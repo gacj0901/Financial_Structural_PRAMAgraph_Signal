@@ -1,0 +1,211 @@
+{
+  "diagnostic": "Development Audit Right-Censoring Correction",
+  "instrument_id": "crypto:binance:BTCUSDT",
+  "timeframe": "D1",
+  "structural_vector_version": "financial_structural_vector_v2",
+  "calibration_profile_id": "crypto:binance:BTCUSDT:D1:financial_first_passage_weighted_neighbors_v2",
+  "calibration_profile_sha256": "sha256:bdc99d9e17d1b393d07cf87d12f7f62247883684a8ffb214cf05f01cd7c9d5fe",
+  "diagnostic_generation_timestamp_unix_seconds": 1786940761,
+  "query_cutoff_timestamp_ns": 1771545600000000000,
+  "label_source_end_timestamp_ns": 1773187200000000000,
+  "label_source_extends_query_cutoff": true,
+  "label_source_bars_after_query_cutoff": 13,
+  "maximum_horizon_bars": 10,
+  "target_rule": "FIRST_PASSAGE_IF_OBSERVED; OTHERWISE_RANGE_ONLY_AFTER_FULL_MAXIMUM_HORIZON; OTHERWISE_RIGHT_CENSORED",
+  "audit_candidate_observations": 27,
+  "labelable_observations": 27,
+  "labelable_queries": [
+    {
+      "query_timestamp_ns": 1768435200000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 4
+    },
+    {
+      "query_timestamp_ns": 1768521600000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 3
+    },
+    {
+      "query_timestamp_ns": 1768608000000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 2
+    },
+    {
+      "query_timestamp_ns": 1768867200000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 1
+    },
+    {
+      "query_timestamp_ns": 1768953600000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 7
+    },
+    {
+      "query_timestamp_ns": 1769040000000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 6
+    },
+    {
+      "query_timestamp_ns": 1769126400000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 5
+    },
+    {
+      "query_timestamp_ns": 1769212800000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 4
+    },
+    {
+      "query_timestamp_ns": 1769472000000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 3
+    },
+    {
+      "query_timestamp_ns": 1769558400000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 2
+    },
+    {
+      "query_timestamp_ns": 1769644800000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 1
+    },
+    {
+      "query_timestamp_ns": 1769731200000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 2
+    },
+    {
+      "query_timestamp_ns": 1769817600000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 1
+    },
+    {
+      "query_timestamp_ns": 1770076800000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 1
+    },
+    {
+      "query_timestamp_ns": 1770163200000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 1
+    },
+    {
+      "query_timestamp_ns": 1770249600000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 1
+    },
+    {
+      "query_timestamp_ns": 1770336000000000000,
+      "actual_direction": "RANGE",
+      "first_passage_bars": 1
+    },
+    {
+      "query_timestamp_ns": 1770422400000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 3
+    },
+    {
+      "query_timestamp_ns": 1770681600000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 2
+    },
+    {
+      "query_timestamp_ns": 1770768000000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 9
+    },
+    {
+      "query_timestamp_ns": 1770854400000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 9
+    },
+    {
+      "query_timestamp_ns": 1770940800000000000,
+      "actual_direction": "UP",
+      "first_passage_bars": 2
+    },
+    {
+      "query_timestamp_ns": 1771027200000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 6
+    },
+    {
+      "query_timestamp_ns": 1771286400000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 5
+    },
+    {
+      "query_timestamp_ns": 1771372800000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 5
+    },
+    {
+      "query_timestamp_ns": 1771459200000000000,
+      "actual_direction": "UP",
+      "first_passage_bars": 10
+    },
+    {
+      "query_timestamp_ns": 1771545600000000000,
+      "actual_direction": "DOWN",
+      "first_passage_bars": 3
+    }
+  ],
+  "right_censored_observations": 0,
+  "right_censored_queries": [],
+  "labelable_actual_direction_counts": {
+    "UP": 2,
+    "DOWN": 24,
+    "RANGE": 1
+  },
+  "runtime_minimum_support": 10,
+  "runtime_resolved_observations": 25,
+  "runtime_support_unresolved_observations": 2,
+  "runtime_support_unresolved_queries": [
+    {
+      "query_timestamp_ns": 1770336000000000000,
+      "actual_direction": "RANGE",
+      "selected_neighbor_count": 7,
+      "runtime_minimum_support": 10
+    },
+    {
+      "query_timestamp_ns": 1770681600000000000,
+      "actual_direction": "DOWN",
+      "selected_neighbor_count": 1,
+      "runtime_minimum_support": 10
+    }
+  ],
+  "resolved_actual_direction_counts": {
+    "UP": 2,
+    "DOWN": 23,
+    "RANGE": 0
+  },
+  "resolved_predicted_direction_counts": {
+    "UP": 15,
+    "DOWN": 10,
+    "RANGE": 0
+  },
+  "resolved_only_confusion_matrix": {
+    "DOWN": {
+      "DOWN": 10,
+      "RANGE": 0,
+      "UP": 13
+    },
+    "RANGE": {
+      "DOWN": 0,
+      "RANGE": 0,
+      "UP": 0
+    },
+    "UP": {
+      "DOWN": 0,
+      "RANGE": 0,
+      "UP": 2
+    }
+  },
+  "resolved_correct": 12,
+  "resolved_accuracy_bp": 4800,
+  "resolved_balanced_accuracy_bp": 7174,
+  "resolved_multiclass_brier_score": 0.5739127720000001,
+  "resolved_climatology_brier_score": 0.6150244560634168,
+  "resolved_brier_skill_score": 0.06684560859020139
+}

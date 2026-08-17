@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FinancialDataRequest",
+  "type": "object",
+  "properties": {
+    "asset": {
+      "type": "string"
+    },
+    "source": {
+      "$ref": "#/$defs/DataSourcePreference",
+      "default": "AUTO"
+    },
+    "timeframe": {
+      "$ref": "#/$defs/Timeframe",
+      "default": "D1"
+    }
+  },
+  "required": [
+    "asset"
+  ],
+  "$defs": {
+    "DataSourcePreference": {
+      "type": "string",
+      "enum": [
+        "AUTO",
+        "SUPPLIED_CORPUS"
+      ]
+    },
+    "Timeframe": {
+      "type": "string",
+      "enum": [
+        "M1",
+        "M5",
+        "H1",
+        "H4",
+        "D1",
+        "W1"
+      ]
+    }
+  }
+}

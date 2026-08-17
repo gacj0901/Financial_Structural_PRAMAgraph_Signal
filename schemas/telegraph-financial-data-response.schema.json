@@ -1,0 +1,524 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FinancialDataResponse",
+  "type": "object",
+  "properties": {
+    "as_of_ns": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "directional": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DirectionalResolution"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "instrument": {
+      "$ref": "#/$defs/Instrument"
+    },
+    "intent": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    },
+    "market": {
+      "$ref": "#/$defs/MarketBarResponse"
+    },
+    "provenance": {
+      "$ref": "#/$defs/ServiceProvenance"
+    },
+    "reason": {
+      "type": "string"
+    },
+    "response_sha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "schema": {
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/RuntimeStatus"
+    },
+    "structural": {
+      "$ref": "#/$defs/StructuralSnapshot"
+    },
+    "timeframe": {
+      "$ref": "#/$defs/Timeframe"
+    }
+  },
+  "required": [
+    "schema",
+    "intent",
+    "status",
+    "label",
+    "reason",
+    "instrument",
+    "timeframe",
+    "as_of_ns",
+    "market",
+    "structural",
+    "provenance"
+  ],
+  "$defs": {
+    "AssetClass": {
+      "type": "string",
+      "enum": [
+        "crypto",
+        "stock",
+        "index",
+        "forex",
+        "futures",
+        "commodity"
+      ]
+    },
+    "AvailabilityStatus": {
+      "type": "string",
+      "enum": [
+        "AVAILABLE",
+        "UNAVAILABLE",
+        "NOT_APPLICABLE",
+        "STALE"
+      ]
+    },
+    "AvailableValue": {
+      "type": "object",
+      "properties": {
+        "availability": {
+          "$ref": "#/$defs/AvailabilityStatus"
+        },
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        }
+      },
+      "required": [
+        "availability"
+      ]
+    },
+    "CalibrationScope": {
+      "type": "string",
+      "enum": [
+        "INSTRUMENT",
+        "ASSET_CLASS",
+        "GLOBAL",
+        "UNAVAILABLE"
+      ]
+    },
+    "ComponentSnapshot": {
+      "type": "object",
+      "properties": {
+        "availability": {
+          "$ref": "#/$defs/AvailabilityStatus"
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "value": true
+      },
+      "required": [
+        "availability"
+      ]
+    },
+    "Direction": {
+      "type": "string",
+      "enum": [
+        "UP",
+        "DOWN",
+        "RANGE",
+        "UNRESOLVED"
+      ]
+    },
+    "DirectionalResolution": {
+      "type": "object",
+      "properties": {
+        "calibration_scope": {
+          "$ref": "#/$defs/CalibrationScope"
+        },
+        "direction": {
+          "$ref": "#/$defs/Direction"
+        },
+        "horizon": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Horizon"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "probabilities_bp": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProbabilitiesBp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "profile_sha256": {
+          "type": "string"
+        },
+        "publication_reason": {
+          "type": "string"
+        },
+        "reliability_bp": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0
+        },
+        "sample_support": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "direction",
+        "sample_support",
+        "calibration_scope",
+        "profile_sha256",
+        "publication_reason"
+      ]
+    },
+    "Horizon": {
+      "type": "object",
+      "properties": {
+        "median_bars": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        },
+        "median_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint64",
+          "minimum": 0
+        },
+        "p25_bars": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        },
+        "p25_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint64",
+          "minimum": 0
+        },
+        "p75_bars": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        },
+        "p75_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint64",
+          "minimum": 0
+        }
+      }
+    },
+    "Instrument": {
+      "type": "object",
+      "properties": {
+        "asset_class": {
+          "$ref": "#/$defs/AssetClass"
+        },
+        "base": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "historical_data_capable": {
+          "type": "boolean"
+        },
+        "instrument_id": {
+          "type": "string"
+        },
+        "live_data_capable": {
+          "type": "boolean"
+        },
+        "price_precision": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0
+        },
+        "quantity_precision": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0
+        },
+        "quote": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "session_calendar": {
+          "$ref": "#/$defs/SessionCalendar"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "venue": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "instrument_id",
+        "asset_class",
+        "symbol",
+        "venue",
+        "timezone",
+        "session_calendar",
+        "live_data_capable",
+        "historical_data_capable"
+      ]
+    },
+    "MarketBarResponse": {
+      "type": "object",
+      "properties": {
+        "close": {
+          "type": "number",
+          "format": "double"
+        },
+        "close_time_ns": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "high": {
+          "type": "number",
+          "format": "double"
+        },
+        "low": {
+          "type": "number",
+          "format": "double"
+        },
+        "open": {
+          "type": "number",
+          "format": "double"
+        },
+        "open_time_ns": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "volume": {
+          "$ref": "#/$defs/AvailableValue"
+        }
+      },
+      "required": [
+        "open_time_ns",
+        "close_time_ns",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ]
+    },
+    "ProbabilitiesBp": {
+      "type": "object",
+      "properties": {
+        "down": {
+          "type": "integer",
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0
+        },
+        "range": {
+          "type": "integer",
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0
+        },
+        "up": {
+          "type": "integer",
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0
+        }
+      },
+      "required": [
+        "up",
+        "range",
+        "down"
+      ]
+    },
+    "RuntimeStatus": {
+      "type": "string",
+      "enum": [
+        "OK",
+        "BOOTSTRAPPING",
+        "UNRESOLVED",
+        "INSUFFICIENT_DATA",
+        "INSUFFICIENT_CALIBRATION",
+        "STALE_DATA",
+        "PROVIDER_DIVERGENCE",
+        "AMBIGUOUS_ASSET",
+        "UNSUPPORTED_ASSET",
+        "ENGINE_ERROR"
+      ]
+    },
+    "ServiceProvenance": {
+      "type": "object",
+      "properties": {
+        "corpus_file": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "engine_version": {
+          "type": "string"
+        },
+        "input_sha256": {
+          "type": "string"
+        },
+        "observation_interface_version": {
+          "type": "string"
+        },
+        "primary_provider": {
+          "type": "string"
+        },
+        "provider_instrument": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "primary_provider",
+        "input_sha256",
+        "engine_version",
+        "observation_interface_version"
+      ]
+    },
+    "SessionCalendar": {
+      "type": "string",
+      "enum": [
+        "CONTINUOUS_UTC",
+        "EXCHANGE_SESSION"
+      ]
+    },
+    "StructuralSnapshot": {
+      "type": "object",
+      "properties": {
+        "as_of_ns": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "availability": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/AvailabilityStatus"
+          }
+        },
+        "d_o": {
+          "$ref": "#/$defs/ComponentSnapshot"
+        },
+        "engine_version": {
+          "type": "string"
+        },
+        "instrument_id": {
+          "type": "string"
+        },
+        "k_mem": {
+          "$ref": "#/$defs/ComponentSnapshot"
+        },
+        "odce": {
+          "$ref": "#/$defs/ComponentSnapshot"
+        },
+        "prama": {
+          "$ref": "#/$defs/ComponentSnapshot"
+        },
+        "snapshot_sha256": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_watermark": {
+          "type": "string"
+        },
+        "structural_state": {
+          "type": "string"
+        },
+        "timeframe": {
+          "$ref": "#/$defs/Timeframe"
+        }
+      },
+      "required": [
+        "instrument_id",
+        "timeframe",
+        "as_of_ns",
+        "engine_version",
+        "structural_state",
+        "prama",
+        "d_o",
+        "odce",
+        "k_mem",
+        "availability",
+        "source_watermark"
+      ]
+    },
+    "Timeframe": {
+      "type": "string",
+      "enum": [
+        "M1",
+        "M5",
+        "H1",
+        "H4",
+        "D1",
+        "W1"
+      ]
+    }
+  }
+}

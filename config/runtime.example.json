@@ -1,0 +1,11 @@
+{
+  "schema": "pramagraph.financial_signal.v1",
+  "default_mode": "CONFIRMED",
+  "enabled_timeframes": ["M1", "M5", "H1", "H4", "D1", "W1"],
+  "runtime_recalibration": false,
+  "massive_api_key_env": "MASSIVE_API_KEY",
+  "massive_gold_min_days_to_maturity": 20,
+  "calibration_fallback_order": ["INSTRUMENT", "ASSET_CLASS", "GLOBAL"],
+  "canonical_json": "RFC8785",
+  "hash": "SHA256"
+}

@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CorpusAuditReport",
+  "type": "object",
+  "properties": {
+    "all_files_accepted": {
+      "type": "boolean"
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/CorpusFileReport"
+      }
+    },
+    "report_sha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "files",
+    "all_files_accepted"
+  ],
+  "$defs": {
+    "CorpusFileReport": {
+      "type": "object",
+      "properties": {
+        "accepted": {
+          "type": "boolean"
+        },
+        "actual_end": {
+          "type": "string"
+        },
+        "actual_rows": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "actual_start": {
+          "type": "string"
+        },
+        "cadence_anomalies": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "expected_end": {
+          "type": "string"
+        },
+        "expected_rows": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "expected_start": {
+          "type": "string"
+        },
+        "file": {
+          "type": "string"
+        },
+        "input_sha256": {
+          "type": "string"
+        },
+        "instrument_id": {
+          "type": "string"
+        },
+        "malformed_rows_excluded": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "role": {
+          "$ref": "#/$defs/CorpusRole"
+        },
+        "status": {
+          "$ref": "#/$defs/CorpusFileStatus"
+        },
+        "valid_rows": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "volume_available_rows": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "volume_unavailable_rows": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "file",
+        "role",
+        "instrument_id",
+        "expected_rows",
+        "actual_rows",
+        "valid_rows",
+        "malformed_rows_excluded",
+        "expected_start",
+        "actual_start",
+        "expected_end",
+        "actual_end",
+        "cadence_anomalies",
+        "volume_available_rows",
+        "volume_unavailable_rows",
+        "input_sha256",
+        "status",
+        "accepted"
+      ]
+    },
+    "CorpusFileStatus": {
+      "type": "string",
+      "enum": [
+        "ACCEPTED",
+        "ACCEPTED_WITH_EXCLUSIONS",
+        "REJECTED"
+      ]
+    },
+    "CorpusRole": {
+      "type": "string",
+      "enum": [
+        "CALIBRATION",
+        "HISTORICAL"
+      ]
+    }
+  }
+}

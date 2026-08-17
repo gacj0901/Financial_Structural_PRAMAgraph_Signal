@@ -1,0 +1,83 @@
+{
+  "diagnostic": "DIAGNOSTIC 0 — Neighbor Anatomy Dump",
+  "instrument_id": "crypto:binance:BTCUSDT",
+  "timeframe": "D1",
+  "structural_vector_version": "financial_structural_vector_v2",
+  "calibration_profile_id": "crypto:binance:BTCUSDT:D1:financial_first_passage_weighted_neighbors_v2",
+  "calibration_profile_sha256": "sha256:bdc99d9e17d1b393d07cf87d12f7f62247883684a8ffb214cf05f01cd7c9d5fe",
+  "diagnostic_generation_timestamp_unix_seconds": 1786940668,
+  "number_of_neighbors": 27,
+  "audit_minimum_support": 10,
+  "profile_runtime_minimum_support": 10,
+  "effective_dimension_count": 12,
+  "audit_points": 25,
+  "actual_direction_counts": {
+    "UP": 2,
+    "DOWN": 23,
+    "RANGE": 0
+  },
+  "predicted_direction_counts": {
+    "UP": 15,
+    "DOWN": 10,
+    "RANGE": 0
+  },
+  "actual_range_points": 0,
+  "actual_range_diagnostics": [],
+  "mean_normalized_class_mass": {
+    "UP": 0.5017532584487446,
+    "DOWN": 0.42286277926570226,
+    "RANGE": 0.07538396228555304
+  },
+  "evaluated_query_neighbor_pairs": 666,
+  "zero_distance_neighbor_pairs": 0,
+  "top_dimension_frequency_eligible_pairs": 666,
+  "top_dimension_tie_break": "LOWEST_STRUCTURAL_VECTOR_INDEX",
+  "mean_dimension_contribution": {
+    "d_o.movement": 0.1743390177384532,
+    "d_o.recurrence_persistence": 0.11204093395551486,
+    "d_o.transport_coherence": 0.09363051134439768,
+    "d_o.transport_deficit": 0.052644852610720896,
+    "d_o.variation_contraction": 0.12262568934337251,
+    "k_mem.strictly_prior_z32": 0.11963123128976895,
+    "odce.retained_friction_vs_adaptive_organization_level": 0.09056058025122185,
+    "odce.retained_friction_vs_structural_recovery": 0.018147273430396457,
+    "prama.accumulated_excess": 0.0,
+    "prama.capacity": 0.0,
+    "prama.delta": 0.10517578074963008,
+    "prama.margin": 0.011809979068576303,
+    "prama.trend": 0.08758432886847216,
+    "prama.xi_occupancy": 0.011809821349475487
+  },
+  "median_dimension_contribution": {
+    "d_o.movement": 0.13145671017645807,
+    "d_o.recurrence_persistence": 0.05671570237537045,
+    "d_o.transport_coherence": 0.046634919300713826,
+    "d_o.transport_deficit": 0.02269455703528067,
+    "d_o.variation_contraction": 0.08483093691005586,
+    "k_mem.strictly_prior_z32": 0.05384108984065189,
+    "odce.retained_friction_vs_adaptive_organization_level": 0.049995655549550336,
+    "odce.retained_friction_vs_structural_recovery": 0.007961227774954314,
+    "prama.accumulated_excess": 0.0,
+    "prama.capacity": 0.0,
+    "prama.delta": 0.04980578597080837,
+    "prama.margin": 0.003169847565938736,
+    "prama.trend": 0.02280431306066166,
+    "prama.xi_occupancy": 0.0031676805689522707
+  },
+  "top_dimension_frequency": {
+    "d_o.movement": 170,
+    "d_o.recurrence_persistence": 74,
+    "d_o.transport_coherence": 49,
+    "d_o.transport_deficit": 19,
+    "d_o.variation_contraction": 72,
+    "k_mem.strictly_prior_z32": 93,
+    "odce.retained_friction_vs_adaptive_organization_level": 41,
+    "odce.retained_friction_vs_structural_recovery": 0,
+    "prama.accumulated_excess": 0,
+    "prama.capacity": 0,
+    "prama.delta": 79,
+    "prama.margin": 0,
+    "prama.trend": 65,
+    "prama.xi_occupancy": 4
+  }
+}

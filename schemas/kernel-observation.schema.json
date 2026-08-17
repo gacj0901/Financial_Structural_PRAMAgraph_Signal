@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "KernelObservation",
+  "type": "object",
+  "properties": {
+    "expected": {
+      "type": "number",
+      "format": "double"
+    },
+    "omega": {
+      "type": "number",
+      "format": "double"
+    },
+    "sigma_op": {
+      "$ref": "#/$defs/AvailableValue2"
+    },
+    "timestamp_ns": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "u_lambda": {
+      "$ref": "#/$defs/AvailableValue"
+    }
+  },
+  "required": [
+    "timestamp_ns",
+    "omega",
+    "expected",
+    "u_lambda",
+    "sigma_op"
+  ],
+  "$defs": {
+    "AvailabilityStatus": {
+      "type": "string",
+      "enum": [
+        "AVAILABLE",
+        "UNAVAILABLE",
+        "NOT_APPLICABLE",
+        "STALE"
+      ]
+    },
+    "AvailableValue": {
+      "type": "object",
+      "properties": {
+        "availability": {
+          "$ref": "#/$defs/AvailabilityStatus"
+        },
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        }
+      },
+      "required": [
+        "availability"
+      ]
+    },
+    "AvailableValue2": {
+      "type": "object",
+      "properties": {
+        "availability": {
+          "$ref": "#/$defs/AvailabilityStatus"
+        },
+        "value": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "availability"
+      ]
+    }
+  }
+}

@@ -1,0 +1,429 @@
+{
+  "diagnostic": "RANGE Intraclass Compactness Audit",
+  "instrument_id": "crypto:binance:BTCUSDT",
+  "timeframe": "D1",
+  "structural_vector_version": "financial_structural_vector_v2",
+  "calibration_profile_id": "crypto:binance:BTCUSDT:D1:financial_first_passage_weighted_neighbors_v2",
+  "calibration_profile_sha256": "sha256:bdc99d9e17d1b393d07cf87d12f7f62247883684a8ffb214cf05f01cd7c9d5fe",
+  "diagnostic_generation_timestamp_unix_seconds": 1786940698,
+  "labeled_sample_count": 797,
+  "labeled_class_counts": {
+    "UP": 380,
+    "DOWN": 322,
+    "RANGE": 95
+  },
+  "self_neighbor_rule": "EXCLUDE_IDENTICAL_TIMESTAMP",
+  "availability_rule": "EXACT_AVAILABILITY_MASK_EQUALITY",
+  "distance": "RMS_OVER_ACTIVE_NORMALIZED_DIMENSIONS",
+  "nearest_neighbor_cutoff_rule": "NO_MAXIMUM_DISTANCE_CENSORING",
+  "top_k_cutoff_rule": "DISTANCE_LE_MAXIMUM_DISTANCE_THEN_DISTANCE_ASC_TIMESTAMP_ASC",
+  "maximum_distance": 1.3361942009850243,
+  "k_values": [
+    5,
+    10,
+    20,
+    27
+  ],
+  "leave_one_out_all_time": {
+    "candidate_time_rule": "ALL_TIMESTAMPS_EXCEPT_QUERY",
+    "query_samples": 797,
+    "class_compactness": {
+      "UP": {
+        "sample_count": 380,
+        "nearest_same_class_distance": {
+          "count": 379,
+          "minimum": 0.08213597606612964,
+          "p10": 0.23823311549525059,
+          "p25": 0.30013223544467443,
+          "median": 0.4042978980759246,
+          "p75": 0.5636516660565316,
+          "maximum": 2.022288347528133
+        },
+        "nearest_other_class_distance": {
+          "count": 372,
+          "minimum": 0.11334194821544648,
+          "p10": 0.32304200869751426,
+          "p25": 0.44842739410995425,
+          "median": 0.5901016328126841,
+          "p75": 0.7358343869868055,
+          "maximum": 1.9350586407073078
+        },
+        "nearest_same_within_maximum_distance_fraction": 0.9947229551451188,
+        "nearest_other_within_maximum_distance_fraction": 0.967741935483871,
+        "runtime_admissible_same_class_fraction_by_k": {
+          "10": {
+            "requested_k": 10,
+            "evaluable_samples": 378,
+            "samples_with_full_k": 336,
+            "mean_actual_k_used": 9.444444444444445,
+            "minimum": 0.0,
+            "median": 0.6,
+            "mean": 0.5958879230704631,
+            "maximum": 1.0
+          },
+          "20": {
+            "requested_k": 20,
+            "evaluable_samples": 378,
+            "samples_with_full_k": 308,
+            "mean_actual_k_used": 17.814814814814813,
+            "minimum": 0.0,
+            "median": 0.55,
+            "mean": 0.5602371624049586,
+            "maximum": 1.0
+          },
+          "27": {
+            "requested_k": 27,
+            "evaluable_samples": 378,
+            "samples_with_full_k": 300,
+            "mean_actual_k_used": 23.40740740740741,
+            "minimum": 0.0,
+            "median": 0.5185185185185185,
+            "mean": 0.5557348424379501,
+            "maximum": 1.0
+          },
+          "5": {
+            "requested_k": 5,
+            "evaluable_samples": 378,
+            "samples_with_full_k": 360,
+            "mean_actual_k_used": 4.886243386243386,
+            "minimum": 0.0,
+            "median": 0.6,
+            "mean": 0.6491181657848332,
+            "maximum": 1.0
+          }
+        }
+      },
+      "DOWN": {
+        "sample_count": 322,
+        "nearest_same_class_distance": {
+          "count": 320,
+          "minimum": 0.13037764484406766,
+          "p10": 0.2226804463612875,
+          "p25": 0.32872209743388453,
+          "median": 0.4457905155358596,
+          "p75": 0.5772216353698059,
+          "maximum": 2.1023881582006996
+        },
+        "nearest_other_class_distance": {
+          "count": 320,
+          "minimum": 0.12720323849250895,
+          "p10": 0.30170026785729914,
+          "p25": 0.4379159570348399,
+          "median": 0.5658929530197923,
+          "p75": 0.7312322438353727,
+          "maximum": 1.7506907623136265
+        },
+        "nearest_same_within_maximum_distance_fraction": 0.9875,
+        "nearest_other_within_maximum_distance_fraction": 0.965625,
+        "runtime_admissible_same_class_fraction_by_k": {
+          "10": {
+            "requested_k": 10,
+            "evaluable_samples": 320,
+            "samples_with_full_k": 288,
+            "mean_actual_k_used": 9.48125,
+            "minimum": 0.0,
+            "median": 0.6,
+            "mean": 0.5488231646825406,
+            "maximum": 1.0
+          },
+          "20": {
+            "requested_k": 20,
+            "evaluable_samples": 320,
+            "samples_with_full_k": 264,
+            "mean_actual_k_used": 18.16875,
+            "minimum": 0.0,
+            "median": 0.5,
+            "mean": 0.5050833310297808,
+            "maximum": 1.0
+          },
+          "27": {
+            "requested_k": 27,
+            "evaluable_samples": 320,
+            "samples_with_full_k": 254,
+            "mean_actual_k_used": 23.828125,
+            "minimum": 0.0,
+            "median": 0.48148148148148145,
+            "mean": 0.4854511071747307,
+            "maximum": 1.0
+          },
+          "5": {
+            "requested_k": 5,
+            "evaluable_samples": 320,
+            "samples_with_full_k": 303,
+            "mean_actual_k_used": 4.896875,
+            "minimum": 0.0,
+            "median": 0.6,
+            "mean": 0.5911458333333328,
+            "maximum": 1.0
+          }
+        }
+      },
+      "RANGE": {
+        "sample_count": 95,
+        "nearest_same_class_distance": {
+          "count": 94,
+          "minimum": 0.2184804000142642,
+          "p10": 0.28010022950639984,
+          "p25": 0.33464533642106276,
+          "median": 0.4894671962087833,
+          "p75": 0.6843466247052165,
+          "maximum": 1.7328801064022337
+        },
+        "nearest_other_class_distance": {
+          "count": 95,
+          "minimum": 0.11334194821544648,
+          "p10": 0.26392639085800984,
+          "p25": 0.3651541155337091,
+          "median": 0.44722664481690466,
+          "p75": 0.6387317704259647,
+          "maximum": 1.1013274259135197
+        },
+        "nearest_same_within_maximum_distance_fraction": 0.9680851063829787,
+        "nearest_other_within_maximum_distance_fraction": 1.0,
+        "runtime_admissible_same_class_fraction_by_k": {
+          "10": {
+            "requested_k": 10,
+            "evaluable_samples": 95,
+            "samples_with_full_k": 83,
+            "mean_actual_k_used": 9.642105263157895,
+            "minimum": 0.0,
+            "median": 0.2,
+            "mean": 0.2405513784461155,
+            "maximum": 0.7
+          },
+          "20": {
+            "requested_k": 20,
+            "evaluable_samples": 95,
+            "samples_with_full_k": 81,
+            "mean_actual_k_used": 18.242105263157896,
+            "minimum": 0.0,
+            "median": 0.2,
+            "mean": 0.2073934837092733,
+            "maximum": 0.5555555555555556
+          },
+          "27": {
+            "requested_k": 27,
+            "evaluable_samples": 95,
+            "samples_with_full_k": 80,
+            "mean_actual_k_used": 24.16842105263158,
+            "minimum": 0.0,
+            "median": 0.18518518518518517,
+            "mean": 0.19831474822321501,
+            "maximum": 0.5555555555555556
+          },
+          "5": {
+            "requested_k": 5,
+            "evaluable_samples": 95,
+            "samples_with_full_k": 94,
+            "mean_actual_k_used": 4.968421052631579,
+            "minimum": 0.0,
+            "median": 0.2,
+            "mean": 0.3094736842105266,
+            "maximum": 1.0
+          }
+        }
+      }
+    }
+  },
+  "causal_prefix": {
+    "candidate_time_rule": "STRICTLY_PRIOR_TIMESTAMP_ONLY",
+    "query_samples": 797,
+    "class_compactness": {
+      "UP": {
+        "sample_count": 380,
+        "nearest_same_class_distance": {
+          "count": 376,
+          "minimum": 0.08213597606612964,
+          "p10": 0.26899458788306735,
+          "p25": 0.388072156282251,
+          "median": 0.5373096715438759,
+          "p75": 0.7300769953994491,
+          "maximum": 3.0260338726241787
+        },
+        "nearest_other_class_distance": {
+          "count": 372,
+          "minimum": 0.1688163667751527,
+          "p10": 0.41996236817083177,
+          "p25": 0.5605078451043523,
+          "median": 0.6954457484965091,
+          "p75": 0.9765922727868941,
+          "maximum": 2.346473069738506
+        },
+        "nearest_same_within_maximum_distance_fraction": 0.9601063829787234,
+        "nearest_other_within_maximum_distance_fraction": 0.9301075268817204,
+        "runtime_admissible_same_class_fraction_by_k": {
+          "10": {
+            "requested_k": 10,
+            "evaluable_samples": 371,
+            "samples_with_full_k": 300,
+            "mean_actual_k_used": 8.89487870619946,
+            "minimum": 0.0,
+            "median": 0.6,
+            "mean": 0.5631241175715574,
+            "maximum": 1.0
+          },
+          "20": {
+            "requested_k": 20,
+            "evaluable_samples": 371,
+            "samples_with_full_k": 249,
+            "mean_actual_k_used": 16.28301886792453,
+            "minimum": 0.0,
+            "median": 0.55,
+            "mean": 0.5497854863664995,
+            "maximum": 1.0
+          },
+          "27": {
+            "requested_k": 27,
+            "evaluable_samples": 371,
+            "samples_with_full_k": 209,
+            "mean_actual_k_used": 20.606469002695416,
+            "minimum": 0.0,
+            "median": 0.5185185185185185,
+            "mean": 0.5469057585922441,
+            "maximum": 1.0
+          },
+          "5": {
+            "requested_k": 5,
+            "evaluable_samples": 371,
+            "samples_with_full_k": 326,
+            "mean_actual_k_used": 4.716981132075472,
+            "minimum": 0.0,
+            "median": 0.6,
+            "mean": 0.6017520215633417,
+            "maximum": 1.0
+          }
+        }
+      },
+      "DOWN": {
+        "sample_count": 322,
+        "nearest_same_class_distance": {
+          "count": 318,
+          "minimum": 0.13037764484406766,
+          "p10": 0.2889577104095477,
+          "p25": 0.4091177506421129,
+          "median": 0.5464955588273623,
+          "p75": 0.7056353109614062,
+          "maximum": 2.9466578426651164
+        },
+        "nearest_other_class_distance": {
+          "count": 306,
+          "minimum": 0.12720323849250895,
+          "p10": 0.35730725846751543,
+          "p25": 0.5083807929862029,
+          "median": 0.6479107417001652,
+          "p75": 0.8617101000048324,
+          "maximum": 2.762941882282344
+        },
+        "nearest_same_within_maximum_distance_fraction": 0.9559748427672956,
+        "nearest_other_within_maximum_distance_fraction": 0.9509803921568627,
+        "runtime_admissible_same_class_fraction_by_k": {
+          "10": {
+            "requested_k": 10,
+            "evaluable_samples": 315,
+            "samples_with_full_k": 251,
+            "mean_actual_k_used": 8.936507936507937,
+            "minimum": 0.0,
+            "median": 0.5,
+            "mean": 0.48809523809523775,
+            "maximum": 1.0
+          },
+          "20": {
+            "requested_k": 20,
+            "evaluable_samples": 315,
+            "samples_with_full_k": 201,
+            "mean_actual_k_used": 16.095238095238095,
+            "minimum": 0.0,
+            "median": 0.4,
+            "mean": 0.4642679307031367,
+            "maximum": 1.0
+          },
+          "27": {
+            "requested_k": 27,
+            "evaluable_samples": 315,
+            "samples_with_full_k": 172,
+            "mean_actual_k_used": 20.196825396825396,
+            "minimum": 0.0,
+            "median": 0.4074074074074074,
+            "mean": 0.4537203562266457,
+            "maximum": 1.0
+          },
+          "5": {
+            "requested_k": 5,
+            "evaluable_samples": 315,
+            "samples_with_full_k": 282,
+            "mean_actual_k_used": 4.707936507936508,
+            "minimum": 0.0,
+            "median": 0.6,
+            "mean": 0.5375661375661369,
+            "maximum": 1.0
+          }
+        }
+      },
+      "RANGE": {
+        "sample_count": 95,
+        "nearest_same_class_distance": {
+          "count": 93,
+          "minimum": 0.2184804000142642,
+          "p10": 0.29778189339077166,
+          "p25": 0.47741133669148805,
+          "median": 0.6992566880296116,
+          "p75": 0.9163624159525341,
+          "maximum": 3.7156097430180033
+        },
+        "nearest_other_class_distance": {
+          "count": 95,
+          "minimum": 0.11334194821544648,
+          "p10": 0.34277635937119577,
+          "p25": 0.45393095927465527,
+          "median": 0.6042927768632628,
+          "p75": 0.7988957577632587,
+          "maximum": 2.0648491372894444
+        },
+        "nearest_same_within_maximum_distance_fraction": 0.8924731182795699,
+        "nearest_other_within_maximum_distance_fraction": 0.9789473684210527,
+        "runtime_admissible_same_class_fraction_by_k": {
+          "10": {
+            "requested_k": 10,
+            "evaluable_samples": 94,
+            "samples_with_full_k": 77,
+            "mean_actual_k_used": 9.03191489361702,
+            "minimum": 0.0,
+            "median": 0.2,
+            "mean": 0.22384751773049663,
+            "maximum": 1.0
+          },
+          "20": {
+            "requested_k": 20,
+            "evaluable_samples": 94,
+            "samples_with_full_k": 62,
+            "mean_actual_k_used": 16.425531914893618,
+            "minimum": 0.0,
+            "median": 0.15,
+            "mean": 0.19204932741178718,
+            "maximum": 1.0
+          },
+          "27": {
+            "requested_k": 27,
+            "evaluable_samples": 94,
+            "samples_with_full_k": 53,
+            "mean_actual_k_used": 20.574468085106382,
+            "minimum": 0.0,
+            "median": 0.14814814814814814,
+            "mean": 0.18777159945228303,
+            "maximum": 1.0
+          },
+          "5": {
+            "requested_k": 5,
+            "evaluable_samples": 94,
+            "samples_with_full_k": 84,
+            "mean_actual_k_used": 4.76595744680851,
+            "minimum": 0.0,
+            "median": 0.2,
+            "mean": 0.27907801418439726,
+            "maximum": 1.0
+          }
+        }
+      }
+    }
+  }
+}

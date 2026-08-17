@@ -1,0 +1,39 @@
+[package]
+name = "pramagraph-financial"
+version = "0.1.0"
+edition = "2021"
+license = "AGPL-3.0-only"
+description = "Deterministic financial structural signal runtime powered by PRAMA Protokol"
+
+[lib]
+name = "pramagraph_financial"
+path = "src/lib.rs"
+
+[[bin]]
+name = "pramagraph-financial"
+path = "src/main.rs"
+
+[dependencies]
+axum = "0.8.4"
+chrono = { version = "0.4.41", default-features = false, features = ["std", "serde", "clock"] }
+clap = { version = "4.5.45", features = ["derive"] }
+csv = "1.3.1"
+hex = "0.4.3"
+prama-protokol = { package = "prama-protokol-rs", git = "https://github.com/gacj0901/PRAMA-Protokol.git", rev = "ddb91cad792fed3674aa81a5650fab6c187fc1a5" }
+reqwest = { version = "0.12.23", default-features = false, features = ["json", "rustls-tls"] }
+schemars = "1.0.4"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.143"
+serde_jcs = "0.1.0"
+sha2 = "0.10.9"
+thiserror = "2.0.16"
+tokio = { version = "1.47.1", features = ["macros", "net", "rt-multi-thread", "signal", "fs"] }
+uuid = { version = "1.0", features = ["v4", "serde"] }
+
+[dev-dependencies]
+tempfile = "3.21.0"
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+strip = true

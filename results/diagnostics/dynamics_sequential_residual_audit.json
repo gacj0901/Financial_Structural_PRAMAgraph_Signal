@@ -1,0 +1,790 @@
+{
+  "diagnostic": "PRAMAGRAPH_FINANCIAL_DYNAMICS_SEQUENTIAL_RESIDUAL",
+  "experiment_id": "financial_dynamics_sequential_residual_v1",
+  "instrument_id": "crypto:binance:BTCUSDT",
+  "timeframe": "D1",
+  "base_structural_vector_version": "financial_structural_vector_v2",
+  "calibration_profile_id": "crypto:binance:BTCUSDT:D1:financial_first_passage_weighted_neighbors_v2",
+  "calibration_profile_sha256": "sha256:bdc99d9e17d1b393d07cf87d12f7f62247883684a8ffb214cf05f01cd7c9d5fe",
+  "diagnostic_generation_timestamp_unix_seconds": 1786958419,
+  "evidence_status": "DEVELOPMENT_AUDIT_CONSUMED_NOT_A_PRODUCTION_CLAIM",
+  "method": "A_SNAPSHOT -> BOUNDED_SLOPE_ONLY_DELTA_VELOCITY -> BOUNDED_SLOPE_ONLY_DELTA_ACCELERATION_FITTED_ON_POST_VELOCITY_RESIDUAL; NO_INTERCEPTS; KNN_UNCHANGED",
+  "validation_observations": 28,
+  "evaluation_observations": 25,
+  "velocity_fit": {
+    "feature_mean_on_validation": -0.00021294313778223866,
+    "feature_std_on_validation": 0.011338168892153843,
+    "intercept_only_residual": {
+      "DOWN": -0.13889999999999997,
+      "RANGE": 0.1849178571428572,
+      "UP": -0.04601785714285713
+    },
+    "feature_residual_slope": {
+      "DOWN": -0.05634772681432397,
+      "RANGE": 0.06596459726342717,
+      "UP": -0.00961687044910319
+    },
+    "probability_projection": "CLAMP_NEGATIVE_TO_ZERO_THEN_RENORMALIZE"
+  },
+  "velocity_support": {
+    "validation_standardized_minimum": -3.0292607347349163,
+    "validation_standardized_maximum": 2.305165447961937,
+    "evaluation_standardized_minimum": -7.704789954343573,
+    "evaluation_standardized_maximum": 3.752307704843618,
+    "evaluation_below_validation_minimum": 2,
+    "evaluation_above_validation_maximum": 1
+  },
+  "acceleration_fit_against_a": {
+    "feature_mean_on_validation": 0.00003873416403415341,
+    "feature_std_on_validation": 0.019835623579621278,
+    "intercept_only_residual": {
+      "DOWN": -0.13889999999999997,
+      "RANGE": 0.1849178571428572,
+      "UP": -0.04601785714285713
+    },
+    "feature_residual_slope": {
+      "DOWN": -0.0953208425338347,
+      "RANGE": 0.056930891843088374,
+      "UP": 0.03838995069074634
+    },
+    "probability_projection": "CLAMP_NEGATIVE_TO_ZERO_THEN_RENORMALIZE"
+  },
+  "acceleration_fit_after_velocity": {
+    "feature_mean_on_validation": 0.00003873416403415341,
+    "feature_std_on_validation": 0.019835623579621278,
+    "intercept_only_residual": {
+      "DOWN": -0.13801581230244178,
+      "RANGE": 0.1828062869866892,
+      "UP": -0.0447904746842474
+    },
+    "feature_residual_slope": {
+      "DOWN": -0.04843278727467037,
+      "RANGE": 0.005266080589659457,
+      "UP": 0.043166706685010936
+    },
+    "probability_projection": "CLAMP_NEGATIVE_TO_ZERO_THEN_RENORMALIZE"
+  },
+  "acceleration_support": {
+    "validation_standardized_minimum": -2.9964675592193872,
+    "validation_standardized_maximum": 2.392539241725972,
+    "evaluation_standardized_minimum": -8.500314724475638,
+    "evaluation_standardized_maximum": 4.170418106141473,
+    "evaluation_below_validation_minimum": 3,
+    "evaluation_above_validation_maximum": 1
+  },
+  "acceleration_after_velocity_validation_association": {
+    "feature_vs_up_residual": 0.07992778156062408,
+    "feature_vs_down_residual": -0.112555417212926,
+    "feature_vs_range_residual": 0.011610012527136645,
+    "feature_vs_brier_loss": -0.17933575512822406,
+    "feature_vs_error_indicator": -0.22367944519185892
+  },
+  "acceleration_after_velocity_evaluation_association": {
+    "feature_vs_up_residual": 0.06516405829886907,
+    "feature_vs_down_residual": 0.0273694324549142,
+    "feature_vs_range_residual": -0.4291390950387373,
+    "feature_vs_brier_loss": 0.16257882342771382,
+    "feature_vs_error_indicator": 0.0581098205913837
+  },
+  "a_metrics": {
+    "observations": 25,
+    "multiclass_brier_score": 0.542370388,
+    "brier_delta_vs_raw_a": 0.0,
+    "brier_delta_vs_intercept_only": null,
+    "accuracy": 0.44,
+    "predicted_direction_counts": {
+      "DOWN": 9,
+      "RANGE": 0,
+      "UP": 16
+    }
+  },
+  "a_plus_bounded_velocity_metrics": {
+    "observations": 25,
+    "multiclass_brier_score": 0.5277615073549742,
+    "brier_delta_vs_raw_a": -0.014608880645025857,
+    "brier_delta_vs_intercept_only": null,
+    "accuracy": 0.52,
+    "predicted_direction_counts": {
+      "DOWN": 11,
+      "RANGE": 0,
+      "UP": 14
+    }
+  },
+  "a_plus_bounded_acceleration_metrics": {
+    "observations": 25,
+    "multiclass_brier_score": 0.5374094766010491,
+    "brier_delta_vs_raw_a": -0.00496091139895094,
+    "brier_delta_vs_intercept_only": null,
+    "accuracy": 0.56,
+    "predicted_direction_counts": {
+      "DOWN": 12,
+      "RANGE": 0,
+      "UP": 13
+    }
+  },
+  "a_plus_bounded_velocity_plus_bounded_acceleration_metrics": {
+    "observations": 25,
+    "multiclass_brier_score": 0.5227510975767804,
+    "brier_delta_vs_raw_a": -0.019619290423219637,
+    "brier_delta_vs_intercept_only": -0.005010409778193781,
+    "accuracy": 0.56,
+    "predicted_direction_counts": {
+      "DOWN": 12,
+      "RANGE": 0,
+      "UP": 13
+    }
+  },
+  "queries": [
+    {
+      "query_timestamp_ns": 1768435200000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.4844,
+        0.0383,
+        0.4773
+      ],
+      "a_direction": "UP",
+      "velocity_standardized_raw": -0.7740772506184799,
+      "velocity_standardized_bounded": -0.7740772506184799,
+      "acceleration_standardized_raw": -1.762067514548883,
+      "acceleration_standardized_bounded": -1.762067514548883,
+      "a_plus_velocity_probabilities": [
+        0.48564652820897675,
+        0.0,
+        0.5143534717910233
+      ],
+      "a_plus_velocity_direction": "DOWN",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.4058182125379442,
+        0.0,
+        0.5941817874620557
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "DOWN"
+    },
+    {
+      "query_timestamp_ns": 1768521600000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.6267,
+        0.107,
+        0.2663
+      ],
+      "a_direction": "UP",
+      "velocity_standardized_raw": -0.6180785869419666,
+      "velocity_standardized_bounded": -0.6180785869419666,
+      "acceleration_standardized_raw": 0.08721707309760769,
+      "acceleration_standardized_bounded": 0.08721707309760769,
+      "a_plus_velocity_probabilities": [
+        0.6326439816979856,
+        0.06622869493522501,
+        0.3011273233667893
+      ],
+      "a_plus_velocity_direction": "UP",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.6364088555103152,
+        0.06668798707095124,
+        0.2969031574187335
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "UP"
+    },
+    {
+      "query_timestamp_ns": 1768608000000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.5122,
+        0.0843,
+        0.4035
+      ],
+      "a_direction": "UP",
+      "velocity_standardized_raw": -0.304415061932416,
+      "velocity_standardized_bounded": -0.304415061932416,
+      "acceleration_standardized_raw": 0.17733931296449892,
+      "acceleration_standardized_bounded": 0.17733931296449892,
+      "a_plus_velocity_probabilities": [
+        0.5151275202133597,
+        0.06421938303870695,
+        0.42065309674793333
+      ],
+      "a_plus_velocity_direction": "UP",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.5227826743198196,
+        0.06515326615249284,
+        0.41206405952768754
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "UP"
+    },
+    {
+      "query_timestamp_ns": 1768867200000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.3846,
+        0.0714,
+        0.544
+      ],
+      "a_direction": "DOWN",
+      "velocity_standardized_raw": 1.3544108806405637,
+      "velocity_standardized_bounded": 1.3544108806405637,
+      "acceleration_standardized_raw": 0.9462427263858647,
+      "acceleration_standardized_bounded": 0.9462427263858647,
+      "a_plus_velocity_probabilities": [
+        0.37157480602602394,
+        0.16074316827065852,
+        0.4676820257033176
+      ],
+      "a_plus_velocity_direction": "DOWN",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.4124209882487476,
+        0.16572615872518556,
+        0.4218528530260669
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "DOWN"
+    },
+    {
+      "query_timestamp_ns": 1768953600000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.3215,
+        0.1186,
+        0.5599
+      ],
+      "a_direction": "DOWN",
+      "velocity_standardized_raw": -0.6683155961878597,
+      "velocity_standardized_bounded": -0.6683155961878597,
+      "acceleration_standardized_raw": -1.1581561068010924,
+      "acceleration_standardized_bounded": -1.1581561068010924,
+      "a_plus_velocity_probabilities": [
+        0.3279271045076539,
+        0.07451483085260062,
+        0.5975580646397456
+      ],
+      "a_plus_velocity_direction": "DOWN",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.27793331954991696,
+        0.06841588745877983,
+        0.6536507929913034
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "DOWN"
+    },
+    {
+      "query_timestamp_ns": 1769040000000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.2818,
+        0.117,
+        0.6012
+      ],
+      "a_direction": "DOWN",
+      "velocity_standardized_raw": -0.00708151215116558,
+      "velocity_standardized_bounded": -0.00708151215116558,
+      "acceleration_standardized_raw": 0.37601286030075676,
+      "acceleration_standardized_bounded": 0.37601286030075676,
+      "a_plus_velocity_probabilities": [
+        0.2818681019849415,
+        0.11653287090293231,
+        0.6015990271121262
+      ],
+      "a_plus_velocity_direction": "DOWN",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.29809933883533624,
+        0.11851298492802445,
+        0.5833876762366393
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "DOWN"
+    },
+    {
+      "query_timestamp_ns": 1769126400000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.2809,
+        0.1153,
+        0.6038
+      ],
+      "a_direction": "DOWN",
+      "velocity_standardized_raw": 0.006928320367129119,
+      "velocity_standardized_bounded": 0.006928320367129119,
+      "acceleration_standardized_raw": 0.006055352014869914,
+      "acceleration_standardized_bounded": 0.006055352014869914,
+      "a_plus_velocity_probabilities": [
+        0.2808333712405994,
+        0.11575702386272967,
+        0.603409604896671
+      ],
+      "a_plus_velocity_direction": "DOWN",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.2810947608448998,
+        0.11578891183443873,
+        0.6031163273206616
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "DOWN"
+    },
+    {
+      "query_timestamp_ns": 1769212800000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.329,
+        0.1095,
+        0.5615
+      ],
+      "a_direction": "DOWN",
+      "velocity_standardized_raw": -0.5589894610398622,
+      "velocity_standardized_bounded": -0.5589894610398622,
+      "acceleration_standardized_raw": -0.32543496920014003,
+      "acceleration_standardized_bounded": -0.32543496920014003,
+      "a_plus_velocity_probabilities": [
+        0.33437572922923436,
+        0.07262648532800528,
+        0.5929977854427604
+      ],
+      "a_plus_velocity_direction": "DOWN",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.32032777336872637,
+        0.070912718553504,
+        0.6087595080777697
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "DOWN"
+    },
+    {
+      "query_timestamp_ns": 1769472000000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.4377,
+        0.0759,
+        0.4864
+      ],
+      "a_direction": "DOWN",
+      "velocity_standardized_raw": -0.7099833213342579,
+      "velocity_standardized_bounded": -0.7099833213342579,
+      "acceleration_standardized_raw": -0.0882618107115602,
+      "acceleration_standardized_bounded": -0.0882618107115602,
+      "a_plus_velocity_probabilities": [
+        0.44452781762229554,
+        0.02906623614443527,
+        0.5264059462332692
+      ],
+      "a_plus_velocity_direction": "DOWN",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.44071784592782165,
+        0.028601442336238927,
+        0.5306807117359394
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "DOWN"
+    },
+    {
+      "query_timestamp_ns": 1769558400000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.3924,
+        0.1509,
+        0.4567
+      ],
+      "a_direction": "DOWN",
+      "velocity_standardized_raw": 0.40956375415061175,
+      "velocity_standardized_bounded": 0.40956375415061175,
+      "acceleration_standardized_raw": 0.6379874880027253,
+      "acceleration_standardized_bounded": 0.6379874880027253,
+      "a_plus_velocity_probabilities": [
+        0.38846127843568523,
+        0.1779167080962424,
+        0.4336220134680724
+      ],
+      "a_plus_velocity_direction": "DOWN",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.4160010971990058,
+        0.18127640162325917,
+        0.40272250117773506
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "UP"
+    },
+    {
+      "query_timestamp_ns": 1769644800000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.3738,
+        0.1522,
+        0.474
+      ],
+      "a_direction": "DOWN",
+      "velocity_standardized_raw": 0.009205540576829116,
+      "velocity_standardized_bounded": 0.009205540576829116,
+      "acceleration_standardized_raw": -0.2308000647682239,
+      "acceleration_standardized_bounded": -0.2308000647682239,
+      "a_plus_velocity_probabilities": [
+        0.3737114715088587,
+        0.15280723977674268,
+        0.47348128871439865
+      ],
+      "a_plus_velocity_direction": "DOWN",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.3637485928101272,
+        0.15159182803557458,
+        0.4846595791542982
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "DOWN"
+    },
+    {
+      "query_timestamp_ns": 1769731200000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.3572,
+        0.0,
+        0.6428
+      ],
+      "a_direction": "DOWN",
+      "velocity_standardized_raw": 3.752307704843618,
+      "velocity_standardized_bounded": 2.305165447961937,
+      "acceleration_standardized_raw": 2.13762830217102,
+      "acceleration_standardized_bounded": 2.13762830217102,
+      "a_plus_velocity_probabilities": [
+        0.3350315225232011,
+        0.15205931040037685,
+        0.5129091670764221
+      ],
+      "a_plus_velocity_direction": "DOWN",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.4273058964445954,
+        0.16331623331034634,
+        0.4093778702450582
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "UP"
+    },
+    {
+      "query_timestamp_ns": 1769817600000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.5137,
+        0.0707,
+        0.4156
+      ],
+      "a_direction": "UP",
+      "velocity_standardized_raw": -2.019439127735741,
+      "velocity_standardized_bounded": -2.019439127735741,
+      "acceleration_standardized_raw": -3.3011200425201417,
+      "acceleration_standardized_bounded": -2.9964675592193872,
+      "a_plus_velocity_probabilities": [
+        0.5017552187543075,
+        0.0,
+        0.49824478124569255
+      ],
+      "a_plus_velocity_direction": "UP",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.36662241296963777,
+        0.0,
+        0.6333775870303622
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "DOWN"
+    },
+    {
+      "query_timestamp_ns": 1770076800000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.5582,
+        0.119,
+        0.3228
+      ],
+      "a_direction": "UP",
+      "velocity_standardized_raw": -0.9177348118990353,
+      "velocity_standardized_bounded": -0.9177348118990353,
+      "acceleration_standardized_raw": 0.6277884528384949,
+      "acceleration_standardized_bounded": 0.6277884528384949,
+      "a_plus_velocity_probabilities": [
+        0.5670257367926651,
+        0.058461992738453046,
+        0.3745122704688818
+      ],
+      "a_plus_velocity_direction": "UP",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.5941252967965812,
+        0.06176797732435819,
+        0.34410672587906055
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "UP"
+    },
+    {
+      "query_timestamp_ns": 1770163200000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.5681,
+        0.0652,
+        0.3667
+      ],
+      "a_direction": "UP",
+      "velocity_standardized_raw": 0.7033412047179742,
+      "velocity_standardized_bounded": 0.7033412047179742,
+      "acceleration_standardized_raw": 0.9246646280499582,
+      "acceleration_standardized_bounded": 0.9246646280499582,
+      "a_plus_velocity_probabilities": [
+        0.5613360587527111,
+        0.11159561930799484,
+        0.3270683219392941
+      ],
+      "a_plus_velocity_direction": "UP",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.6012507855337483,
+        0.11646497775771342,
+        0.28228423670853825
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "UP"
+    },
+    {
+      "query_timestamp_ns": 1770249600000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.5063,
+        0.0634,
+        0.4303
+      ],
+      "a_direction": "UP",
+      "velocity_standardized_raw": -0.8984846689836312,
+      "velocity_standardized_bounded": -0.8984846689836312,
+      "acceleration_standardized_raw": -0.91756663877125,
+      "acceleration_standardized_bounded": -0.91756663877125,
+      "a_plus_velocity_probabilities": [
+        0.5149406106621209,
+        0.004131820663131093,
+        0.48092756867474795
+      ],
+      "a_plus_velocity_direction": "UP",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.47499970528724184,
+        0.0,
+        0.5250002947127583
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "DOWN"
+    },
+    {
+      "query_timestamp_ns": 1770422400000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.5772,
+        0.0348,
+        0.388
+      ],
+      "a_direction": "UP",
+      "velocity_standardized_raw": -4.910246737029047,
+      "velocity_standardized_bounded": -3.0292607347349163,
+      "acceleration_standardized_raw": -6.304992111615945,
+      "acceleration_standardized_bounded": -2.9964675592193872,
+      "a_plus_velocity_probabilities": [
+        0.5204459535465225,
+        0.0,
+        0.47955404645347754
+      ],
+      "a_plus_velocity_direction": "UP",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.3850227963427816,
+        0.0,
+        0.6149772036572184
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "DOWN"
+    },
+    {
+      "query_timestamp_ns": 1770768000000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.5466,
+        0.0,
+        0.4534
+      ],
+      "a_direction": "UP",
+      "velocity_standardized_raw": -7.704789954343573,
+      "velocity_standardized_bounded": -3.0292607347349163,
+      "acceleration_standardized_raw": -8.500314724475638,
+      "acceleration_standardized_bounded": -2.9964675592193872,
+      "a_plus_velocity_probabilities": [
+        0.47984706518468967,
+        0.0,
+        0.5201529348153103
+      ],
+      "a_plus_velocity_direction": "DOWN",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.3450545918454206,
+        0.0,
+        0.6549454081545794
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "DOWN"
+    },
+    {
+      "query_timestamp_ns": 1770854400000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.5978,
+        0.0323,
+        0.3699
+      ],
+      "a_direction": "UP",
+      "velocity_standardized_raw": -0.40541219111713545,
+      "velocity_standardized_bounded": -0.40541219111713545,
+      "acceleration_standardized_raw": 4.170418106141473,
+      "acceleration_standardized_bounded": 2.392539241725972,
+      "a_plus_velocity_probabilities": [
+        0.6016987965204605,
+        0.005557148087274599,
+        0.39274405539226487
+      ],
+      "a_plus_velocity_direction": "UP",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.7049768362004241,
+        0.018156452548126294,
+        0.27686671125144974
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "UP"
+    },
+    {
+      "query_timestamp_ns": 1770940800000000000,
+      "actual_direction": "UP",
+      "a_probabilities": [
+        0.5716,
+        0.103,
+        0.3254
+      ],
+      "a_direction": "UP",
+      "velocity_standardized_raw": -0.9072637151117483,
+      "velocity_standardized_bounded": -0.9072637151117483,
+      "acceleration_standardized_raw": -0.2888142880345611,
+      "acceleration_standardized_bounded": -0.2888142880345611,
+      "a_plus_velocity_probabilities": [
+        0.5803250376114018,
+        0.0431527144209328,
+        0.3765222479676655
+      ],
+      "a_plus_velocity_direction": "UP",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.5678578759533736,
+        0.04163179510469768,
+        0.3905103289419288
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "UP"
+    },
+    {
+      "query_timestamp_ns": 1771027200000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.5369,
+        0.0,
+        0.4631
+      ],
+      "a_direction": "UP",
+      "velocity_standardized_raw": 0.27102268848302735,
+      "velocity_standardized_bounded": 0.27102268848302735,
+      "acceleration_standardized_raw": 0.6715632624193152,
+      "acceleration_standardized_bounded": 0.6715632624193152,
+      "a_plus_velocity_probabilities": [
+        0.5342936099160911,
+        0.01787790249503418,
+        0.4478284875888748
+      ],
+      "a_plus_velocity_direction": "UP",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.5632827842853747,
+        0.021414408755988917,
+        0.4153028069586365
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "UP"
+    },
+    {
+      "query_timestamp_ns": 1771286400000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.5556,
+        0.0669,
+        0.3775
+      ],
+      "a_direction": "UP",
+      "velocity_standardized_raw": 0.6940668940037403,
+      "velocity_standardized_bounded": 0.6940668940037403,
+      "acceleration_standardized_raw": 0.23986200725722645,
+      "acceleration_standardized_bounded": 0.23986200725722645,
+      "a_plus_velocity_probabilities": [
+        0.5489252485973546,
+        0.11268384313683452,
+        0.33839090826581086
+      ],
+      "a_plus_velocity_direction": "UP",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.5592793015095053,
+        0.11394697579744857,
+        0.3267737226930462
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "UP"
+    },
+    {
+      "query_timestamp_ns": 1771372800000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.6111,
+        0.0634,
+        0.3255
+      ],
+      "a_direction": "UP",
+      "velocity_standardized_raw": -0.851739432648442,
+      "velocity_standardized_bounded": -0.851739432648442,
+      "acceleration_standardized_raw": -0.8855455085477029,
+      "acceleration_standardized_bounded": -0.8855455085477029,
+      "a_plus_velocity_probabilities": [
+        0.6192910677801727,
+        0.00721535135196557,
+        0.3734935808678617
+      ],
+      "a_plus_velocity_direction": "UP",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.5810649845564652,
+        0.002551997338142399,
+        0.4163830181053924
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "UP"
+    },
+    {
+      "query_timestamp_ns": 1771459200000000000,
+      "actual_direction": "UP",
+      "a_probabilities": [
+        0.5533,
+        0.0,
+        0.4467
+      ],
+      "a_direction": "UP",
+      "velocity_standardized_raw": -0.14723836441066565,
+      "velocity_standardized_bounded": -0.14723836441066565,
+      "acceleration_standardized_raw": 0.4007445443013557,
+      "acceleration_standardized_bounded": 0.4007445443013557,
+      "a_plus_velocity_probabilities": [
+        0.5493801073198222,
+        0.0,
+        0.45061989268017777
+      ],
+      "a_plus_velocity_direction": "UP",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.5666789295192972,
+        0.0021103530661572938,
+        0.4312107174145455
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "UP"
+    },
+    {
+      "query_timestamp_ns": 1771545600000000000,
+      "actual_direction": "DOWN",
+      "a_probabilities": [
+        0.6109,
+        0.0339,
+        0.3552
+      ],
+      "a_direction": "UP",
+      "velocity_standardized_raw": 1.0444883626752515,
+      "velocity_standardized_bounded": 1.0444883626752515,
+      "acceleration_standardized_raw": 0.6792458370102298,
+      "acceleration_standardized_bounded": 0.6792458370102298,
+      "a_plus_velocity_probabilities": [
+        0.6008552907305562,
+        0.10279925419020941,
+        0.29634545507923443
+      ],
+      "a_plus_velocity_direction": "UP",
+      "a_plus_velocity_plus_acceleration_probabilities": [
+        0.6301760965437915,
+        0.10637621750809595,
+        0.2634476859481125
+      ],
+      "a_plus_velocity_plus_acceleration_direction": "UP"
+    }
+  ],
+  "runtime_or_profile_modified": false
+}

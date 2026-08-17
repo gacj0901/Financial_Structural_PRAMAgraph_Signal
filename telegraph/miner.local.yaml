@@ -1,0 +1,84 @@
+# Local validation template. Replace id and base_url only after deployment.
+version: "1"
+kind: miner
+id: 0
+slug: financial-structural-pramagraph-signal
+protocol: generic
+name: Financial Structural PRAMAgraph Signal
+description: Deterministic, hash-addressable multiscale financial structural data powered by PRAMA Protokol.
+base_url: http://127.0.0.1:8080
+
+input_schema:
+  type: object
+  additionalProperties: false
+  required: [asset]
+  properties:
+    asset:
+      type: string
+      description: Canonical symbol or supported alias such as BTC, XRP, GOLD, SP500, or NASDAQ.
+    timeframe:
+      type: string
+      enum: [D1, W1]
+      default: D1
+    source:
+      type: string
+      enum: [AUTO, SUPPLIED_CORPUS]
+      default: AUTO
+
+output_schema:
+  type: object
+  required: [schema, intent, status, label, instrument, timeframe, as_of_ns, market, structural, provenance, response_sha256]
+  properties:
+    schema: { type: string }
+    intent: { type: string, const: FINANCIAL_DATA }
+    status: { type: string }
+    label: { type: string }
+    reason: { type: string }
+    instrument: { type: object }
+    timeframe: { type: string }
+    as_of_ns: { type: integer }
+    market: { type: object }
+    structural: { type: object }
+    provenance: { type: object }
+    response_sha256: { type: string }
+
+endpoints:
+  - path: /financial-data
+    external_path: /v1/telegraph/financial-data
+    method: POST
+    description: Return the deterministic financial market and structural snapshot for an asset.
+
+semantics:
+  signal_mapping:
+    label_field: label
+    reason_field: reason
+  supported_intents:
+    - FINANCIAL_DATA
+
+cache_ttl_sec: 60
+rate_limit_per_sec: 20
+circuit_threshold: 5
+circuit_cooldown_seconds: 30
+
+on_chain:
+  transform: direct
+  min_price_usdc: 0.01
+  fields:
+    strings:
+      - index: 0
+        name: structural_label
+        source_path: label
+      - index: 1
+        name: instrument_symbol
+        source_path: instrument.symbol
+    integers:
+      - index: 0
+        name: as_of_ns
+        source_path: as_of_ns
+        multiplier: 1
+  request:
+    - endpoint: financial-data
+      method: POST
+      body:
+        asset: { source: strings.0 }
+        timeframe: { source: strings.1, optional: true }

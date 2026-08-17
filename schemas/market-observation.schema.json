@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MarketObservation",
+  "type": "object",
+  "properties": {
+    "ask_size": {
+      "$ref": "#/$defs/AvailableValue"
+    },
+    "best_ask": {
+      "$ref": "#/$defs/AvailableValue"
+    },
+    "best_bid": {
+      "$ref": "#/$defs/AvailableValue"
+    },
+    "bid_size": {
+      "$ref": "#/$defs/AvailableValue"
+    },
+    "close": {
+      "type": "number",
+      "format": "double"
+    },
+    "close_time_ns": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "high": {
+      "type": "number",
+      "format": "double"
+    },
+    "instrument_id": {
+      "type": "string"
+    },
+    "is_closed": {
+      "type": "boolean"
+    },
+    "low": {
+      "type": "number",
+      "format": "double"
+    },
+    "open": {
+      "type": "number",
+      "format": "double"
+    },
+    "open_time_ns": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "quote_volume": {
+      "$ref": "#/$defs/AvailableValue"
+    },
+    "source": {
+      "type": "string"
+    },
+    "timeframe": {
+      "$ref": "#/$defs/Timeframe"
+    },
+    "trade_count": {
+      "$ref": "#/$defs/AvailableValue2"
+    },
+    "volume": {
+      "$ref": "#/$defs/AvailableValue"
+    }
+  },
+  "required": [
+    "instrument_id",
+    "timeframe",
+    "open_time_ns",
+    "close_time_ns",
+    "open",
+    "high",
+    "low",
+    "close",
+    "is_closed",
+    "source",
+    "volume",
+    "quote_volume",
+    "trade_count",
+    "best_bid",
+    "best_ask",
+    "bid_size",
+    "ask_size"
+  ],
+  "$defs": {
+    "AvailabilityStatus": {
+      "type": "string",
+      "enum": [
+        "AVAILABLE",
+        "UNAVAILABLE",
+        "NOT_APPLICABLE",
+        "STALE"
+      ]
+    },
+    "AvailableValue": {
+      "type": "object",
+      "properties": {
+        "availability": {
+          "$ref": "#/$defs/AvailabilityStatus"
+        },
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        }
+      },
+      "required": [
+        "availability"
+      ]
+    },
+    "AvailableValue2": {
+      "type": "object",
+      "properties": {
+        "availability": {
+          "$ref": "#/$defs/AvailabilityStatus"
+        },
+        "value": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint64",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "availability"
+      ]
+    },
+    "Timeframe": {
+      "type": "string",
+      "enum": [
+        "M1",
+        "M5",
+        "H1",
+        "H4",
+        "D1",
+        "W1"
+      ]
+    }
+  }
+}

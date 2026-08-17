@@ -1,0 +1,618 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ResolutionCalibrationProfile",
+  "type": "object",
+  "properties": {
+    "asset_class": {
+      "$ref": "#/$defs/AssetClass"
+    },
+    "calibration_end_ns": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "calibration_start_ns": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "calibration_version": {
+      "type": "string"
+    },
+    "diagnostics": {
+      "$ref": "#/$defs/CalibrationDiagnostics"
+    },
+    "engine_version": {
+      "type": "string"
+    },
+    "estimator": {
+      "$ref": "#/$defs/NeighborParameters"
+    },
+    "instrument_id": {
+      "type": "string"
+    },
+    "normalization": {
+      "$ref": "#/$defs/FeatureNormalization"
+    },
+    "outcome_label": {
+      "$ref": "#/$defs/OutcomeLabelParameters"
+    },
+    "prefix_causality_verified": {
+      "type": "boolean"
+    },
+    "profile_id": {
+      "type": "string"
+    },
+    "profile_sha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "publication": {
+      "$ref": "#/$defs/PublicationPolicy"
+    },
+    "reliability": {
+      "$ref": "#/$defs/HeldOutReliability"
+    },
+    "runtime_recalibration": {
+      "type": "boolean"
+    },
+    "samples": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/CalibratedSample"
+      }
+    },
+    "schema": {
+      "type": "string"
+    },
+    "scope": {
+      "$ref": "#/$defs/CalibrationScope"
+    },
+    "structural_vector_version": {
+      "type": "string"
+    },
+    "timeframe": {
+      "$ref": "#/$defs/Timeframe"
+    }
+  },
+  "required": [
+    "schema",
+    "calibration_version",
+    "profile_id",
+    "instrument_id",
+    "asset_class",
+    "timeframe",
+    "scope",
+    "engine_version",
+    "structural_vector_version",
+    "calibration_start_ns",
+    "calibration_end_ns",
+    "normalization",
+    "outcome_label",
+    "estimator",
+    "publication",
+    "reliability",
+    "diagnostics",
+    "samples",
+    "prefix_causality_verified",
+    "runtime_recalibration"
+  ],
+  "$defs": {
+    "AssetClass": {
+      "type": "string",
+      "enum": [
+        "crypto",
+        "stock",
+        "index",
+        "forex",
+        "futures",
+        "commodity"
+      ]
+    },
+    "CalibratedSample": {
+      "type": "object",
+      "properties": {
+        "availability_mask": {
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          }
+        },
+        "direction": {
+          "$ref": "#/$defs/Direction"
+        },
+        "first_passage_bars": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "timestamp_ns": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "vector": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "required": [
+        "timestamp_ns",
+        "vector",
+        "availability_mask",
+        "direction",
+        "first_passage_bars"
+      ]
+    },
+    "CalibrationDiagnostics": {
+      "type": "object",
+      "properties": {
+        "d_o_transport_evaluable_bp": {
+          "type": "integer",
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0
+        },
+        "d_o_transport_status_counts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0
+          }
+        },
+        "effective_vector_dimensions": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "evaluation_tail_samples": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FeatureDiagnostic"
+          }
+        },
+        "k_mem_strictly_prior_available_bp": {
+          "type": "integer",
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0
+        },
+        "odce_adaptive_organization_available_bp": {
+          "type": "integer",
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0
+        },
+        "test_label_counts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0
+          }
+        },
+        "total_vector_dimensions": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "train_label_counts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0
+          }
+        },
+        "train_samples": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "upper_lower_barrier_ratio": {
+          "type": "number",
+          "format": "double"
+        },
+        "validation_label_counts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0
+          }
+        },
+        "validation_samples": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "train_samples",
+        "validation_samples",
+        "evaluation_tail_samples",
+        "train_label_counts",
+        "validation_label_counts",
+        "test_label_counts",
+        "total_vector_dimensions",
+        "effective_vector_dimensions",
+        "features",
+        "upper_lower_barrier_ratio",
+        "d_o_transport_status_counts",
+        "d_o_transport_evaluable_bp",
+        "odce_adaptive_organization_available_bp",
+        "k_mem_strictly_prior_available_bp"
+      ]
+    },
+    "CalibrationScope": {
+      "type": "string",
+      "enum": [
+        "INSTRUMENT",
+        "ASSET_CLASS",
+        "GLOBAL",
+        "UNAVAILABLE"
+      ]
+    },
+    "Direction": {
+      "type": "string",
+      "enum": [
+        "UP",
+        "DOWN",
+        "RANGE",
+        "UNRESOLVED"
+      ]
+    },
+    "FeatureDiagnostic": {
+      "type": "object",
+      "properties": {
+        "availability_bp": {
+          "type": "integer",
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0
+        },
+        "available_samples": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "empirically_variable": {
+          "type": "boolean"
+        },
+        "included_in_distance": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "available_samples",
+        "availability_bp",
+        "empirically_variable",
+        "included_in_distance"
+      ]
+    },
+    "FeatureNormalization": {
+      "type": "object",
+      "properties": {
+        "effective_dimension_count": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "effective_dimension_mask": {
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          }
+        },
+        "fitted_sample_count": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "median": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scale": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "required": [
+        "names",
+        "median",
+        "scale",
+        "effective_dimension_mask",
+        "effective_dimension_count",
+        "fitted_sample_count"
+      ]
+    },
+    "HeldOutReliability": {
+      "type": "object",
+      "properties": {
+        "actual_support": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0
+          }
+        },
+        "balanced_accuracy_bp": {
+          "type": "integer",
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0
+        },
+        "brier_skill_score": {
+          "type": "number",
+          "format": "double"
+        },
+        "by_actual_direction_bp": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "uint16",
+            "maximum": 65535,
+            "minimum": 0
+          }
+        },
+        "by_direction_bp": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "uint16",
+            "maximum": 65535,
+            "minimum": 0
+          }
+        },
+        "by_direction_lower_bound_bp": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "uint16",
+            "maximum": 65535,
+            "minimum": 0
+          }
+        },
+        "climatology_brier_score": {
+          "type": "number",
+          "format": "double"
+        },
+        "confidence_level_bp": {
+          "type": "integer",
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0
+        },
+        "confusion_matrix": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0
+            }
+          }
+        },
+        "correct": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "evaluated": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "evidence_status": {
+          "type": "string"
+        },
+        "multiclass_brier_score": {
+          "type": "number",
+          "format": "double"
+        },
+        "predicted_support": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0
+          }
+        },
+        "reliability_bp": {
+          "type": "integer",
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0
+        },
+        "reliability_lower_bound_bp": {
+          "type": "integer",
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0
+        },
+        "temporal_split_timestamp_ns": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "untouched_test": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "correct",
+        "evaluated",
+        "reliability_bp",
+        "reliability_lower_bound_bp",
+        "confidence_level_bp",
+        "balanced_accuracy_bp",
+        "multiclass_brier_score",
+        "climatology_brier_score",
+        "brier_skill_score",
+        "by_direction_bp",
+        "by_direction_lower_bound_bp",
+        "by_actual_direction_bp",
+        "actual_support",
+        "predicted_support",
+        "confusion_matrix",
+        "temporal_split_timestamp_ns",
+        "untouched_test",
+        "evidence_status"
+      ]
+    },
+    "NeighborParameters": {
+      "type": "object",
+      "properties": {
+        "distance_power": {
+          "type": "number",
+          "format": "double"
+        },
+        "maximum_distance": {
+          "type": "number",
+          "format": "double"
+        },
+        "minimum_support": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "neighbor_count": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "neighbor_count",
+        "minimum_support",
+        "maximum_distance",
+        "distance_power"
+      ]
+    },
+    "OutcomeLabelParameters": {
+      "type": "object",
+      "properties": {
+        "lower_barrier_volatility_multiple": {
+          "type": "number",
+          "format": "double"
+        },
+        "maximum_horizon_bars": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "no_hit_rule": {
+          "type": "string"
+        },
+        "simultaneous_hit_rule": {
+          "type": "string"
+        },
+        "up_down_symmetric": {
+          "type": "boolean"
+        },
+        "upper_barrier_volatility_multiple": {
+          "type": "number",
+          "format": "double"
+        },
+        "volatility_lookback_bars": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "volatility_lookback_bars",
+        "upper_barrier_volatility_multiple",
+        "lower_barrier_volatility_multiple",
+        "maximum_horizon_bars",
+        "up_down_symmetric",
+        "simultaneous_hit_rule",
+        "no_hit_rule"
+      ]
+    },
+    "PublicationPolicy": {
+      "type": "object",
+      "properties": {
+        "minimum_direction_edge_bp": {
+          "type": "integer",
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0
+        },
+        "minimum_reliability_bp": {
+          "type": "integer",
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0
+        },
+        "parameters_selected_on": {
+          "type": "string"
+        },
+        "preregistered_protocol_sha256": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "profile_eligible_for_publication": {
+          "type": "boolean"
+        },
+        "reliability_evaluated_on": {
+          "type": "string"
+        },
+        "requires_positive_brier_skill": {
+          "type": "boolean"
+        },
+        "test_outcomes_used_for_parameter_selection": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "minimum_direction_edge_bp",
+        "minimum_reliability_bp",
+        "parameters_selected_on",
+        "reliability_evaluated_on",
+        "test_outcomes_used_for_parameter_selection",
+        "requires_positive_brier_skill",
+        "profile_eligible_for_publication"
+      ]
+    },
+    "Timeframe": {
+      "type": "string",
+      "enum": [
+        "M1",
+        "M5",
+        "H1",
+        "H4",
+        "D1",
+        "W1"
+      ]
+    }
+  }
+}

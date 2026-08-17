@@ -1,0 +1,177 @@
+{
+  "diagnostic": "RANGE Class-Distance Geometry Audit",
+  "instrument_id": "crypto:binance:BTCUSDT",
+  "timeframe": "D1",
+  "structural_vector_version": "financial_structural_vector_v2",
+  "calibration_profile_id": "crypto:binance:BTCUSDT:D1:financial_first_passage_weighted_neighbors_v2",
+  "calibration_profile_sha256": "sha256:bdc99d9e17d1b393d07cf87d12f7f62247883684a8ffb214cf05f01cd7c9d5fe",
+  "diagnostic_generation_timestamp_unix_seconds": 1786940682,
+  "neighbor_count": 27,
+  "runtime_minimum_support": 10,
+  "maximum_distance": 1.3361942009850243,
+  "distance": "RMS_OVER_ACTIVE_NORMALIZED_DIMENSIONS",
+  "availability_rule": "EXACT_AVAILABILITY_MASK_EQUALITY",
+  "candidate_order": "DISTANCE_ASC_THEN_TIMESTAMP_ASC",
+  "percentile_method": "LINEAR_INTERPOLATION_AT_INDEX_(N_MINUS_1)_Q",
+  "development_audit_runtime_parity": {
+    "audit_observations": 27,
+    "resolved_observations": 25,
+    "unresolved_observations": 2,
+    "resolved_actual_direction_counts": {
+      "UP": 2,
+      "DOWN": 23,
+      "RANGE": 0
+    },
+    "resolved_predicted_direction_counts": {
+      "UP": 15,
+      "DOWN": 10,
+      "RANGE": 0
+    },
+    "unresolved_actual_direction_counts": {
+      "UP": 0,
+      "DOWN": 1,
+      "RANGE": 1
+    },
+    "resolved_only_confusion_matrix": {
+      "DOWN": {
+        "DOWN": 10,
+        "RANGE": 0,
+        "UP": 13
+      },
+      "RANGE": {
+        "DOWN": 0,
+        "RANGE": 0,
+        "UP": 0
+      },
+      "UP": {
+        "DOWN": 0,
+        "RANGE": 0,
+        "UP": 2
+      }
+    },
+    "unresolved_queries": [
+      {
+        "query_timestamp_ns": 1770336000000000000,
+        "actual_direction": "RANGE",
+        "selected_neighbor_count": 7,
+        "runtime_minimum_support": 10
+      },
+      {
+        "query_timestamp_ns": 1770681600000000000,
+        "actual_direction": "DOWN",
+        "selected_neighbor_count": 1,
+        "runtime_minimum_support": 10
+      }
+    ]
+  },
+  "queries": [
+    {
+      "query_timestamp_ns": 1770336000000000000,
+      "actual_direction": "RANGE",
+      "candidates_after_mask": 746,
+      "candidates_within_maximum_distance": 7,
+      "selected_neighbor_count": 7,
+      "runtime_minimum_support": 10,
+      "runtime_resolvable": false,
+      "class_distance_stats": {
+        "UP": {
+          "count": 5,
+          "minimum": 0.9750221089788247,
+          "p10": 0.9778278960794873,
+          "p25": 0.9820365767304812,
+          "median": 1.0938497406255123,
+          "p75": 1.280072020938555,
+          "maximum": 1.313008095276269
+        },
+        "DOWN": {
+          "count": 2,
+          "minimum": 1.1878382539847163,
+          "p10": 1.1897952558297307,
+          "p25": 1.1927307585972522,
+          "median": 1.1976232632097878,
+          "p75": 1.2025157678223237,
+          "maximum": 1.2074082724348596
+        },
+        "RANGE": {
+          "count": 0,
+          "minimum": null,
+          "p10": null,
+          "p25": null,
+          "median": null,
+          "p75": null,
+          "maximum": null
+        }
+      },
+      "top_k_composition": {
+        "10": {
+          "actual_k_used": 7,
+          "UP": 5,
+          "DOWN": 2,
+          "RANGE": 0
+        },
+        "100": {
+          "actual_k_used": 7,
+          "UP": 5,
+          "DOWN": 2,
+          "RANGE": 0
+        },
+        "20": {
+          "actual_k_used": 7,
+          "UP": 5,
+          "DOWN": 2,
+          "RANGE": 0
+        },
+        "27": {
+          "actual_k_used": 7,
+          "UP": 5,
+          "DOWN": 2,
+          "RANGE": 0
+        },
+        "5": {
+          "actual_k_used": 5,
+          "UP": 3,
+          "DOWN": 2,
+          "RANGE": 0
+        },
+        "50": {
+          "actual_k_used": 7,
+          "UP": 5,
+          "DOWN": 2,
+          "RANGE": 0
+        }
+      },
+      "nearest_by_class": {
+        "UP": {
+          "rank_among_all_admissible": 1,
+          "distance": 0.9750221089788247,
+          "timestamp_ns": 1731369600000000000
+        },
+        "DOWN": {
+          "rank_among_all_admissible": 4,
+          "distance": 1.1878382539847163,
+          "timestamp_ns": 1738627200000000000
+        },
+        "RANGE": null
+      }
+    }
+  ],
+  "aggregate": {
+    "actual_range_queries": 1,
+    "runtime_resolvable_range_queries": 0,
+    "runtime_unresolved_range_queries": 1,
+    "mean_range_share_by_k": {
+      "10": 0.0,
+      "100": 0.0,
+      "20": 0.0,
+      "27": 0.0,
+      "5": 0.0,
+      "50": 0.0
+    },
+    "median_range_rank": null,
+    "mean_class_median_distance": {
+      "UP": 1.0938497406255123,
+      "DOWN": 1.1976232632097878,
+      "RANGE": null
+    }
+  }
+}
