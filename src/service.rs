@@ -6,8 +6,11 @@ use crate::canonical;
 use crate::engine::{StructuralEngineAdapter, ENGINE_VERSION};
 use crate::historical::{aggregate_weekly, load_daily_csv};
 use crate::observation::{adapt_closed_bars, OBSERVATION_INTERFACE_VERSION};
-use crate::provider::{binance_closed_daily, massive_closed_daily};
+use crate::provider::{binance_closed_daily, massive_closed_daily, ProviderError};
 use crate::resolver::{AssetResolver, Resolution};
+use crate::technical::{
+    TechnicalCounterReading, TechnicalDirectionHead, TechnicalStructuralContrast,
+};
 use crate::{AvailableValue, Instrument, RuntimeStatus, StructuralSnapshot, Timeframe};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -70,6 +73,9 @@ pub struct FinancialDataResponse {
     pub as_of_ns: i64,
     pub market: MarketBarResponse,
     pub structural: StructuralSnapshot,
+    pub technical: Option<TechnicalDirectionHead>,
+    pub counter_reading: Option<TechnicalCounterReading>,
+    pub structural_contrast: Option<TechnicalStructuralContrast>,
     pub directional: Option<DirectionalResolution>,
     pub provenance: ServiceProvenance,
     pub response_sha256: Option<String>,
@@ -121,29 +127,84 @@ async fn build_financial_data_response_internal(
     }
     let (daily, primary_provider, provider_instrument, corpus_file, input_sha256, live) =
         if request.source == DataSourcePreference::Auto && instrument.venue == "binance" {
-            let observations = binance_closed_daily(&instrument, 1_000)
-                .await
-                .map_err(pipeline)?;
-            let hash = canonical::sha256(&observations).map_err(pipeline)?;
-            (
-                observations,
-                "binance_spot".to_owned(),
-                Some(instrument.symbol.clone()),
-                None,
-                hash,
-                true,
-            )
+            match binance_closed_daily(&instrument, 1_000).await {
+                Ok(observations) => {
+                    let hash = canonical::sha256(&observations).map_err(pipeline)?;
+                    (
+                        observations,
+                        "binance_spot".to_owned(),
+                        Some(instrument.symbol.clone()),
+                        None,
+                        hash,
+                        true,
+                    )
+                }
+                Err(ProviderError::Unsupported(_)) => {
+                    return Err(ServiceError::Asset(instrument.symbol.clone()));
+                }
+                Err(_e) => {
+                    // Live Binance failed - fallback to corpus with explicit STALE status
+                    let file = calibration_file(&instrument)?;
+                    let path = corpus_directory.as_ref().join(file);
+                    let bytes = fs::read(&path).map_err(pipeline)?;
+                    let observations =
+                        load_daily_csv(&path, &instrument, "supplied_corpus").map_err(pipeline)?;
+                    (
+                        observations,
+                        "supplied_corpus".to_owned(),
+                        None,
+                        Some(file.to_owned()),
+                        format!("sha256:{}", hex::encode(Sha256::digest(bytes))),
+                        false,
+                    )
+                }
+            }
         } else if request.source == DataSourcePreference::Auto && instrument.venue == "massive" {
-            let provider_bars = massive_closed_daily(&instrument).await.map_err(pipeline)?;
-            let hash = canonical::sha256(&provider_bars.observations).map_err(pipeline)?;
-            (
-                provider_bars.observations,
-                "massive_rest".to_owned(),
-                Some(provider_bars.provider_symbol),
-                None,
-                hash,
-                true,
-            )
+            match massive_closed_daily(&instrument).await {
+                Ok(provider_bars) => {
+                    let hash = canonical::sha256(&provider_bars.observations).map_err(pipeline)?;
+                    (
+                        provider_bars.observations,
+                        "massive_rest".to_owned(),
+                        Some(provider_bars.provider_symbol),
+                        None,
+                        hash,
+                        true,
+                    )
+                }
+                Err(ProviderError::MissingCredential(_)) => {
+                    // Massive credential missing - fallback to corpus
+                    let file = calibration_file(&instrument)?;
+                    let path = corpus_directory.as_ref().join(file);
+                    let bytes = fs::read(&path).map_err(pipeline)?;
+                    let observations =
+                        load_daily_csv(&path, &instrument, "supplied_corpus").map_err(pipeline)?;
+                    (
+                        observations,
+                        "supplied_corpus".to_owned(),
+                        None,
+                        Some(file.to_owned()),
+                        format!("sha256:{}", hex::encode(Sha256::digest(bytes))),
+                        false,
+                    )
+                }
+                Err(_e) => {
+                    // Other Massive error - fallback to corpus
+                    let file = calibration_file(&instrument)?;
+                    let path = corpus_directory.as_ref().join(file);
+                    let bytes = fs::read(&path).map_err(pipeline)?;
+                    let observations =
+                        load_daily_csv(&path, &instrument, "supplied_corpus").map_err(pipeline)?;
+                    (
+                        observations,
+                        "supplied_corpus".to_owned(),
+                        None,
+                        Some(file.to_owned()),
+                        format!("sha256:{}", hex::encode(Sha256::digest(bytes))),
+                        false,
+                    )
+                }
+            }
         } else {
             let file = calibration_file(&instrument)?;
             let path = corpus_directory.as_ref().join(file);
@@ -179,6 +240,20 @@ async fn build_financial_data_response_internal(
             &frames,
         )
         .map_err(pipeline)?;
+
+    // Step 1: Compute Technical Direction Head (authoritative H1 directional)
+    let technical = crate::technical::compute_technical_direction(&bars).map_err(pipeline)?;
+
+    // Step 1: Compute Counter Reading
+    let counter_reading = crate::technical::compute_counter_reading(&bars, &technical);
+
+    // Step 1: Compute full TechnicalStructuralContrast (includes structural_contrast + components)
+    let technical_structural_contrast =
+        crate::technical::compute_technical_structural_contrast(&bars, &structural)
+            .map_err(pipeline)?;
+
+    // Optional: calibration-based directional (KNN) for backward compatibility / provenance
+    // Optional: calibration-based directional (KNN) for backward compatibility / provenance
     let directional = match calibration_directory {
         Some(directory) => {
             let path = directory.join(profile_file_name(
@@ -202,7 +277,24 @@ async fn build_financial_data_response_internal(
         }
         None => None,
     };
-    let label = structural.structural_state.clone();
+
+    // Top-level label: use technical direction as authoritative financial signal
+    let label = match technical.direction {
+        crate::TechnicalDirection::Up => "UP",
+        crate::TechnicalDirection::Down => "DOWN",
+        crate::TechnicalDirection::Range => "RANGE",
+        crate::TechnicalDirection::Unavailable => "UNAVAILABLE",
+    }
+    .to_string();
+
+    // Reason reflects actual timeframe
+    let tf_str = format!("{:?}", request.timeframe);
+    let reason = if live {
+        format!("deterministic structural snapshot from the latest closed {primary_provider} {tf_str} bars")
+    } else {
+        format!("deterministic structural snapshot from the supplied closed-bar corpus ({tf_str})")
+    };
+
     let mut response = FinancialDataResponse {
         schema: "pramagraph.telegraph.financial_data.v1".into(),
         intent: "FINANCIAL_DATA".into(),
@@ -212,13 +304,7 @@ async fn build_financial_data_response_internal(
             RuntimeStatus::StaleData
         },
         label,
-        reason: if live {
-            format!(
-                "deterministic structural snapshot from the latest closed {primary_provider} D1 bars"
-            )
-        } else {
-            "deterministic structural snapshot from the supplied closed-bar corpus".into()
-        },
+        reason,
         instrument,
         timeframe: request.timeframe,
         as_of_ns: last.close_time_ns,
@@ -232,12 +318,19 @@ async fn build_financial_data_response_internal(
             volume: last.volume.clone(),
         },
         structural,
+        technical: Some(technical),
+        counter_reading: Some(counter_reading),
+        structural_contrast: Some(technical_structural_contrast),
         directional,
         provenance: ServiceProvenance {
             primary_provider,
             provider_instrument,
             corpus_file,
-            input_sha256,
+            input_sha256: if input_sha256.is_empty() {
+                canonical::sha256(&bars).map_err(pipeline)?
+            } else {
+                input_sha256
+            },
             engine_version: ENGINE_VERSION.into(),
             observation_interface_version: OBSERVATION_INTERFACE_VERSION.into(),
         },

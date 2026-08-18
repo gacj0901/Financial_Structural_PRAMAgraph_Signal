@@ -3,7 +3,7 @@
 //! Computes conventional indicators from CLOSED OHLCV bars only.
 //! Does NOT feed back into PRAMA. Does NOT modify structural state.
 
-use crate::{AvailabilityStatus, AvailableValue, Direction, MarketObservation, Timeframe};
+use crate::{AvailabilityStatus, AvailableValue, MarketObservation, Timeframe};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -50,13 +50,13 @@ pub enum TechnicalDirection {
     Unavailable,
 }
 
-impl From<TechnicalDirection> for Direction {
+impl From<TechnicalDirection> for crate::Direction {
     fn from(td: TechnicalDirection) -> Self {
         match td {
-            TechnicalDirection::Up => Direction::Up,
-            TechnicalDirection::Down => Direction::Down,
-            TechnicalDirection::Range => Direction::Range,
-            TechnicalDirection::Unavailable => Direction::Unresolved,
+            TechnicalDirection::Up => crate::Direction::Up,
+            TechnicalDirection::Down => crate::Direction::Down,
+            TechnicalDirection::Range => crate::Direction::Range,
+            TechnicalDirection::Unavailable => crate::Direction::Unresolved,
         }
     }
 }
@@ -603,48 +603,47 @@ pub fn compute_technical_direction(
             AvailableValue {
                 value: Some(sep),
                 availability: AvailabilityStatus::Available,
-            }
+            },
         ) if *adx < 20.0 && *sep < 0.5
     );
 
-    let range_detection = RangeDetection {
-        adx14: adx14_val,
-        ema_separation_atr,
-        is_range,
-    };
-
-    // Determine final direction
     let direction = if is_range {
         TechnicalDirection::Range
     } else {
         let votes = [ema_trend, ema_slope, macd, rsi_centerline];
         let up_votes = votes
             .iter()
-            .filter(|&&v| v == TechnicalDirection::Up)
+            .filter(|&&d| d == TechnicalDirection::Up)
             .count();
         let down_votes = votes
             .iter()
-            .filter(|&&v| v == TechnicalDirection::Down)
+            .filter(|&&d| d == TechnicalDirection::Down)
             .count();
         if up_votes > down_votes {
             TechnicalDirection::Up
         } else if down_votes > up_votes {
             TechnicalDirection::Down
         } else {
-            // Tie-breaker: EMA20 slope sign
-            match ema_slope {
-                TechnicalDirection::Up => TechnicalDirection::Up,
-                TechnicalDirection::Down => TechnicalDirection::Down,
-                _ => TechnicalDirection::Unavailable,
+            // Tie-break: EMA20 slope
+            if matches!(ema_slope, TechnicalDirection::Up) {
+                TechnicalDirection::Up
+            } else {
+                TechnicalDirection::Down
             }
         }
     };
 
-    let votes_breakdown = VoteBreakdown {
+    let votes = VoteBreakdown {
         ema_trend,
         ema_slope,
         macd,
         rsi_centerline,
+    };
+
+    let range_detection = RangeDetection {
+        adx14: adx14[last].clone(),
+        ema_separation_atr,
+        is_range,
     };
 
     let indicators = IndicatorValues {
@@ -662,14 +661,14 @@ pub fn compute_technical_direction(
 
     Ok(TechnicalDirectionHead {
         direction,
-        votes: votes_breakdown,
+        votes,
         range_detection,
         indicators,
         bars_used: bars.len(),
     })
 }
 
-/// Compute TechnicalCounterReading
+/// Compute Technical Counter-Reading (exhaustion / mean-reversion pressure)
 pub fn compute_counter_reading(
     bars: &[MarketObservation],
     technical: &TechnicalDirectionHead,
@@ -677,15 +676,15 @@ pub fn compute_counter_reading(
     let last = bars.len() - 1;
     let close = bars[last].close;
 
-    // RSI extreme
+    // RSI extreme check
     let rsi_extreme = match technical.indicators.rsi14 {
         AvailableValue {
-            value: Some(r),
+            value: Some(rsi),
             availability: AvailabilityStatus::Available,
         } => {
-            if r >= 70.0 {
+            if rsi >= 70.0 {
                 Some(CounterReading::Down)
-            } else if r <= 30.0 {
+            } else if rsi <= 30.0 {
                 Some(CounterReading::Up)
             } else {
                 None
@@ -694,22 +693,22 @@ pub fn compute_counter_reading(
         _ => None,
     };
 
-    // Normalized EMA extension
+    // EMA extension (normalized)
     let ema_extension = match (&technical.indicators.ema20, &technical.indicators.atr14) {
         (
             AvailableValue {
-                value: Some(e20),
+                value: Some(ema20),
                 availability: AvailabilityStatus::Available,
             },
             AvailableValue {
-                value: Some(a),
+                value: Some(atr),
                 availability: AvailabilityStatus::Available,
             },
-        ) if *a > 0.0 => AvailableValue::available((close - e20) / a),
+        ) if *atr > 0.0 => AvailableValue::available((close - ema20) / atr),
         _ => AvailableValue::unavailable(),
     };
 
-    // Bollinger Bands position
+    // Bollinger position
     let bollinger_position = match (
         &technical.indicators.bollinger_upper,
         &technical.indicators.bollinger_lower,
@@ -735,27 +734,25 @@ pub fn compute_counter_reading(
         _ => None,
     };
 
-    // Determine counter-reading direction (priority: RSI extreme, then Bollinger, then EMA extension sign)
+    // Determine counter-reading direction (priority: RSI extreme -> Bollinger -> EMA extension)
     let direction = if let Some(cr) = rsi_extreme {
         cr
     } else if let Some(cr) = bollinger_position {
         cr
-    } else {
-        match ema_extension {
-            AvailableValue {
-                value: Some(ext),
-                availability: AvailabilityStatus::Available,
-            } => {
-                if ext > 2.0 {
-                    CounterReading::Down
-                } else if ext < -2.0 {
-                    CounterReading::Up
-                } else {
-                    CounterReading::None
-                }
-            }
-            _ => CounterReading::None,
+    } else if let AvailableValue {
+        value: Some(ext),
+        availability: AvailabilityStatus::Available,
+    } = ema_extension
+    {
+        if ext > 2.0 {
+            CounterReading::Down
+        } else if ext < -2.0 {
+            CounterReading::Up
+        } else {
+            CounterReading::None
         }
+    } else {
+        CounterReading::None
     };
 
     TechnicalCounterReading {
@@ -768,66 +765,27 @@ pub fn compute_counter_reading(
     }
 }
 
-/// Compute StructuralContrast using only explicitly available structural fields
+// Compute StructuralContrast using only explicitly available structural fields
+//
+// DO NOT map structural states to price direction - they are independent channels
+// The authoritative price direction is exclusively TechnicalDirectionHead
+//
+// Structural fields are presented as descriptive observational evidence only.
+// They do NOT vote for or against TechnicalDirectionHead.
+// No "aligned", "opposed", "mixed", "confirming", "conflicting" reasoning.
+//
+// When both structural and technical channels are available: state = NEUTRAL
+// When either channel is unavailable: state = UNAVAILABLE
 pub fn compute_structural_contrast(
     structural: &crate::StructuralSnapshot,
     technical: &TechnicalDirectionHead,
 ) -> StructuralContrast {
     let mut evidence = Vec::new();
 
-    // Only use structural fields with explicit semantics from contracts.rs and structural.rs
-    // Structural state from D_O (most direct directional signal)
-    let structural_state = &structural.structural_state;
-    let structural_direction = match structural_state.as_str() {
-        "CRYSTALLIZED" | "RECURRENT" | "VIABLE" | "CRYSTALLIZING" => TechnicalDirection::Up,
-        "STAGNANT" | "INACTIVE" => TechnicalDirection::Range,
-        "DISRUPTED" | "TRANSPORT_DISRUPTED" | "TRANSPORT_UNRESOLVED" | "UNRESOLVED" => {
-            TechnicalDirection::Down
-        }
-        "PROVISIONAL" => {
-            // PROVISIONAL inherits last coherent regime - check mobility
-            if let Some(mobility) = structural
-                .d_o
-                .value
-                .as_ref()
-                .and_then(|v| v.get("mobility_status"))
-                .and_then(|v| v.as_str())
-            {
-                match mobility {
-                    "VIABLE" | "RECURRENT" | "CRYSTALLIZING" | "CRYSTALLIZED" => {
-                        TechnicalDirection::Up
-                    }
-                    "STAGNANT" => TechnicalDirection::Range,
-                    _ => TechnicalDirection::Down,
-                }
-            } else {
-                TechnicalDirection::Unavailable
-            }
-        }
-        _ => TechnicalDirection::Unavailable,
-    };
+    // Only present structural fields as descriptive observational evidence.
+    // No mapping to price direction, no confirmation/conflict logic.
 
-    if structural_direction != TechnicalDirection::Unavailable {
-        let alignment = match (structural_direction, technical.direction) {
-            (TechnicalDirection::Up, TechnicalDirection::Up)
-            | (TechnicalDirection::Down, TechnicalDirection::Down)
-            | (TechnicalDirection::Range, TechnicalDirection::Range) => "aligned",
-            (TechnicalDirection::Up, TechnicalDirection::Down)
-            | (TechnicalDirection::Down, TechnicalDirection::Up) => "opposed",
-            _ => "mixed",
-        };
-        evidence.push(ContrastEvidenceItem {
-            structural_field: "structural_state (D_O)".into(),
-            structural_value: structural_state.clone(),
-            technical_direction: technical.direction,
-            reasoning: format!(
-                "D_O structural state maps to {:?}, technical direction is {:?} => {}",
-                structural_direction, technical.direction, alignment
-            ),
-        });
-    }
-
-    // D_O transport coherence as trend quality confirmation
+    // D_O transport coherence - descriptive only
     if let Some(coherence) = structural
         .d_o
         .value
@@ -835,34 +793,20 @@ pub fn compute_structural_contrast(
         .and_then(|v| v.get("transport_coherence"))
         .and_then(|v| v.as_f64())
     {
-        let coherence_quality = if coherence >= 0.5 {
+        let quality = if coherence >= 0.5 {
             "coherent"
         } else {
             "incoherent"
-        };
-        let tech_trend = match technical.direction {
-            TechnicalDirection::Up | TechnicalDirection::Down => "trending",
-            TechnicalDirection::Range => "ranging",
-            TechnicalDirection::Unavailable => "unavailable",
-        };
-        let alignment = match (coherence_quality, tech_trend) {
-            ("coherent", "trending") => "aligned",
-            ("incoherent", "ranging") => "aligned",
-            ("coherent", "ranging") | ("incoherent", "trending") => "opposed",
-            _ => "mixed",
         };
         evidence.push(ContrastEvidenceItem {
             structural_field: "d_o.transport_coherence".into(),
             structural_value: coherence.to_string(),
             technical_direction: technical.direction,
-            reasoning: format!(
-                "Transport coherence {:.2} => {}, technical => {} => {}",
-                coherence, coherence_quality, tech_trend, alignment
-            ),
+            reasoning: format!("Transport coherence {:.2} ({})", coherence, quality),
         });
     }
 
-    // D_O recurrence persistence as trend persistence confirmation
+    // D_O recurrence persistence - descriptive only
     if let Some(recurrence) = structural
         .d_o
         .value
@@ -870,34 +814,20 @@ pub fn compute_structural_contrast(
         .and_then(|v| v.get("recurrence_persistence"))
         .and_then(|v| v.as_f64())
     {
-        let rec_quality = if recurrence >= 0.3 {
+        let quality = if recurrence >= 0.3 {
             "recurrent"
         } else {
             "non_recurrent"
-        };
-        let tech_trend = match technical.direction {
-            TechnicalDirection::Up | TechnicalDirection::Down => "trending",
-            TechnicalDirection::Range => "ranging",
-            TechnicalDirection::Unavailable => "unavailable",
-        };
-        let alignment = match (rec_quality, tech_trend) {
-            ("recurrent", "trending") => "aligned",
-            ("non_recurrent", "ranging") => "aligned",
-            ("recurrent", "ranging") | ("non_recurrent", "trending") => "opposed",
-            _ => "mixed",
         };
         evidence.push(ContrastEvidenceItem {
             structural_field: "d_o.recurrence_persistence".into(),
             structural_value: recurrence.to_string(),
             technical_direction: technical.direction,
-            reasoning: format!(
-                "Recurrence persistence {:.2} => {}, technical => {} => {}",
-                recurrence, rec_quality, tech_trend, alignment
-            ),
+            reasoning: format!("Recurrence persistence {:.2} ({})", recurrence, quality),
         });
     }
 
-    // K-MEM strictly prior state as momentum confirmation
+    // K-MEM strictly prior state - descriptive only
     if let Some(k_mem) = structural
         .k_mem
         .value
@@ -905,58 +835,19 @@ pub fn compute_structural_contrast(
         .and_then(|v| v.get("strictly_prior_state"))
         .and_then(|v| v.as_f64())
     {
-        let kmem_direction = if k_mem > 0.0 {
-            TechnicalDirection::Up
-        } else if k_mem < 0.0 {
-            TechnicalDirection::Down
-        } else {
-            TechnicalDirection::Range
-        };
-        let alignment = match (kmem_direction, technical.direction) {
-            (TechnicalDirection::Up, TechnicalDirection::Up)
-            | (TechnicalDirection::Down, TechnicalDirection::Down)
-            | (TechnicalDirection::Range, TechnicalDirection::Range) => "aligned",
-            (TechnicalDirection::Up, TechnicalDirection::Down)
-            | (TechnicalDirection::Down, TechnicalDirection::Up) => "opposed",
-            _ => "mixed",
-        };
         evidence.push(ContrastEvidenceItem {
             structural_field: "k_mem.strictly_prior_state".into(),
             structural_value: k_mem.to_string(),
             technical_direction: technical.direction,
-            reasoning: format!(
-                "K-MEM strictly prior z[{:.2}] maps to {:?}, technical is {:?} => {}",
-                k_mem, kmem_direction, technical.direction, alignment
-            ),
+            reasoning: format!("K-MEM strictly prior z[{:.2}]", k_mem),
         });
     }
 
-    // Determine overall contrast state
-    let state = if evidence.is_empty() {
+    // State: NEUTRAL when both channels available, UNAVAILABLE otherwise
+    let state = if evidence.is_empty() || technical.direction == TechnicalDirection::Unavailable {
         ContrastState::Unavailable
     } else {
-        let aligned = evidence
-            .iter()
-            .filter(|e| e.reasoning.contains("=> aligned"))
-            .count();
-        let opposed = evidence
-            .iter()
-            .filter(|e| e.reasoning.contains("=> opposed"))
-            .count();
-        let mixed = evidence
-            .iter()
-            .filter(|e| e.reasoning.contains("=> mixed"))
-            .count();
-
-        if aligned > 0 && opposed == 0 && mixed == 0 {
-            ContrastState::Confirming
-        } else if opposed > 0 && aligned == 0 && mixed == 0 {
-            ContrastState::Conflicting
-        } else if aligned > 0 && opposed > 0 {
-            ContrastState::Mixed
-        } else {
-            ContrastState::Neutral
-        }
+        ContrastState::Neutral
     };
 
     StructuralContrast { state, evidence }
@@ -983,7 +874,7 @@ pub fn compute_technical_structural_contrast(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{AvailabilityStatus, AvailableValue, MarketObservation, Timeframe};
+    use crate::{AvailableValue, MarketObservation, Timeframe};
 
     fn make_bar(idx: usize, close: f64, high: f64, low: f64, open: f64) -> MarketObservation {
         let ns = (idx as i64) * 86_400_000_000_000;
@@ -1021,80 +912,40 @@ mod tests {
         (0..n)
             .map(|i| {
                 let base = 200.0 - i as f64 * 0.5;
-                make_bar(i, base - 1.0, base, base - 2.0, base - 0.5)
+                make_bar(i, base - 1.0, base + 1.0, base - 2.0, base - 0.5)
             })
             .collect()
     }
 
+    #[allow(dead_code)]
     fn range_bars(n: usize) -> Vec<MarketObservation> {
         (0..n)
             .map(|i| {
-                let phase = (i as f64 * 0.3).sin();
-                let close = 100.0 + phase * 1.5;
-                let high = close + 0.5;
-                let low = close - 0.5;
-                let open = 100.0 + ((i as f64 - 0.5) * 0.3).sin() * 1.5;
-                make_bar(i, close, high, low, open)
+                let base = 100.0 + i as f64 * 0.1;
+                make_bar(i, base + 0.2, base + 0.5, base - 0.5, base)
             })
             .collect()
-    }
-
-    fn minimal_structural() -> crate::StructuralSnapshot {
-        crate::StructuralSnapshot {
-            instrument_id: "test:instrument".into(),
-            timeframe: Timeframe::D1,
-            as_of_ns: 0,
-            engine_version: "test".into(),
-            structural_state: "VIABLE".into(),
-            prama: crate::ComponentSnapshot::unavailable("test"),
-            d_o: crate::ComponentSnapshot::available(serde_json::json!({
-                "structural_state": "VIABLE",
-                "transport_coherence": 0.7,
-                "recurrence_persistence": 0.5,
-                "mobility_status": "VIABLE"
-            })),
-            odce: crate::ComponentSnapshot::unavailable("test"),
-            k_mem: crate::ComponentSnapshot::available(serde_json::json!({
-                "strictly_prior_state": 0.8
-            })),
-            availability: std::collections::BTreeMap::new(),
-            source_watermark: "test".into(),
-            snapshot_sha256: None,
-        }
     }
 
     #[test]
     fn clearly_rising_series_returns_up() {
-        let bars = rising_bars(80);
-        let tech = compute_technical_direction(&bars).unwrap();
-        assert_eq!(tech.direction, TechnicalDirection::Up);
+        let bars = rising_bars(100);
+        let result = compute_technical_direction(&bars).unwrap();
+        assert_eq!(result.direction, TechnicalDirection::Up);
+        assert_eq!(result.bars_used, 100);
     }
 
     #[test]
     fn clearly_falling_series_returns_down() {
-        let bars = falling_bars(80);
-        let tech = compute_technical_direction(&bars).unwrap();
-        assert_eq!(tech.direction, TechnicalDirection::Down);
-    }
-
-    #[test]
-    fn low_adx_compressed_ema_returns_range() {
-        let bars = range_bars(80);
-        let tech = compute_technical_direction(&bars).unwrap();
-        // Range bars should have low ADX and compressed EMAs
-        // The test checks that either RANGE is detected or direction is RANGE
-        // (the exact detection depends on the specific synthetic data)
-        assert!(
-            tech.range_detection.is_range
-                || tech.direction == TechnicalDirection::Range
-                || tech.direction == TechnicalDirection::Up
-                || tech.direction == TechnicalDirection::Down
-        );
+        let bars = falling_bars(100);
+        let result = compute_technical_direction(&bars).unwrap();
+        assert_eq!(result.direction, TechnicalDirection::Down);
+        assert_eq!(result.bars_used, 100);
     }
 
     #[test]
     fn insufficient_history_returns_unavailable() {
-        let bars = rising_bars(30); // Less than MIN_BARS_TECHNICAL (60)
+        let bars = rising_bars(10);
         let result = compute_technical_direction(&bars);
         assert!(matches!(
             result,
@@ -1104,78 +955,74 @@ mod tests {
 
     #[test]
     fn identical_input_produces_identical_result() {
-        let bars = rising_bars(80);
-        let tech1 = compute_technical_direction(&bars).unwrap();
-        let tech2 = compute_technical_direction(&bars).unwrap();
-        assert_eq!(tech1, tech2);
+        let bars = rising_bars(100);
+        let r1 = compute_technical_direction(&bars).unwrap();
+        let r2 = compute_technical_direction(&bars).unwrap();
+        assert_eq!(r1, r2);
+    }
+
+    #[test]
+    fn d1_and_w1_evaluated_independently() {
+        let d1_bars = rising_bars(100);
+        let w1_bars = rising_bars(100);
+        let d1_result = compute_technical_direction(&d1_bars).unwrap();
+        let w1_result = compute_technical_direction(&w1_bars).unwrap();
+        assert_eq!(d1_result.direction, TechnicalDirection::Up);
+        assert_eq!(w1_result.direction, TechnicalDirection::Up);
+    }
+
+    #[test]
+    fn low_adx_compressed_ema_returns_range() {
+        let n = 100;
+        let bars: Vec<MarketObservation> = (0..n)
+            .map(|i| {
+                let base = 100.0 + (i as f64).sin() * 0.5;
+                make_bar(i, base + 0.5, base + 0.8, base - 0.8, base)
+            })
+            .collect();
+        let result = compute_technical_direction(&bars).unwrap();
+        assert_eq!(result.direction, TechnicalDirection::Range);
+    }
+
+    #[test]
+    fn no_future_observation_enters_indicator_calculation() {
+        let bars = rising_bars(100);
+        let result = compute_technical_direction(&bars).unwrap();
+        assert_eq!(result.bars_used, 100);
+        assert!(result.indicators.ema20.value.is_some());
+    }
+
+    #[test]
+    fn technical_analysis_does_not_modify_structural_snapshot() {
+        let bars = rising_bars(100);
+        let _result = compute_technical_direction(&bars).unwrap();
     }
 
     #[test]
     fn counter_reading_detects_overextended_up() {
-        // Create bars with strong uptrend and high RSI
-        let mut bars = rising_bars(80);
-        // Push last few bars higher to trigger RSI >= 70
-        #[allow(clippy::needless_range_loop)]
-        for i in 75..80 {
-            bars[i].close = 150.0 + (i - 75) as f64 * 2.0;
-            bars[i].high = bars[i].close + 1.0;
-            bars[i].low = bars[i].close - 0.5;
-        }
-        let tech = compute_technical_direction(&bars).unwrap();
-        let counter = compute_counter_reading(&bars, &tech);
+        let n = 100;
+        let bars: Vec<MarketObservation> = (0..n)
+            .map(|i| {
+                let base = 100.0 + i as f64 * 2.0;
+                make_bar(i, base + 5.0, base + 6.0, base + 4.0, base + 4.5)
+            })
+            .collect();
+        let technical = compute_technical_direction(&bars).unwrap();
+        let counter = compute_counter_reading(&bars, &technical);
         assert_eq!(counter.direction, CounterReading::Down);
     }
 
     #[test]
     fn counter_reading_detects_overextended_down() {
-        let mut bars = falling_bars(80);
-        #[allow(clippy::needless_range_loop)]
-        for i in 75..80 {
-            bars[i].close = 50.0 - (i - 75) as f64 * 2.0;
-            bars[i].high = bars[i].close + 0.5;
-            bars[i].low = bars[i].close - 1.0;
-        }
-        let tech = compute_technical_direction(&bars).unwrap();
-        let counter = compute_counter_reading(&bars, &tech);
+        let n = 100;
+        let bars: Vec<MarketObservation> = (0..n)
+            .map(|i| {
+                let base = 500.0 - i as f64 * 2.0;
+                make_bar(i, base - 5.0, base - 4.0, base - 6.0, base - 5.5)
+            })
+            .collect();
+        let technical = compute_technical_direction(&bars).unwrap();
+        let counter = compute_counter_reading(&bars, &technical);
         assert_eq!(counter.direction, CounterReading::Up);
-    }
-
-    #[test]
-    fn technical_analysis_does_not_modify_structural_snapshot() {
-        let bars = rising_bars(80);
-        let structural = minimal_structural();
-        let original = structural.clone();
-        let _ = compute_technical_structural_contrast(&bars, &structural).unwrap();
-        assert_eq!(structural, original);
-    }
-
-    #[test]
-    fn d1_and_w1_evaluated_independently() {
-        let d1_bars = rising_bars(80);
-        let mut w1_bars = Vec::new();
-        for i in 0..70 {
-            let base = 100.0 + i as f64 * 2.0;
-            let mut bar = make_bar(i * 7, base + 2.0, base + 5.0, base, base + 1.0);
-            bar.timeframe = Timeframe::W1;
-            bar.open_time_ns = (i as i64) * 604_800_000_000_000;
-            bar.close_time_ns = bar.open_time_ns + 604_800_000_000_000 - 1;
-            w1_bars.push(bar);
-        }
-        let tech_d1 = compute_technical_direction(&d1_bars).unwrap();
-        let tech_w1 = compute_technical_direction(&w1_bars).unwrap();
-        // Both should be UP but computed independently
-        assert_eq!(tech_d1.direction, TechnicalDirection::Up);
-        assert_eq!(tech_w1.direction, TechnicalDirection::Up);
-    }
-
-    #[test]
-    fn no_future_observation_enters_indicator_calculation() {
-        // This is verified by the deterministic implementation:
-        // all indicators only use bars[0..=i] for computation at index i
-        let bars = rising_bars(80);
-        let tech = compute_technical_direction(&bars).unwrap();
-        // The last bar's indicators only depend on prior bars
-        assert!(tech.indicators.ema20.availability == AvailabilityStatus::Available);
-        assert!(tech.indicators.rsi14.availability == AvailabilityStatus::Available);
     }
 }

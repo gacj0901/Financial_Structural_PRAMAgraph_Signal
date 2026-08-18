@@ -361,6 +361,7 @@ async fn native_financial_signal(
             technical: technical_structural.technical.clone(),
             counter_reading: technical_structural.counter_reading.clone(),
             structural_contrast: technical_structural,
+            directional: None, // No calibration-based directional in this path
         };
         scales.push(scale_signal);
     }
@@ -457,12 +458,60 @@ async fn telegraph_financial_data(
     // Delegate to native handler
     match native_financial_signal(State(state), headers, Json(native_request)).await {
         Ok(Json(native_response)) => {
-            // Convert to Telegraph format
+            // Use the first scale's Step 1 components for Telegraph single-timeframe response
+            let first_scale = native_response.scales.first();
+            let technical = first_scale.and_then(|s| s.technical.clone());
+            let counter_reading = first_scale.and_then(|s| s.counter_reading.clone());
+            let structural_contrast = first_scale.and_then(|s| s.structural_contrast.clone());
+            let structural = first_scale
+                .map(|s| s.structural.clone())
+                .unwrap_or_else(|| crate::StructuralSnapshot {
+                    instrument_id: "".into(),
+                    timeframe: Timeframe::D1,
+                    as_of_ns: 0,
+                    engine_version: "".into(),
+                    structural_state: "".into(),
+                    prama: crate::ComponentSnapshot::unavailable(""),
+                    d_o: crate::ComponentSnapshot::unavailable(""),
+                    odce: crate::ComponentSnapshot::unavailable(""),
+                    k_mem: crate::ComponentSnapshot::unavailable(""),
+                    availability: std::collections::BTreeMap::new(),
+                    source_watermark: "".into(),
+                    snapshot_sha256: None,
+                });
+
+            // directional from calibration profile (preserved from native)
+            let directional = native_response
+                .scales
+                .first()
+                .and_then(|s| s.directional.clone());
+
+            // Market bar from first scale structural
+            let market = first_scale
+                .map(|_s| crate::service::MarketBarResponse {
+                    open_time_ns: 0,
+                    close_time_ns: native_response.as_of_ns,
+                    open: 0.0,
+                    high: 0.0,
+                    low: 0.0,
+                    close: 0.0,
+                    volume: crate::AvailableValue::unavailable(),
+                })
+                .unwrap_or(crate::service::MarketBarResponse {
+                    open_time_ns: 0,
+                    close_time_ns: native_response.as_of_ns,
+                    open: 0.0,
+                    high: 0.0,
+                    low: 0.0,
+                    close: 0.0,
+                    volume: crate::AvailableValue::unavailable(),
+                });
+
             let telegraph_response = FinancialDataResponse {
                 schema: "pramagraph.telegraph.financial_data.v1".into(),
                 intent: "FINANCIAL_DATA".into(),
                 status: native_response.status,
-                label: format!("{:?}", native_response.direction),
+                label: native_response.label.clone(), // technical direction from native
                 reason: format!(
                     "multi-scale signal: {}",
                     native_response
@@ -471,61 +520,19 @@ async fn telegraph_financial_data(
                         .map(|s| format!("{:?}", s.timeframe))
                         .unwrap_or("D1".into())
                 ),
-                instrument: native_response.instrument,
+                instrument: native_response.instrument.clone(),
                 timeframe: native_response
                     .scales
                     .first()
                     .map(|s| s.timeframe)
                     .unwrap_or(Timeframe::D1),
                 as_of_ns: native_response.as_of_ns,
-                market: crate::service::MarketBarResponse {
-                    open_time_ns: 0,
-                    close_time_ns: native_response.as_of_ns,
-                    open: 0.0,
-                    high: 0.0,
-                    low: 0.0,
-                    close: 0.0,
-                    volume: crate::AvailableValue::unavailable(),
-                },
-                structural: native_response
-                    .scales
-                    .first()
-                    .map(|s| s.structural.clone())
-                    .unwrap_or(crate::StructuralSnapshot {
-                        instrument_id: "".into(),
-                        timeframe: Timeframe::D1,
-                        as_of_ns: 0,
-                        engine_version: "".into(),
-                        structural_state: "".into(),
-                        prama: crate::ComponentSnapshot::unavailable(""),
-                        d_o: crate::ComponentSnapshot::unavailable(""),
-                        odce: crate::ComponentSnapshot::unavailable(""),
-                        k_mem: crate::ComponentSnapshot::unavailable(""),
-                        availability: std::collections::BTreeMap::new(),
-                        source_watermark: "".into(),
-                        snapshot_sha256: None,
-                    }),
-                directional: native_response
-                    .scales
-                    .first()
-                    .and_then(|s| s.structural.d_o.value.as_ref())
-                    .and_then(|v| v.get("structural_state"))
-                    .map(|v| crate::calibration::DirectionalResolution {
-                        direction: match v.as_str().unwrap_or("") {
-                            "CRYSTALLIZED" | "RECURRENT" | "VIABLE" | "CRYSTALLIZING" => {
-                                crate::Direction::Up
-                            }
-                            "STAGNANT" | "INACTIVE" => crate::Direction::Range,
-                            _ => crate::Direction::Down,
-                        },
-                        probabilities_bp: None,
-                        horizon: None,
-                        reliability_bp: None,
-                        sample_support: 0,
-                        calibration_scope: crate::CalibrationScope::Unavailable,
-                        profile_sha256: "".into(),
-                        publication_reason: "technical proxy".into(),
-                    }),
+                market,
+                structural,
+                technical,
+                counter_reading,
+                structural_contrast,
+                directional,
                 provenance: crate::service::ServiceProvenance {
                     primary_provider: native_response.provenance.primary_provider.clone(),
                     provider_instrument: None,
@@ -564,6 +571,7 @@ async fn telegraph_financial_data(
 }
 
 /// Request logging middleware
+/// Request logging middleware
 async fn logging_middleware(req: axum::http::Request<axum::body::Body>, next: Next) -> Response {
     let start = Instant::now();
     let path = req.uri().path().to_string();
@@ -600,8 +608,10 @@ pub async fn serve(
     corpus_directory: PathBuf,
     calibration_directory: PathBuf,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    // Initialize logging
-    let log_path = PathBuf::from("results/runtime/request_events.ndjson");
+    // Initialize logging - path can be configured via env var
+    let log_path = std::env::var("LOG_PATH")
+        .unwrap_or_else(|_| "results/runtime/request_events.ndjson".to_string());
+    let log_path = PathBuf::from(log_path);
     init_logging(&log_path).unwrap_or_else(|e| eprintln!("Failed to init logging: {e}"));
 
     let ready = audit_corpus(&corpus_directory)

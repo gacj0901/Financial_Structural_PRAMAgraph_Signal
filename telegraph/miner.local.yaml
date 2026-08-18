@@ -1,12 +1,26 @@
-# Local validation template. Replace id and base_url only after deployment.
 version: "1"
 kind: miner
 id: 0
 slug: financial-structural-pramagraph-signal
 protocol: generic
 name: Financial Structural PRAMAgraph Signal
-description: Deterministic, hash-addressable multiscale financial structural data powered by PRAMA Protokol.
-base_url: http://127.0.0.1:8080
+description: Deterministic multi-scale financial intelligence combining conventional price-state analysis with an independent PRAMAgraph structural reading. Returns UP/DOWN/RANGE market-state classification, structural contrast, data availability, and reproducible provenance without LLM mediation.
+base_url: https://trigger-match-forming-mediterranean.trycloudflare.com
+
+auth:
+  type: none
+
+rate_limit_per_sec: 20
+cache_ttl_sec: 60
+circuit_threshold: 5
+circuit_cooldown_seconds: 30
+
+endpoints:
+  - path: /financial-data
+    external_path: /v1/telegraph/financial-data
+    method: POST
+    content_type: application/json
+    description: Return the deterministic financial market and structural snapshot for an asset.
 
 input_schema:
   type: object
@@ -20,33 +34,48 @@ input_schema:
       type: string
       enum: [D1, W1]
       default: D1
+      description: Observation timeframe.
     source:
       type: string
       enum: [AUTO, SUPPLIED_CORPUS]
       default: AUTO
+      description: Data source mode.
 
 output_schema:
   type: object
-  required: [schema, intent, status, label, instrument, timeframe, as_of_ns, market, structural, provenance, response_sha256]
+  required: [schema, intent, status, label, instrument, timeframe, as_of_ns, market, structural, technical, counter_reading, structural_contrast, provenance, response_sha256]
   properties:
-    schema: { type: string }
-    intent: { type: string, const: FINANCIAL_DATA }
-    status: { type: string }
-    label: { type: string }
-    reason: { type: string }
-    instrument: { type: object }
-    timeframe: { type: string }
-    as_of_ns: { type: integer }
-    market: { type: object }
-    structural: { type: object }
-    provenance: { type: object }
-    response_sha256: { type: string }
-
-endpoints:
-  - path: /financial-data
-    external_path: /v1/telegraph/financial-data
-    method: POST
-    description: Return the deterministic financial market and structural snapshot for an asset.
+    schema:
+      type: string
+    intent:
+      type: string
+      const: FINANCIAL_DATA
+    status:
+      type: string
+    label:
+      type: string
+    reason:
+      type: string
+    instrument:
+      type: object
+    timeframe:
+      type: string
+    as_of_ns:
+      type: integer
+    market:
+      type: object
+    structural:
+      type: object
+    technical:
+      type: object
+    counter_reading:
+      type: object
+    structural_contrast:
+      type: object
+    provenance:
+      type: object
+    response_sha256:
+      type: string
 
 semantics:
   signal_mapping:
@@ -55,30 +84,33 @@ semantics:
   supported_intents:
     - FINANCIAL_DATA
 
-cache_ttl_sec: 60
-rate_limit_per_sec: 20
-circuit_threshold: 5
-circuit_cooldown_seconds: 30
-
 on_chain:
   transform: direct
   min_price_usdc: 0.01
   fields:
     strings:
       - index: 0
-        name: structural_label
-        source_path: label
+        name: asset_symbol
+        description: Canonical base asset symbol returned by PRAMAgraph, such as BTC or XRP.
+        source_path: instrument.base
       - index: 1
-        name: instrument_symbol
-        source_path: instrument.symbol
+        name: timeframe
+        description: Observation timeframe of the returned signal, such as D1 or W1.
+        source_path: timeframe
+      - index: 2
+        name: signal_label
+        description: Primary deterministic market-state classification label.
+        source_path: label
     integers:
       - index: 0
         name: as_of_ns
+        description: UTC observation timestamp in nanoseconds.
         source_path: as_of_ns
         multiplier: 1
   request:
     - endpoint: financial-data
       method: POST
+      content_type: application/json
       body:
         asset: { source: strings.0 }
         timeframe: { source: strings.1, optional: true }

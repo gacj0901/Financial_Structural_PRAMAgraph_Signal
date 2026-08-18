@@ -252,7 +252,7 @@ enum Command {
         output: PathBuf,
     },
     Serve {
-        #[arg(long, default_value = "127.0.0.1:8080")]
+        #[arg(long, default_value = "0.0.0.0:8080")]
         bind: std::net::SocketAddr,
         #[arg(long, default_value = "data/corpus")]
         corpus: PathBuf,
