@@ -90,6 +90,112 @@ The exact source inventory, equations, financial adapter boundary, unavailable e
 ODCE channels, and Ergonektim-derived custody rules are documented in
 [`docs/STRUCTURAL_STACK.md`](docs/STRUCTURAL_STACK.md).
 
+## Telegraph H1 Miner
+
+### Intent
+`FINANCIAL_DATA` (Tier A, WASM Exact Match)
+
+### What it does
+Deterministic multi-scale financial intelligence combining conventional price-state analysis with an independent PRAMAgraph structural reading. Returns UP/DOWN/RANGE market-state classification, structural contrast, data availability, and reproducible provenance without LLM mediation.
+
+### Architecture
+```
+Client / Telegraph
+    │
+    ▼
+Telegraph Adapter (/v1/telegraph/financial-data)
+    │   Single-timeframe, thin adapter
+    ▼
+Native Financial Service (/v1/financial/signal)
+    │   Multi-timeframe, core logic
+    │   ┌──────────────────────────────────────┐
+    │   │ PRAMAgraph Structural Path           │
+    │   │  adapt_closed_bars → replay_frames   │
+    │   │  → snapshot_from_frames              │
+    │   └──────────────────────────────────────┘
+    │   ┌──────────────────────────────────────┐
+    │   │ Technical Direction Path             │
+    │   │  compute_technical_direction()       │
+    │   │  compute_counter_reading()           │
+    │   └──────────────────────────────────────┘
+    │   ┌──────────────────────────────────────┐
+    │   │ Contrast / Composition               │
+    │   │  compute_structural_contrast()       │
+    │   │  cross-scale composition             │
+    │   └──────────────────────────────────────┘
+    ▼
+FinancialSignalResponse (canonical, SHA-256 hashed)
+```
+
+### Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/v1/financial/signal` | POST | Native multi-timeframe financial signal |
+| `/v1/telegraph/financial-data` | POST | Telegraph adapter (single timeframe) |
+| `/health/live` | GET | Process liveness |
+| `/health/ready` | GET | Service readiness (corpus audit) |
+
+### Supported Assets & Timeframes
+
+| Asset | Symbol | Timeframes | Corpus File |
+|-------|--------|------------|-------------|
+| BTC | BTCUSDT | D1, W1 | `btc_calib.csv` |
+| XRP | XRPUSDT | D1, W1 | `xrp_calib.csv` |
+| GOLD | GC | D1, W1 | `gold_calib.csv` |
+| SP500 | SPX | D1, W1 | `sp500_calib.csv` |
+| NASDAQ | NDX | D1, W1 | `nasdaq_calib.csv` |
+
+*Note: Only BTC D1 calibration profile exists currently (`DEVELOPMENT_AUDIT_CONSUMED`). Other assets return `STALE_DATA` with calibration scope `UNAVAILABLE`.*
+
+### Local Run
+
+```powershell
+# Start server
+cargo run -- serve --bind 127.0.0.1:8080 --corpus data\corpus --calibration calibration\profiles
+
+# Test native endpoint
+curl -X POST http://127.0.0.1:8080/v1/financial/signal -H "Content-Type: application/json" -d '{"asset":"BTC","timeframes":["D1","W1"]}'
+
+# Test Telegraph adapter
+curl -X POST http://127.0.0.1:8080/v1/telegraph/financial-data -H "Content-Type: application/json" -d '{"asset":"BTC","timeframe":"D1"}'
+
+# Health checks
+curl http://127.0.0.1:8080/health/live
+curl http://127.0.0.1:8080/health/ready
+```
+
+### Test Command
+
+```powershell
+cargo test --all-targets
+```
+
+### Status Behavior
+
+| Status | Meaning |
+|--------|---------|
+| `OK` | Signal generated successfully |
+| `STALE_DATA` | Served from supplied corpus (not live) |
+| `INSUFFICIENT_DATA` | < 60 closed bars for indicators |
+| `UNSUPPORTED_ASSET` | Asset not in resolver |
+| `UNSUPPORTED_TIMEFRAME` | Timeframe not in {D1, W1} |
+| `ENGINE_ERROR` | Internal structural failure |
+
+### Documentation
+
+- [Functional Declaration](docs/H1_MINER_FUNCTIONAL_DECLARATION.md) — what the miner is, what it returns, semantics, limitations
+- [Interface Document](docs/H1_MINER_INTERFACE.md) — endpoints, schemas, request lifecycle, logging
+- [Signal Semantics](docs/H1_SIGNAL_SEMANTICS.md) — authoritative field explanations
+- [Operator Runbook](docs/H1_OPERATOR_RUNBOOK.md) — operational procedures
+- [Public Description](docs/H1_MINER_PUBLIC_DESCRIPTION.md) — for Miner YAML
+
+## Structural authority and adaptation
+
+The exact source inventory, equations, financial adapter boundary, unavailable external
+ODCE channels, and Ergonektim-derived custody rules are documented in
+[`docs/STRUCTURAL_STACK.md`](docs/STRUCTURAL_STACK.md).
+
 ## Next milestone
 
 1. Generate and evaluate immutable D1/W1 profiles for the remaining supported instruments.

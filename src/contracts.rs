@@ -278,6 +278,12 @@ pub struct PerScaleSignal {
     pub reliability_bp: Option<u16>,
     pub sample_support: u64,
     pub calibration_scope: CalibrationScope,
+    // Step 1: Technical Direction Head, Counter Reading, Structural Contrast
+    pub technical: Option<crate::technical::TechnicalDirectionHead>,
+    pub counter_reading: Option<crate::technical::TechnicalCounterReading>,
+    pub structural_contrast: Option<crate::technical::TechnicalStructuralContrast>,
+    // Optional: calibration-based directional (KNN)
+    pub directional: Option<crate::calibration::DirectionalResolution>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
@@ -304,6 +310,7 @@ pub struct FinancialSignalResponse {
     pub data_watermark_ns: i64,
     pub mode: SignalMode,
     pub direction: Direction,
+    pub label: String,
     pub probabilities_bp: Option<ProbabilitiesBp>,
     pub scales: Vec<PerScaleSignal>,
     pub provenance: Provenance,

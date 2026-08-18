@@ -56,6 +56,8 @@ pub struct ScaleSignal {
     pub technical: TechnicalDirectionHead,
     pub counter_reading: TechnicalCounterReading,
     pub structural_contrast: TechnicalStructuralContrast,
+    // Optional: calibration-based directional (KNN)
+    pub directional: Option<crate::calibration::DirectionalResolution>,
 }
 
 /// Cross-scale composition result
@@ -298,6 +300,7 @@ pub fn build_financial_signal_response(
             data_watermark_ns: 0,
             mode,
             direction: Direction::Unresolved,
+            label: "UNAVAILABLE".into(),
             probabilities_bp: None,
             scales: vec![],
             provenance: crate::Provenance {
@@ -353,6 +356,10 @@ pub fn build_financial_signal_response(
             reliability_bp: None,
             sample_support: s.technical.bars_used as u64,
             calibration_scope: crate::CalibrationScope::Unavailable,
+            technical: Some(s.technical.clone()),
+            counter_reading: Some(s.counter_reading.clone()),
+            structural_contrast: Some(s.structural_contrast.clone()),
+            directional: s.directional.clone(),
         })
         .collect();
 
@@ -364,6 +371,7 @@ pub fn build_financial_signal_response(
         data_watermark_ns: 0, // Will be set by caller
         mode,
         direction,
+        label: format!("{:?}", direction),
         probabilities_bp: None,
         scales: per_scales,
         provenance: crate::Provenance {
@@ -500,6 +508,7 @@ mod tests {
             technical: make_test_technical(TechnicalDirection::Up),
             counter_reading: make_test_counter(),
             structural_contrast: make_test_contrast(),
+            directional: None,
         }];
 
         let resp = build_financial_signal_response(
@@ -538,6 +547,7 @@ mod tests {
             technical: make_test_technical(TechnicalDirection::Up),
             counter_reading: make_test_counter(),
             structural_contrast: make_test_contrast(),
+            directional: None,
         }];
 
         let resp1 = build_financial_signal_response(
@@ -588,6 +598,7 @@ mod tests {
                 technical: make_test_technical(TechnicalDirection::Up),
                 counter_reading: make_test_counter(),
                 structural_contrast: make_test_contrast(),
+                directional: None,
             },
             ScaleSignal {
                 timeframe: Timeframe::W1,
@@ -595,6 +606,7 @@ mod tests {
                 technical: make_test_technical(TechnicalDirection::Up),
                 counter_reading: make_test_counter(),
                 structural_contrast: make_test_contrast(),
+                directional: None,
             },
         ];
 
@@ -613,6 +625,7 @@ mod tests {
                 technical: make_test_technical(TechnicalDirection::Up),
                 counter_reading: make_test_counter(),
                 structural_contrast: make_test_contrast(),
+                directional: None,
             },
             ScaleSignal {
                 timeframe: Timeframe::W1,
@@ -620,6 +633,7 @@ mod tests {
                 technical: make_test_technical(TechnicalDirection::Down),
                 counter_reading: make_test_counter(),
                 structural_contrast: make_test_contrast(),
+                directional: None,
             },
         ];
 
