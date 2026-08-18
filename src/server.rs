@@ -1,11 +1,12 @@
 use crate::{
-    contracts::SignalMode,
     corpus::audit_corpus,
     engine::{StructuralEngineAdapter, ENGINE_VERSION},
     logging::{init_logging, RequestFailed, RequestReceived, RequestServed},
-    observation::OBSERVATION_INTERFACE_VERSION,
     resolver::AssetResolver,
-    service::FinancialDataResponse,
+    service::{
+        build_financial_data_response_with_profiles, DataSourcePreference, FinancialDataRequest,
+        FinancialDataResponse,
+    },
     signal::{build_financial_signal_response, FinancialSignalRequest},
     structural::STRUCTURAL_VECTOR_VERSION,
     Timeframe,
@@ -49,6 +50,10 @@ struct ResolveRequest {
     query: String,
 }
 
+fn default_timeframe() -> Timeframe {
+    Timeframe::D1
+}
+
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 struct TelegraphFinancialDataRequest {
     asset: String,
@@ -56,18 +61,6 @@ struct TelegraphFinancialDataRequest {
     timeframe: Timeframe,
     #[serde(default)]
     source: DataSourcePreference,
-}
-
-fn default_timeframe() -> Timeframe {
-    Timeframe::D1
-}
-
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
-enum DataSourcePreference {
-    #[default]
-    Auto,
-    SuppliedCorpus,
 }
 
 async fn health_live() -> Json<HealthResponse> {
@@ -421,7 +414,7 @@ async fn native_financial_signal(
     Ok(Json(response))
 }
 
-/// Telegraph adapter endpoint
+/// Telegraph adapter endpoint - delegates directly to canonical service implementation
 async fn telegraph_financial_data(
     State(state): State<AppState>,
     headers: HeaderMap,
@@ -446,126 +439,51 @@ async fn telegraph_financial_data(
     );
     log_req.log();
 
-    // Convert to native request
-    let native_request = FinancialSignalRequest {
+    // Convert to service FinancialDataRequest
+    let service_request = FinancialDataRequest {
         asset: request.asset,
-        venue: "auto".into(),
-        quote: "auto".into(),
-        timeframes: vec![request.timeframe],
-        mode: SignalMode::Confirmed,
+        timeframe: request.timeframe,
+        source: request.source,
     };
 
-    // Delegate to native handler
-    match native_financial_signal(State(state), headers, Json(native_request)).await {
-        Ok(Json(native_response)) => {
-            // Use the first scale's Step 1 components for Telegraph single-timeframe response
-            let first_scale = native_response.scales.first();
-            let technical = first_scale.and_then(|s| s.technical.clone());
-            let counter_reading = first_scale.and_then(|s| s.counter_reading.clone());
-            let structural_contrast = first_scale.and_then(|s| s.structural_contrast.clone());
-            let structural = first_scale
-                .map(|s| s.structural.clone())
-                .unwrap_or_else(|| crate::StructuralSnapshot {
-                    instrument_id: "".into(),
-                    timeframe: Timeframe::D1,
-                    as_of_ns: 0,
-                    engine_version: "".into(),
-                    structural_state: "".into(),
-                    prama: crate::ComponentSnapshot::unavailable(""),
-                    d_o: crate::ComponentSnapshot::unavailable(""),
-                    odce: crate::ComponentSnapshot::unavailable(""),
-                    k_mem: crate::ComponentSnapshot::unavailable(""),
-                    availability: std::collections::BTreeMap::new(),
-                    source_watermark: "".into(),
-                    snapshot_sha256: None,
-                });
-
-            // directional from calibration profile (preserved from native)
-            let directional = native_response
-                .scales
-                .first()
-                .and_then(|s| s.directional.clone());
-
-            // Market bar from first scale structural
-            let market = first_scale
-                .map(|_s| crate::service::MarketBarResponse {
-                    open_time_ns: 0,
-                    close_time_ns: native_response.as_of_ns,
-                    open: 0.0,
-                    high: 0.0,
-                    low: 0.0,
-                    close: 0.0,
-                    volume: crate::AvailableValue::unavailable(),
-                })
-                .unwrap_or(crate::service::MarketBarResponse {
-                    open_time_ns: 0,
-                    close_time_ns: native_response.as_of_ns,
-                    open: 0.0,
-                    high: 0.0,
-                    low: 0.0,
-                    close: 0.0,
-                    volume: crate::AvailableValue::unavailable(),
-                });
-
-            let telegraph_response = FinancialDataResponse {
-                schema: "pramagraph.telegraph.financial_data.v1".into(),
-                intent: "FINANCIAL_DATA".into(),
-                status: native_response.status,
-                label: native_response.label.clone(), // technical direction from native
-                reason: format!(
-                    "multi-scale signal: {}",
-                    native_response
-                        .scales
-                        .first()
-                        .map(|s| format!("{:?}", s.timeframe))
-                        .unwrap_or("D1".into())
-                ),
-                instrument: native_response.instrument.clone(),
-                timeframe: native_response
-                    .scales
-                    .first()
-                    .map(|s| s.timeframe)
-                    .unwrap_or(Timeframe::D1),
-                as_of_ns: native_response.as_of_ns,
-                market,
-                structural,
-                technical,
-                counter_reading,
-                structural_contrast,
-                directional,
-                provenance: crate::service::ServiceProvenance {
-                    primary_provider: native_response.provenance.primary_provider.clone(),
-                    provider_instrument: None,
-                    corpus_file: None,
-                    input_sha256: native_response.provenance.input_window_sha256.clone(),
-                    engine_version: native_response.provenance.engine_version.clone(),
-                    observation_interface_version: OBSERVATION_INTERFACE_VERSION.into(),
-                },
-                response_sha256: native_response.provenance.response_sha256.clone(),
-            };
-
+    // Delegate to canonical service implementation
+    match build_financial_data_response_with_profiles(
+        &state.corpus_directory,
+        &state.calibration_directory,
+        &service_request,
+    )
+    .await
+    {
+        Ok(response) => {
+            // Log successful response
             let log_resp = RequestServed::new(
-                Uuid::new_v4().to_string(),
+                request_id,
                 StatusCode::OK.as_u16(),
-                telegraph_response.status,
-                Some(telegraph_response.instrument.symbol.clone()),
-                Some(vec![telegraph_response.timeframe]),
+                response.status,
+                Some(response.instrument.symbol.clone()),
+                Some(vec![response.timeframe]),
                 start.elapsed(),
-                telegraph_response.response_sha256.clone(),
+                response.response_sha256.clone(),
             );
             log_resp.log();
 
-            Ok(Json(telegraph_response))
+            Ok(Json(response))
         }
         Err(e) => {
             let log_err = RequestFailed::new(
-                Uuid::new_v4().to_string(),
-                e.0.as_u16(),
-                e.1.error.clone(),
+                request_id,
+                StatusCode::BAD_REQUEST.as_u16(),
+                e.to_string(),
                 start.elapsed(),
             );
             log_err.log();
-            Err(e)
+            Err((
+                StatusCode::BAD_REQUEST,
+                Json(ErrorResponse {
+                    status: "ERROR",
+                    error: e.to_string(),
+                }),
+            ))
         }
     }
 }
