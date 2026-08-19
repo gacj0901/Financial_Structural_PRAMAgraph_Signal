@@ -2,8 +2,9 @@
 name = "pramagraph-financial"
 version = "0.1.0"
 edition = "2021"
-license = "AGPL-3.0-only"
 description = "Deterministic financial structural signal runtime powered by PRAMA Protokol"
+license-file = "LICENSE"
+publish = false
 
 [lib]
 name = "pramagraph_financial"
