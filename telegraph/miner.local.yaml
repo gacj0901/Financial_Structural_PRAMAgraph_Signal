@@ -5,7 +5,7 @@ slug: financial-structural-pramagraph-signal
 protocol: generic
 name: Financial Structural PRAMAgraph Signal
 description: Deterministic multi-scale financial intelligence combining conventional price-state analysis with an independent PRAMAgraph structural reading. Returns UP/DOWN/RANGE market-state classification, structural contrast, data availability, and reproducible provenance without LLM mediation.
-base_url: https://trigger-match-forming-mediterranean.trycloudflare.com
+base_url: https://pramagraph-financial-h1-production.up.railway.app
 
 auth:
   type: none
