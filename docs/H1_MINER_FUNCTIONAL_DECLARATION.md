@@ -57,20 +57,18 @@ Complete `StructuralSnapshot` per timeframe:
 - Availability map per component
 
 #### D. Structural Contrast
-Relation between technical direction and structural evidence:
+Descriptive co-presentation of technical direction and independent structural evidence:
 | State | Meaning |
 |-------|---------|
-| `CONFIRMING` | All available structural evidence aligns with technical direction |
-| `CONFLICTING` | All available structural evidence opposes technical direction |
-| `MIXED` | Some evidence aligns, some opposes |
-| `NEUTRAL` | Evidence available but neither clearly confirming nor conflicting |
+| `CONFIRMING` | Reserved; not emitted without an empirically validated mapping |
+| `CONFLICTING` | Reserved; not emitted without an empirically validated mapping |
+| `MIXED` | Reserved; not emitted without an empirically validated mapping |
+| `NEUTRAL` | Both channels are available and remain independent |
 | `UNAVAILABLE` | No structural evidence with explicit directional semantics |
 
-Uses ONLY explicitly available structural fields with explicit semantics:
-- D_O `structural_state` mapping (CRYSTALLIZED/RECURRENT/VIABLE/CRYSTALLIZING → UP, STAGNANT/INACTIVE → RANGE, DISRUPTED/TRANSPORT_DISRUPTED → DOWN, PROVISIONAL inherits mobility_status)
-- D_O `transport_coherence` ≥ 0.5 → coherent trend quality
-- D_O `recurrence_persistence` ≥ 0.3 → recurrent trend persistence
-- K-MEM `strictly_prior_state` sign → momentum confirmation
+The runtime exports D_O transport coherence and recurrence plus K-MEM prior state as
+descriptive evidence. It does not translate any of them into price direction or let them
+vote for/against the registered technical label.
 
 #### E. Per-Scale Readings
 Array of `ScaleSignal` per evaluated timeframe containing:
@@ -105,7 +103,8 @@ Array of `ScaleSignal` per evaluated timeframe containing:
 >
 > - Technical Direction = market-state classification from price action
 > - Structural State = independent causal/invariant characterization from PRAMAgraph
-> - Structural Contrast = agreement/conflict relation between the two
+> - Structural Contrast = descriptive co-presentation; current runtime does not infer
+>   confirmation or conflict between the two
 
 ---
 
@@ -162,12 +161,13 @@ Signal generation is pure deterministic Rust computation from closed market data
 ### 8. LIMITATIONS
 
 - **Technical Direction** is a deterministic market-state classification from closed-bar indicators — **not a guarantee of future price movement**
-- **Structural Contrast** is independent evidence of agreement/conflict — **not financial advice**
+- **Structural Contrast** preserves independent structural evidence — **not financial advice**
 - **Stale or insufficient source data** is surfaced via explicit status — never hidden behind silent defaults
 - Only **actually supported timeframes** (D1, W1) and **actually resolvable assets** are returned
 - **No forward-looking prediction**: the signal classifies current market state from closed history
 - **Calibration-based KNN directional** is optional provenance only — not the primary signal
-- **Profile Brier skill gate** must be positive vs. climatology for production publication (current BTC D1 profile is `DEVELOPMENT_AUDIT_CONSUMED`, negative skill)
+- **Profile Brier skill gate** must be positive vs. climatology for production publication;
+  all current profiles remain `DEVELOPMENT_AUDIT_CONSUMED` and non-publicable.
 
 ---
 
@@ -185,7 +185,6 @@ Signal generation is pure deterministic Rust computation from closed market data
 | Health/Live + Health/Ready | ✅ IMPLEMENTED |
 | Request Logging (JSONL + console) | ✅ IMPLEMENTED |
 | Deterministic SHA-256 Response Hash | ✅ IMPLEMENTED |
-| BTC D1 Calibration Profile | ⚠️ `DEVELOPMENT_AUDIT_CONSUMED` (negative Brier skill) |
-| Other Asset Profiles (XRP, GOLD, SP500, NASDAQ) | ❌ NOT YET AVAILABLE |
+| Nine D1/W1 Calibration Profiles | ⚠️ `DEVELOPMENT_AUDIT_CONSUMED`, non-publicable |
 | Live Provider (Binance/Massive) | ✅ IMPLEMENTED (`AUTO` mode) |
-| Final Telegraph Task Schema Binding | ❌ NOT YET AVAILABLE (awaiting publication) |
+| Telegraph miner 111 contract | ✅ REGISTERED (D1/W1 `FINANCIAL_DATA`) |

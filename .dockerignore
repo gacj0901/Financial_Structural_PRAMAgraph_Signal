@@ -1,0 +1,8 @@
+.git
+.github
+.codex
+.env
+target
+results/runtime
+*.log
+*.tmp

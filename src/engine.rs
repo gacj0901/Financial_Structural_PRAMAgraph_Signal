@@ -44,10 +44,39 @@ pub struct StructuralEngineAdapter {
     config: KernelConfigV3,
 }
 
+#[derive(Serialize)]
+struct KernelConfigDigest {
+    schema: &'static str,
+    h: f64,
+    tau: f64,
+    theta_scale: f64,
+    lambda_0: f64,
+    lambda_min: f64,
+    lambda_max: f64,
+    kappa_v3: f64,
+    g_smooth: usize,
+    delta_ref: f64,
+}
+
 impl StructuralEngineAdapter {
     pub fn new(config: KernelConfigV3) -> Result<Self, EngineError> {
         config.validate()?;
         Ok(Self { config })
+    }
+
+    pub fn config_sha256(&self) -> Result<String, EngineError> {
+        Ok(canonical::sha256(&KernelConfigDigest {
+            schema: "prama.kernel_config.v3",
+            h: self.config.h,
+            tau: self.config.tau,
+            theta_scale: self.config.theta_scale,
+            lambda_0: self.config.lambda_0,
+            lambda_min: self.config.lambda_min,
+            lambda_max: self.config.lambda_max,
+            kappa_v3: self.config.kappa_v3,
+            g_smooth: self.config.g_smooth,
+            delta_ref: self.config.delta_ref,
+        })?)
     }
 
     pub fn replay(
@@ -217,6 +246,11 @@ mod tests {
             .unwrap();
         assert_eq!(left, right);
         assert_eq!(left.snapshot_sha256, right.snapshot_sha256);
+        assert_eq!(
+            engine.config_sha256().unwrap(),
+            StructuralEngineAdapter::default().config_sha256().unwrap()
+        );
+        assert!(engine.config_sha256().unwrap().starts_with("sha256:"));
     }
 
     #[test]

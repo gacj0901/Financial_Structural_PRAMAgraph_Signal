@@ -1,19 +1,21 @@
 # Telegraph adapter
 
-`miner.local.yaml` follows the Telegraph Miner Standard documented on
-2026-08-16. It is intentionally a local template, not a registration artifact.
+`miner.local.yaml` is the contract currently registered as Telegraph miner **111**,
+`financial-structural-pramagraph-signal`, for the `FINANCIAL_DATA` intent. The public
+registration date is 2026-08-21 and the registered base URL is
+`https://pramagraph-financial-h1-production.up.railway.app`.
 
-Before registration:
+Compatibility rule for implementation updates:
 
-1. Deploy the Rust HTTP service behind a stable HTTPS URL.
-2. Replace YAML `id: 0` and `base_url` with the deployed values.
-3. Recheck the live canonical intent registry for `FINANCIAL_DATA`.
-4. Validate the YAML and live endpoint at `integrate.telegraphprotocol.com`.
-5. Hash the final raw YAML bytes with SHA-256 and do not modify them afterward.
+1. Keep `id`, slug, protocol, intent, base URL, endpoint path and D1/W1 request shape stable.
+2. Keep the registered required response fields and on-chain source paths stable.
+3. Internal bug fixes, provenance hardening, schema regeneration and fail-closed calibration
+   changes do not require a new registration while those public invariants remain unchanged.
+4. Re-register only if a declared public invariant changes.
 
-The current endpoint contract is isolated here because the hackathon participant
-task schema has not yet been published. Only this adapter should change when the
-exact-match task payload becomes available.
+The top-level `label` is the conventional deterministic price-state classification declared
+in the registration. PRAMAgraph remains an independent structural reading; a development
+KNN result may be included in `directional` but cannot override publication gates.
 
 Local run:
 
@@ -31,6 +33,6 @@ Invoke-RestMethod -Method Post `
 ```
 
 `AUTO` uses Binance's latest closed D1 bars for BTC/XRP and Massive REST for
-stocks, indices, FX and COMEX gold when `MASSIVE_API_KEY` is present in the
-server environment. A missing credential or provider error fails explicitly;
-use `SUPPLIED_CORPUS` only when a deliberate stale replay is required.
+stocks, indices, FX and COMEX gold when `MASSIVE_API_KEY` is present. Provider failure
+falls back deterministically to the pinned corpus and returns `STALE_DATA`; an explicit
+`SUPPLIED_CORPUS` request always selects that stale replay path.

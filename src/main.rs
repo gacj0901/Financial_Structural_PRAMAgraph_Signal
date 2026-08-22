@@ -5,8 +5,9 @@ use pramagraph_financial::calibration::{
     build_neighbor_anatomy_artifacts, build_range_distance_geometry_audit,
     build_range_intraclass_compactness_audit, build_range_trajectory_anatomy_audit,
     build_resolution_profile, build_right_censoring_audit, resolve_direction,
-    validate_profile_for_engine, CalibrationProtocol, NeighborAnatomyQuery,
+    validate_profile_authority, CalibrationProtocol, NeighborAnatomyQuery,
     ResolutionCalibrationProfile, DEVELOPMENT_DATA_CUTOFF_NS, PROTOCOL_FREEZE_TIMESTAMP_NS,
+    TELEGRAPH_REGISTRATION_BOUNDARY_NS,
 };
 use pramagraph_financial::corpus::{audit_corpus, CorpusAuditReport};
 use pramagraph_financial::engine::{KernelObservation, StructuralEngineAdapter};
@@ -476,8 +477,12 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
                 DEVELOPMENT_DATA_CUTOFF_NS
             );
             println!(
-                "Protocol freeze timestamp: {} (2026-07-21T00:00:00Z)",
+                "Legacy protocol timestamp metadata: {} (not an evidence boundary)",
                 PROTOCOL_FREEZE_TIMESTAMP_NS
+            );
+            println!(
+                "Conservative Telegraph evidence boundary: {} (2026-08-23T00:00:00Z; Explorer exposes date only)",
+                TELEGRAPH_REGISTRATION_BOUNDARY_NS
             );
         }
         Command::ResolveDirection {
@@ -486,10 +491,16 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
             timeframe,
             profile,
         } => {
-            let (_, _, _, frames) = replay_market_frames(&input, &instrument, &timeframe)?;
+            let (instrument, timeframe, _, frames) =
+                replay_market_frames(&input, &instrument, &timeframe)?;
             let profile: ResolutionCalibrationProfile =
                 serde_json::from_reader(File::open(profile)?)?;
-            validate_profile_for_engine(&profile, pramagraph_financial::engine::ENGINE_VERSION)?;
+            validate_profile_authority(
+                &profile,
+                pramagraph_financial::engine::ENGINE_VERSION,
+                &instrument.instrument_id,
+                timeframe,
+            )?;
             let vector = &frames
                 .last()
                 .ok_or("structural replay produced no frames")?
@@ -512,7 +523,12 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
             )?;
             let profile: ResolutionCalibrationProfile =
                 serde_json::from_reader(File::open(profile)?)?;
-            validate_profile_for_engine(&profile, pramagraph_financial::engine::ENGINE_VERSION)?;
+            validate_profile_authority(
+                &profile,
+                pramagraph_financial::engine::ENGINE_VERSION,
+                &instrument.instrument_id,
+                timeframe,
+            )?;
             let generation_timestamp_unix_seconds =
                 SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();
             let artifacts = build_neighbor_anatomy_artifacts(
@@ -545,7 +561,12 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
             )?;
             let profile: ResolutionCalibrationProfile =
                 serde_json::from_reader(File::open(profile)?)?;
-            validate_profile_for_engine(&profile, pramagraph_financial::engine::ENGINE_VERSION)?;
+            validate_profile_authority(
+                &profile,
+                pramagraph_financial::engine::ENGINE_VERSION,
+                &instrument.instrument_id,
+                timeframe,
+            )?;
             let generation_timestamp_unix_seconds =
                 SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();
             let audit = build_range_distance_geometry_audit(
@@ -575,7 +596,12 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
             )?;
             let profile: ResolutionCalibrationProfile =
                 serde_json::from_reader(File::open(profile)?)?;
-            validate_profile_for_engine(&profile, pramagraph_financial::engine::ENGINE_VERSION)?;
+            validate_profile_authority(
+                &profile,
+                pramagraph_financial::engine::ENGINE_VERSION,
+                &instrument.instrument_id,
+                timeframe,
+            )?;
             let generation_timestamp_unix_seconds =
                 SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();
             let audit = build_range_intraclass_compactness_audit(
@@ -605,7 +631,12 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
             )?;
             let profile: ResolutionCalibrationProfile =
                 serde_json::from_reader(File::open(profile)?)?;
-            validate_profile_for_engine(&profile, pramagraph_financial::engine::ENGINE_VERSION)?;
+            validate_profile_authority(
+                &profile,
+                pramagraph_financial::engine::ENGINE_VERSION,
+                &instrument.instrument_id,
+                timeframe,
+            )?;
             let generation_timestamp_unix_seconds =
                 SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();
             let audit = build_range_trajectory_anatomy_audit(
@@ -635,7 +666,12 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
             )?;
             let profile: ResolutionCalibrationProfile =
                 serde_json::from_reader(File::open(profile)?)?;
-            validate_profile_for_engine(&profile, pramagraph_financial::engine::ENGINE_VERSION)?;
+            validate_profile_authority(
+                &profile,
+                pramagraph_financial::engine::ENGINE_VERSION,
+                &instrument.instrument_id,
+                timeframe,
+            )?;
             let generation_timestamp_unix_seconds =
                 SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();
             let audit = build_right_censoring_audit(
@@ -668,7 +704,12 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
             }
             let profile: ResolutionCalibrationProfile =
                 serde_json::from_reader(File::open(profile)?)?;
-            validate_profile_for_engine(&profile, pramagraph_financial::engine::ENGINE_VERSION)?;
+            validate_profile_authority(
+                &profile,
+                pramagraph_financial::engine::ENGINE_VERSION,
+                &instrument.instrument_id,
+                timeframe,
+            )?;
             let feature_bars = bars
                 .get(..frames.len())
                 .ok_or("feature frame count exceeds label-source bars")?;
@@ -708,7 +749,12 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
             }
             let profile: ResolutionCalibrationProfile =
                 serde_json::from_reader(File::open(profile)?)?;
-            validate_profile_for_engine(&profile, pramagraph_financial::engine::ENGINE_VERSION)?;
+            validate_profile_authority(
+                &profile,
+                pramagraph_financial::engine::ENGINE_VERSION,
+                &instrument.instrument_id,
+                timeframe,
+            )?;
             let feature_bars = bars
                 .get(..frames.len())
                 .ok_or("feature frame count exceeds label-source bars")?;
@@ -748,7 +794,12 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
             }
             let profile: ResolutionCalibrationProfile =
                 serde_json::from_reader(File::open(profile)?)?;
-            validate_profile_for_engine(&profile, pramagraph_financial::engine::ENGINE_VERSION)?;
+            validate_profile_authority(
+                &profile,
+                pramagraph_financial::engine::ENGINE_VERSION,
+                &instrument.instrument_id,
+                timeframe,
+            )?;
             let feature_bars = bars
                 .get(..frames.len())
                 .ok_or("feature frame count exceeds label-source bars")?;
@@ -784,7 +835,12 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
             }
             let profile: ResolutionCalibrationProfile =
                 serde_json::from_reader(File::open(profile)?)?;
-            validate_profile_for_engine(&profile, pramagraph_financial::engine::ENGINE_VERSION)?;
+            validate_profile_authority(
+                &profile,
+                pramagraph_financial::engine::ENGINE_VERSION,
+                &instrument.instrument_id,
+                timeframe,
+            )?;
             let feature_bars = bars
                 .get(..frames.len())
                 .ok_or("feature frame count exceeds label-source bars")?;

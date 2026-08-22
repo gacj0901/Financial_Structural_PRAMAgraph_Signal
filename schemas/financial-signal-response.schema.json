@@ -17,6 +17,9 @@
     "instrument": {
       "$ref": "#/$defs/Instrument"
     },
+    "label": {
+      "type": "string"
+    },
     "mode": {
       "$ref": "#/$defs/SignalMode"
     },
@@ -54,6 +57,7 @@
     "data_watermark_ns",
     "mode",
     "direction",
+    "label",
     "scales",
     "provenance"
   ],
@@ -76,6 +80,24 @@
         "UNAVAILABLE",
         "NOT_APPLICABLE",
         "STALE"
+      ]
+    },
+    "AvailableValue": {
+      "type": "object",
+      "properties": {
+        "availability": {
+          "$ref": "#/$defs/AvailabilityStatus"
+        },
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        }
+      },
+      "required": [
+        "availability"
       ]
     },
     "CalibrationScope": {
@@ -105,6 +127,78 @@
         "availability"
       ]
     },
+    "ContrastEvidenceItem": {
+      "type": "object",
+      "properties": {
+        "reasoning": {
+          "type": "string"
+        },
+        "structural_field": {
+          "type": "string"
+        },
+        "structural_value": {
+          "type": "string"
+        },
+        "technical_direction": {
+          "$ref": "#/$defs/TechnicalDirection"
+        }
+      },
+      "required": [
+        "structural_field",
+        "structural_value",
+        "technical_direction",
+        "reasoning"
+      ]
+    },
+    "ContrastState": {
+      "type": "string",
+      "enum": [
+        "CONFIRMING",
+        "CONFLICTING",
+        "MIXED",
+        "NEUTRAL",
+        "UNAVAILABLE"
+      ]
+    },
+    "CounterReading": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "UP",
+        "DOWN"
+      ]
+    },
+    "CounterReadingEvidence": {
+      "type": "object",
+      "properties": {
+        "bollinger_position": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CounterReading"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ema_extension": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "rsi_extreme": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CounterReading"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "ema_extension"
+      ]
+    },
     "Direction": {
       "type": "string",
       "enum": [
@@ -112,6 +206,64 @@
         "DOWN",
         "RANGE",
         "UNRESOLVED"
+      ]
+    },
+    "DirectionalResolution": {
+      "type": "object",
+      "properties": {
+        "calibration_scope": {
+          "$ref": "#/$defs/CalibrationScope"
+        },
+        "direction": {
+          "$ref": "#/$defs/Direction"
+        },
+        "horizon": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Horizon"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "probabilities_bp": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProbabilitiesBp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "profile_sha256": {
+          "type": "string"
+        },
+        "publication_reason": {
+          "type": "string"
+        },
+        "reliability_bp": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0
+        },
+        "sample_support": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "direction",
+        "sample_support",
+        "calibration_scope",
+        "profile_sha256",
+        "publication_reason"
       ]
     },
     "Horizon": {
@@ -166,6 +318,53 @@
           "minimum": 0
         }
       }
+    },
+    "IndicatorValues": {
+      "type": "object",
+      "properties": {
+        "adx14": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "atr14": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "bollinger_lower": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "bollinger_middle": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "bollinger_upper": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "ema20": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "ema20_slope": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "ema50": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "macd_histogram": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "rsi14": {
+          "$ref": "#/$defs/AvailableValue"
+        }
+      },
+      "required": [
+        "ema20",
+        "ema50",
+        "ema20_slope",
+        "macd_histogram",
+        "rsi14",
+        "adx14",
+        "atr14",
+        "bollinger_upper",
+        "bollinger_lower",
+        "bollinger_middle"
+      ]
     },
     "Instrument": {
       "type": "object",
@@ -242,8 +441,28 @@
         "calibration_scope": {
           "$ref": "#/$defs/CalibrationScope"
         },
+        "counter_reading": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TechnicalCounterReading"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "direction": {
           "$ref": "#/$defs/Direction"
+        },
+        "directional": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DirectionalResolution"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "horizon": {
           "anyOf": [
@@ -281,6 +500,26 @@
         },
         "structural": {
           "$ref": "#/$defs/StructuralSnapshot"
+        },
+        "structural_contrast": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TechnicalStructuralContrast"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "technical": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TechnicalDirectionHead"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "timeframe": {
           "$ref": "#/$defs/Timeframe"
@@ -337,6 +576,10 @@
         "primary_provider": {
           "type": "string"
         },
+        "request_sha256": {
+          "description": "Canonical SHA-256 of the native request that produced this response.\nThis field belongs to the native API contract; the registered Telegraph\nresponse uses `service::ServiceProvenance` and is intentionally unchanged.",
+          "type": "string"
+        },
         "resolution_calibration_version": {
           "type": [
             "string",
@@ -378,7 +621,27 @@
         "engine_version",
         "engine_config_sha256",
         "structural_vector_version",
-        "runtime_config_sha256"
+        "runtime_config_sha256",
+        "request_sha256"
+      ]
+    },
+    "RangeDetection": {
+      "type": "object",
+      "properties": {
+        "adx14": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "ema_separation_atr": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "is_range": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "adx14",
+        "ema_separation_atr",
+        "is_range"
       ]
     },
     "RuntimeStatus": {
@@ -408,6 +671,24 @@
       "enum": [
         "CONFIRMED",
         "LIVE_PREVIEW"
+      ]
+    },
+    "StructuralContrast": {
+      "type": "object",
+      "properties": {
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContrastEvidenceItem"
+          }
+        },
+        "state": {
+          "$ref": "#/$defs/ContrastState"
+        }
+      },
+      "required": [
+        "state",
+        "evidence"
       ]
     },
     "StructuralSnapshot": {
@@ -471,6 +752,86 @@
         "source_watermark"
       ]
     },
+    "TechnicalCounterReading": {
+      "type": "object",
+      "properties": {
+        "direction": {
+          "$ref": "#/$defs/CounterReading"
+        },
+        "evidence": {
+          "$ref": "#/$defs/CounterReadingEvidence"
+        }
+      },
+      "required": [
+        "direction",
+        "evidence"
+      ]
+    },
+    "TechnicalDirection": {
+      "type": "string",
+      "enum": [
+        "UP",
+        "DOWN",
+        "RANGE",
+        "UNAVAILABLE"
+      ]
+    },
+    "TechnicalDirectionHead": {
+      "type": "object",
+      "properties": {
+        "bars_used": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "direction": {
+          "$ref": "#/$defs/TechnicalDirection"
+        },
+        "indicators": {
+          "$ref": "#/$defs/IndicatorValues"
+        },
+        "range_detection": {
+          "$ref": "#/$defs/RangeDetection"
+        },
+        "votes": {
+          "$ref": "#/$defs/VoteBreakdown"
+        }
+      },
+      "required": [
+        "direction",
+        "votes",
+        "range_detection",
+        "indicators",
+        "bars_used"
+      ]
+    },
+    "TechnicalStructuralContrast": {
+      "type": "object",
+      "properties": {
+        "counter_reading": {
+          "$ref": "#/$defs/TechnicalCounterReading"
+        },
+        "structural": {
+          "$ref": "#/$defs/StructuralSnapshot"
+        },
+        "structural_contrast": {
+          "$ref": "#/$defs/StructuralContrast"
+        },
+        "technical": {
+          "$ref": "#/$defs/TechnicalDirectionHead"
+        },
+        "timeframe": {
+          "$ref": "#/$defs/Timeframe"
+        }
+      },
+      "required": [
+        "timeframe",
+        "structural",
+        "technical",
+        "counter_reading",
+        "structural_contrast"
+      ]
+    },
     "Timeframe": {
       "type": "string",
       "enum": [
@@ -480,6 +841,29 @@
         "H4",
         "D1",
         "W1"
+      ]
+    },
+    "VoteBreakdown": {
+      "type": "object",
+      "properties": {
+        "ema_slope": {
+          "$ref": "#/$defs/TechnicalDirection"
+        },
+        "ema_trend": {
+          "$ref": "#/$defs/TechnicalDirection"
+        },
+        "macd": {
+          "$ref": "#/$defs/TechnicalDirection"
+        },
+        "rsi_centerline": {
+          "$ref": "#/$defs/TechnicalDirection"
+        }
+      },
+      "required": [
+        "ema_trend",
+        "ema_slope",
+        "macd",
+        "rsi_centerline"
       ]
     }
   }

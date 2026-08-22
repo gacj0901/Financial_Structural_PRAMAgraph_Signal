@@ -1,323 +1,147 @@
-# FINANCIAL STRUCTURAL PRAMAGRAPH SIGNAL — FREEZE MANIFEST
+# FINANCIAL STRUCTURAL PRAMAGRAPH SIGNAL — CUSTODY MANIFEST
 
-## Project Identity
-- **Project**: Financial Structural PRAMAgraph Signal
-- **Freeze Designation**: `financial-v0.1.0-freeze`
-- **Description**: Deterministic multi-scale financial intelligence combining conventional price-state analysis with an independent PRAMAgraph structural reading. Returns UP/DOWN/RANGE market-state classification, structural contrast, data availability, and reproducible provenance without LLM mediation.
+This file records immutable public compatibility boundaries and the status of development
+evidence. It does **not** freeze ordinary implementation work and it does not promote any
+calibration profile. Internal fixes may be deployed without a new Telegraph registration
+provided every public invariant below remains unchanged.
 
-## Source Control Baseline
+## Public Telegraph registration
 
-### Source Freeze Commit
-- **Repository**: Financial Structural PRAMAgraph Signal
-- **Branch**: `main`
-- **Source Commit SHA**: `c1ebc99` ("legal: switch project to proprietary license")
-- **Source Commit Contains**: All Financial source + profiles + Telegraph adapter/config + native response + cross-asset + calibration protocol
+- Miner ID: `111`
+- Slug: `financial-structural-pramagraph-signal`
+- Name: `Financial Structural PRAMAgraph Signal`
+- Protocol: `generic`
+- Intent: `FINANCIAL_DATA`
+- Registration date shown by Telegraph Explorer: `2026-08-21`
+- Base URL: `https://pramagraph-financial-h1-production.up.railway.app`
+- External endpoint: `POST /v1/telegraph/financial-data`
+- Registered timeframes: `D1`, `W1`
+- Registered sources: `AUTO`, `SUPPLIED_CORPUS`
+- On-chain transform: `direct`
+- Minimum price: `0.01 USDC`
+- Registered YAML byte SHA-256:
+  `sha256:f7e1fba0d171979cd7c4881ac9058405e070ca9bf6b9e0edd2894f9497d323d0`
 
-### Freeze Manifest Commit
-- **Manifest Commit SHA**: To be recorded after manifest commit
-- **Manifest References**: `source_commit_sha = c1ebc99`
+The registered description defines the top-level `label` as conventional deterministic
+price-state analysis combined with an **independent** PRAMAgraph structural reading. D_O,
+ODCE and K-MEM observables are not silently mapped into price direction.
 
-### Freeze Tag
-- **Annotated Tag**: `financial-v0.1.0-freeze` (created after manifest commit)
+### Compatibility invariants
 
-## Package / Crate Versioning
-- **Crate Name**: `pramagraph-financial`
-- **Version**: `0.1.0`
-- **Edition**: `2021`
-- **License**: Proprietary (see LICENSE file)
+The following require a registration review before alteration:
 
-## Rust Toolchain
-- **Rustc Version**: `1.97.1 (8bab26f4f 2026-07-14)`
-- **Edition**: `2021`
-- **Profile Release**: LTO=fat, codegen-units=1, strip=true
+1. miner ID, slug, protocol, intent, name or base URL;
+2. external path or HTTP method;
+3. D1/W1 input shape and required response fields;
+4. on-chain source paths `instrument.base`, `timeframe`, `label`, and `as_of_ns`;
+5. the declared interpretation of the top-level label.
 
-## Frozen Protocol Artifact
+Bug fixes, provider hardening, provenance corrections, regenerated schemas, readiness checks,
+development diagnostics and fail-closed calibration changes do not alter those invariants.
 
-### Calibration Protocol (Preregistered)
-- **Protocol ID**: `financial_first_passage_weighted_neighbors_v2`
-- **Schema**: `pramagraph.calibration_protocol.v1`
-- **Structural Vector Version**: `financial_structural_vector_v2`
-- **Engine Version**: `prama-protokol-rs/0.3.0@ddb91cad+D_O_v9-financial-adapter-v2+ODCE-v0.1-financial-normalization-v1+K-MEM-K1-tau32`
-- **Development Data Cutoff**: `1755734400000000000` ns (2025-08-21T00:00:00Z) — historical/development data cutoff
-- **Protocol Freeze Timestamp**: `1766304000000000000` ns (2026-07-21T00:00:00Z) — actual protocol freeze/preregistration timestamp
-- **Protocol SHA-256**: `sha256:d715790d6ce60d0f53a0672becc2bad1d354cd51b2fbb46c17eaedbcf54ea740`
+## Source-control history
 
-### Calibration Procedure (Frozen)
-- **Split Rules**: `test_count = integer_sqrt(frames.len()).max(1)`, `validation_count = test_count`, strict temporal order, no lookahead
-- **Neighbor Selection**: `neighbor_count = integer_sqrt(training_samples).max(1)`, `minimum_support = integer_log2(training_samples).max(1).min(neighbor_count)`, `max_distance = max_kth_distance_on_validation`, `distance_power ∈ {1.0, 2.0}` selected on validation
-- **Voting**: Weight = `1 / distance^power`, probabilities = basis points from weighted votes, directional edge = `top_prob - second_prob`, tie-break = direction order priority, horizon = weighted by vote weight
-- **First Passage**: D1 max 10 bars / W1 max 8 bars, volatility lookback D1=28 / W1=12, symmetric barriers, simultaneous hit → RANGE, no hit → RANGE_AT_MAXIMUM_HORIZON
-- **Publication Gates**: Requires positive Brier skill, directional edge gate (median on validation), reliability gate (Wilson lower bound per direction), profile eligible only with preregistered protocol SHA-256 + prospective evidence
+- Historical tag: `financial-v0.1.0-freeze`
+- Tag target observed before the current development update:
+  `8bd12a2e6bf79871bc6203c1adc39983ff24e152`
+- The earlier `c1ebc99` commit does **not** contain the complete nine-profile package and must
+  not be used as the reproduction target for that package.
+- The tag is historical evidence only; the current development working tree is not represented
+  by that tag until the user deliberately creates a later commit/tag.
 
-## Calibration Profile Artifacts (SHA-256)
+No new version, commit, tag or release is created by ordinary development updates.
 
-| Profile | SHA-256 | Parameters Selected On | Eligible |
-|---------|---------|------------------------|----------|
-| `crypto_binance_BTCUSDT_D1.resolution.json` | `a4a833a86a77854102a2ed438a77268e17ff19cb94be233be71510807188a667` | TEMPORAL_VALIDATION | false |
-| `crypto_binance_BTCUSDT_W1.resolution.json` | `6626882402419b505e13158e026dc1f6a3f028738949f7a4c626d0578240f8c1` | TEMPORAL_VALIDATION | false |
-| `crypto_binance_XRPUSDT_D1.resolution.json` | `2393b896344cf04a728c86d3f90442a6c1955403835bae17a4683966b5f053bf` | TEMPORAL_VALIDATION | false |
-| `crypto_binance_XRPUSDT_W1.resolution.json` | `a630df6c91c618177d21c1132b3ac3729070898584ff5274ba2d4969b29d6f3d` | TEMPORAL_VALIDATION | false |
-| `futures_massive_GC_D1.resolution.json` | `d7959b8e2f1187499c80d22d66006fff1776bbb91e52bde44c7f2c7acf820876` | TEMPORAL_VALIDATION | false |
-| `futures_massive_GC_W1.resolution.json` | `9deb8ef6bb8da4b76f8b5c52e7cf56a19371c1720a12a8db4ca35553021fe6b6` | TEMPORAL_VALIDATION | false |
-| `index_massive_NDX_D1.resolution.json` | `16e5a907ac00641349b2a16f816f7ad6d1a4bf9c062e107a3f70730d4796f666` | TEMPORAL_VALIDATION | false |
-| `index_massive_SPX_D1.resolution.json` | `5ef3ddb9cf571495c554228484624a5eb5a6eed44245ee222a528b2e868702e3` | TEMPORAL_VALIDATION | false |
-| `index_massive_SPX_W1.resolution.json` | `ef05903d9df665fe0b7c109913de20d88b34bbd5f07cb3dff35ed57a2be6d26a` | TEMPORAL_VALIDATION | false |
+## Calibration-protocol identity
 
-**Note**: All 9 profiles use `parameters_selected_on: "TEMPORAL_VALIDATION"` and `profile_eligible_for_publication: false`. None have been retroactively promoted.
+- Protocol ID: `financial_first_passage_weighted_neighbors_v2`
+- Schema: `pramagraph.calibration_protocol.v1`
+- Structural vector: `financial_structural_vector_v2`
+- Engine:
+  `prama-protokol-rs/0.3.0@ddb91cad+D_O_v9-financial-adapter-v2+ODCE-v0.1-financial-normalization-v1+K-MEM-K1-tau32`
+- Registered protocol byte identity:
+  `sha256:d715790d6ce60d0f53a0672becc2bad1d354cd51b2fbb46c17eaedbcf54ea740`
+- Historical development-data marker:
+  `1755734400000000000` (`2025-08-21T00:00:00Z`)
+- Conservative Telegraph evidence boundary:
+  `1787443200000000000` (`2026-08-23T00:00:00Z`). Telegraph Explorer exposes the
+  registration date, not an exact instant; this boundary is safely after the displayed date
+  in every civil timezone.
 
-## NativeFinancialResponse Contract
-- **Schema**: `pramagraph.telegraph.financial_data` (internal native schema)
-- **Intent**: `FINANCIAL_DATA`
-- **Key Fields**: `signal.direction`, `signal.direction_basis` (TECHNICAL/CALIBRATED_RESOLUTION), `signal.calibration`, `signal.horizon`, `quality`, `instrument`, `detail`, `provenance`, `response_sha256`
-- **Deterministic Hashing**: `response_sha256` computed from canonical JSON serialization
+The legacy numeric metadata value `1766304000000000000` was previously described as
+`2026-07-21T00:00:00Z`; that description was false (the number represents
+`2025-12-21T08:00:00Z`). It is retained only to preserve the registered protocol byte/hash
+identity and is not accepted as evidence of a preregistration date.
 
-## Telegraph FINANCIAL_DATA v1 Adapter
-- **Miner ID**: 111
-- **Slug**: `financial-structural-pramagraph-signal`
-- **Endpoint**: `POST /v1/telegraph/financial-data`
-- **Registered Input**: `asset` (required), `timeframe` (D1/W1, default D1), `source` (AUTO/SUPPLIED_CORPUS)
-- **Registered Output**: `schema`, `intent`=FINANCIAL_DATA, `status`, `label`, `reason`, `instrument`, `timeframe`, `as_of_ns`, `market`, `structural`, `technical`, `counter_reading`, `structural_contrast`, `provenance`, `response_sha256`
-- **Signal Mapping**: `label_field: label`, `reason_field: reason`
-- **On-Chain Transform**: direct
-- **Schema Version**: 1
+`--preregistered-protocol-sha256` must equal the exact protocol SHA above. Supplying the hash
+does not transform old data into prospective evidence. Every outcome used for parameter
+selection must mature by the conservative boundary, and an untouched evaluation segment must
+begin strictly after it before it can be considered prospective.
 
-## Calibration Protocol Hash
-- **Preregistered Protocol SHA-256**: `sha256:d715790d6ce60d0f53a0672becc2bad1d354cd51b2fbb46c17eaedbcf54ea740`
-- **Development Data Cutoff**: `1755734400000000000` (2025-08-21T00:00:00Z) — historical/development data cutoff
-- **Protocol Freeze Timestamp**: `1766304000000000000` (2026-07-21T00:00:00Z) — actual protocol freeze/preregistration timestamp
-- **Generated By**: `cargo run -- freeze-protocol` (deterministic)
+## Development calibration profiles
 
-## Deterministic Hash-Producing Components
-1. **Calibration Protocol SHA-256**: Canonical JSON → SHA-256
-2. **Profile SHA-256**: Each `ResolutionCalibrationProfile` hashed canonically (field-invariant)
-3. **Response SHA-256**: NativeFinancialResponse + Telegraph adapter both compute canonical SHA-256
-4. **Structural Vector SHA-256**: Each `StructuralFrame.vector` hashed during construction
+All committed profiles currently state:
 
-## Deployment / Runtime Configuration
-- **Base URL**: `https://pramagraph-financial-h1-production.up.railway.app`
-- **Auth Type**: none
-- **Rate Limit**: 20/sec
-- **Cache TTL**: 60 sec
-- **Circuit Breaker**: 5 errors / 30 sec cooldown
-- **Endpoints**: `POST /v1/telegraph/financial-data`
-- **Timeframes Supported**: D1, W1
-- **Sources**: AUTO, SUPPLIED_CORPUS
-
-## Development-Only Files (Not Frozen)
-```
-?? calibration/profiles/crypto_binance_BTCUSDT_W1.resolution.json
-?? calibration/profiles/crypto_binance_XRPUSDT_D1.resolution.json
-?? calibration/profiles/crypto_binance_XRPUSDT_W1.resolution.json
-?? calibration/profiles/futures_massive_GC_D1.resolution.json
-?? calibration/profiles/futures_massive_GC_W1.resolution.json
-?? calibration/profiles/index_massive_NDX_D1.resolution.json
-?? calibration/profiles/index_massive_SPX_D1.resolution.json
-?? calibration/profiles/index_massive_SPX_W1.resolution.json
-?? src/cross_asset.rs
-?? src/native_response.rs
+```text
+parameters_selected_on: TEMPORAL_VALIDATION
+profile_eligible_for_publication: false
+untouched_test: false
+evidence_status: DEVELOPMENT_AUDIT_CONSUMED
 ```
 
-## Mutable Artifacts (Runtime Behavior Without Source Change)
-- **External Market Data**: CSV/bar data from Binance, Stooq, Massive — NOT frozen, empirical inputs
-- **Prospective Evidence**: Post-freeze observations (post 2026-07-21T00:00:00Z) — NOT frozen, pending evaluation
-- **Runtime Instrument Resolution**: Resolver catalog (source-controlled) maps aliases to instruments
+| Profile | Raw-file SHA-256 |
+|---|---|
+| `crypto_binance_BTCUSDT_D1.resolution.json` | `a4a833a86a77854102a2ed438a77268e17ff19cb94be233be71510807188a667` |
+| `crypto_binance_BTCUSDT_W1.resolution.json` | `6626882402419b505e13158e026dc1f6a3f028738949f7a4c626d0578240f8c1` |
+| `crypto_binance_XRPUSDT_D1.resolution.json` | `2393b896344cf04a728c86d3f90442a6c1955403835bae17a4683966b5f053bf` |
+| `crypto_binance_XRPUSDT_W1.resolution.json` | `a630df6c91c618177d21c1132b3ac3729070898584ff5274ba2d4969b29d6f3d` |
+| `futures_massive_GC_D1.resolution.json` | `d7959b8e2f1187499c80d22d66006fff1776bbb91e52bde44c7f2c7acf820876` |
+| `futures_massive_GC_W1.resolution.json` | `9deb8ef6bb8da4b76f8b5c52e7cf56a19371c1720a12a8db4ca35553021fe6b6` |
+| `index_massive_NDX_D1.resolution.json` | `16e5a907ac00641349b2a16f816f7ad6d1a4bf9c062e107a3f70730d4796f666` |
+| `index_massive_SPX_D1.resolution.json` | `5ef3ddb9cf571495c554228484624a5eb5a6eed44245ee222a528b2e868702e3` |
+| `index_massive_SPX_W1.resolution.json` | `ef05903d9df665fe0b7c109913de20d88b34bd5f07cb3dff35ed57a2be6d26a` |
 
-## Freeze Interfaces (Exact)
+These hashes identify the currently committed profile bytes; they are not performance claims.
 
-### A. Calibration (Frozen)
-- Brier skill, empirical reliability, reliability lower-bound, support semantics, neighbor voting, distance calculation, directional edge gate, probability construction, first-passage horizon, no-lookahead, publication eligibility, prospective preregistration, calibration-scope semantics — ALL FROZEN
+## Diagnostic lineage
 
-### B. NativeFinancialResponse (Frozen)
-- Schema, fields, deterministic hashing, direction_basis (TECHNICAL/CALIBRATED_RESOLUTION), calibration section (probabilities_bp in bp summing to 10000, reliability_bp, sample_support), horizon (p25/median/p75 bars), quality, provenance, cross_asset — ALL FROZEN
+The detailed BTC diagnostics in `results/diagnostics/` were regenerated on 2026-08-21 against
+the current BTC D1 profile hash
+`sha256:e985d84b5583f7a17970955a764424c915d9279e17d79811b5ee82709d3e2f1f`.
+They are development diagnostics, not prospective production evidence. The JSONL neighbor
+dump is bound to the same run through `neighbor_anatomy_summary.json`. Diagnostics must be
+regenerated whenever the profile identity changes.
 
-### C. Diversification (Frozen)
-- Generic unseen-instrument resolution via resolver catalog (ETH, SOL as validation cases, not architectural special cases)
+## Reproducibility and validation
 
-### D. Cross-Asset (Frozen)
-- Structural relation layer (cosine similarity, state agreements, relation classification), symmetric pair-order, no calibration transfer, no heuristic confidence
+The toolchain is pinned by `rust-toolchain.toml`; the Docker builder and CI use the same Rust
+release. The PRAMA dependency is pinned to Git revision
+`ddb91cad792fed3674aa81a5650fab6c187fc1a5`.
 
-### E. Telegraph FINANCIAL_DATA v1 (Frozen)
-- Registered input/output contracts, intent=FINANCIAL_DATA, adapter semantics — ALL FROZEN
+Standard validation:
 
-## Prospective Calibration Boundary
-```
-DEVELOPMENT / TEMPORAL VALIDATION DATA
-    ↓
-DEVELOPMENT DATA CUTOFF (2025-08-21T00:00:00Z)
-    ↓
-TEMPORAL_VALIDATION
-    ↓
-PARAMETER SELECTION
-    ↓
-PROTOCOL FREEZE / SHA-256
-    ↓
-ACTUAL PREREGISTRATION TIMESTAMP (2026-07-21T00:00:00Z)
-    ↓
-===============================
-PROSPECTIVE EVIDENCE BOUNDARY
-===============================
-    ↓
-NEW OBSERVATIONS UNAVAILABLE AT FREEZE TIME
-    ↓
-PROSPECTIVE EVALUATION
-    ↓
-POSSIBLE PUBLICATION ELIGIBILITY
-```
-
-**Current Status**: All 9 profiles are TEMPORAL_VALIDATION (development evidence). No profiles have prospective evidence. No profiles are publication eligible.
-
-## Security / Secrets Audit
-- **API Keys**: None
-- **Wallet Private Keys**: None
-- **Tokens/Secrets**: None
-- **Private Endpoints**: None
-- **Credentials**: None
-- **Configuration**: `telegraph/miner.local.yaml` uses `auth.type: none`, no secrets in source
-
-## Known Limitations (Preserved)
-1. **Negative Brier Skill**: XRPUSDT W1 (-13.6%), NDX D1 (-9.9%)
-2. **Reliability Gate Failures**: GC D1 (reliability 3655 < min 7280)
-3. **Unavailable Prospective Evidence**: No post-freeze evaluation performed
-4. **Unavailable Calibration for Unseen Instruments**: ETH, SOL resolve but `calibration.calibrated=false`, `calibration.status=UNAVAILABLE`
-5. **Runtime Insufficient Support**: Queries with `vote.support < minimum_support` return UNRESOLVED
-6. **XRPUSDT D1 UP Direction**: Reliability lower bound (3195) < minimum (4934) — UP predictions fail gate
-7. **SPX W1 All Directions**: All direction-specific reliability bounds below minimum
-
-## Reproducibility Procedure
-```bash
-# 1. Clean checkout
-git clone <repo-url>
-cd Financial-Structural-PRAMAgraph-Signal
-git checkout c1ebc99
-
-# 2. Verify toolchain
-rustc --version  # 1.97.1
-
-# 3. Standard verification
-cargo fmt --check
+```text
+cargo fmt --all -- --check
 cargo clippy --all-targets --all-features -- -D warnings
-cargo build --release
-cargo test --all-targets  # 96 tests
-
-# 4. Protocol hash verification
-cargo run -- freeze-protocol
-# Verify output matches: sha256:d715790d6ce60d0f53a0672becc2bad1d354cd51b2fbb46c17eaedbcf54ea740
-# Verify development data cutoff: 1755734400000000000 (2025-08-21T00:00:00Z)
-# Verify protocol freeze timestamp: 1766304000000000000 (2026-07-21T00:00:00Z)
-
-# 5. Profile hash verification
-sha256sum calibration/profiles/*.json
-# Verify against manifest table above
+cargo test --all-targets --all-features
+cargo run -- schema --output schemas
+cargo run -- audit-corpus --input data/corpus --output results/corpus-audit.json
 ```
 
-## Verification Results (Fresh)
-```
-cargo fmt --check                                    PASS
-cargo clippy --all-targets --all-features -D warnings  PASS
-cargo build --release                                PASS
-cargo test --all-targets                             96 PASS, 0 FAIL
-```
+Validation results must be recorded only after those commands are actually executed against
+the current working tree. Historical `96 PASS` statements are not evidence for later source
+states.
 
-## Final Git Status (After Source Freeze Commit)
-```
-M calibration/profiles/crypto_binance_BTCUSDT_D1.resolution.json
-M src/calibration.rs
-M src/historical.rs
-M src/lib.rs
-M src/main.rs
-M src/provider.rs
-M src/resolver.rs
-M src/service.rs
-M src/signal.rs
-M telegraph/miner.local.yaml
-A calibration/profiles/crypto_binance_BTCUSDT_W1.resolution.json
-A calibration/profiles/crypto_binance_XRPUSDT_D1.resolution.json
-A calibration/profiles/crypto_binance_XRPUSDT_W1.resolution.json
-A calibration/profiles/futures_massive_GC_D1.resolution.json
-A calibration/profiles/futures_massive_GC_W1.resolution.json
-A calibration/profiles/index_massive_NDX_D1.resolution.json
-A calibration/profiles/index_massive_SPX_D1.resolution.json
-A calibration/profiles/index_massive_SPX_W1.resolution.json
-A src/cross_asset.rs
-A src/native_response.rs
-```
+## Publication rule
 
-## Files Changed During Freeze Phase
-- **Modified (tracked)**: 10 files
-- **Added (tracked)**: 10 files (8 calibration profiles + 2 source modules)
-- **Added (freeze artifact)**: 1 `FREEZE_MANIFEST.md`
-- **Functional Changes**: **None** — all modifications are inspection/verification/fixes for verification
+No current profile may publish calibrated direction or horizon. Future publication requires,
+at minimum:
 
-## Tests Added During Freeze Phase
-- **None** — existing 96 tests suffice; freeze invariants verified by existing test suite
+1. exact protocol identity;
+2. post-registration untouched evidence;
+3. positive probabilistic skill;
+4. adequate coverage and minimum support;
+5. per-predicted-class reliability, including RANGE;
+6. instrument, timeframe, engine and structural-vector identity checks.
 
-## Final Test Count
-- **Total**: 96 tests (0 failed)
-- **By Module**: calibration (22), native_response (8), signal (6), technical (13), structural (3), historical (10), provider (3), resolver (2), service (1), logging (3), observation (4), engine (3), dynamics (3)
-
----
-
-### Source Freeze Commit
-- **SHA**: `c1ebc99` ("legal: switch project to proprietary license")
-- **Contains**: All Financial source + profiles + Telegraph adapter/config + native response + cross-asset + calibration protocol
-
-### Freeze Manifest Commit
-- **SHA**: To be recorded after manifest commit (this manifest references `source_commit_sha = c1ebc99`)
-
-### Freeze Tag
-- **Annotated Tag**: `financial-v0.1.0-freeze` (created after manifest commit, references manifest commit)
-
-### Protocol SHA-256
-`sha256:d715790d6ce60d0f53a0672becc2bad1d354cd51b2fbb46c17eaedbcf54ea740`
-
-### Development Data Cutoff
-`1755734400000000000` ns (2025-08-21T00:00:00Z) — historical/development data cutoff
-
-### Protocol Freeze Timestamp
-`1766304000000000000` ns (2026-07-21T00:00:00Z) — actual protocol freeze/preregistration timestamp
-
-### Verification Result
-```
-cargo fmt --check                                    PASS
-cargo clippy --all-targets --all-features -D warnings  PASS
-cargo build --release                                PASS
-cargo test --all-targets                             96 PASS, 0 FAIL
-```
-
-### Final Git Status (After Source Freeze Commit)
-```
-M calibration/profiles/crypto_binance_BTCUSDT_D1.resolution.json
-M src/calibration.rs
-M src/historical.rs
-M src/lib.rs
-M src/main.rs
-M src/provider.rs
-M src/resolver.rs
-M src/service.rs
-M src/signal.rs
-M telegraph/miner.local.yaml
-A calibration/profiles/crypto_binance_BTCUSDT_W1.resolution.json
-A calibration/profiles/crypto_binance_XRPUSDT_D1.resolution.json
-A calibration/profiles/crypto_binance_XRPUSDT_W1.resolution.json
-A calibration/profiles/futures_massive_GC_D1.resolution.json
-A calibration/profiles/futures_massive_GC_W1.resolution.json
-A calibration/profiles/index_massive_NDX_D1.resolution.json
-A calibration/profiles/index_massive_SPX_D1.resolution.json
-A calibration/profiles/index_massive_SPX_W1.resolution.json
-A src/cross_asset.rs
-A src/native_response.rs
-```
-
-### Confirmation
-- ✅ No historical data was relabeled as prospective
-- ✅ 2025-08-21 is the **development data cutoff** (not preregistration boundary)
-- ✅ 2026-07-21 is the **actual protocol freeze/preregistration timestamp**
-- ✅ No existing profile was promoted — all remain TEMPORAL_VALIDATION
-- ✅ Source freeze commit: `c1ebc99`
-- ✅ Protocol SHA-256: `sha256:d715790d6ce60d0f53a0672becc2bad1d354cd51b2fbb46c17eaedbcf54ea740`
-- ✅ Final verification: 96 PASS / 0 FAIL
-- ✅ Freeze tag: `financial-v0.1.0-freeze`
-
----
-
-**FINANCIAL FREEZE — GENUINELY REPRODUCIBLE FROM COMMITTED SOURCE** 🏁
+Until those conditions hold, the calibrated resolver remains `UNRESOLVED` and the registered
+technical/structural response continues to operate independently.

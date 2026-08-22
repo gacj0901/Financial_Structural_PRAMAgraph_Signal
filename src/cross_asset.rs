@@ -143,16 +143,19 @@ pub fn compute_cross_asset_relation(
         .map(|f| f.vector.vector_sha256.clone())
         .unwrap_or_default();
 
+    let overlap_start_ns = aligned_pairs
+        .first()
+        .map(|(primary, _)| primary.timestamp_ns)
+        .unwrap_or(0);
+    let overlap_end_ns = aligned_pairs
+        .last()
+        .map(|(primary, _)| primary.timestamp_ns)
+        .unwrap_or(0);
+
     Some(CrossAssetRelation {
         reference_instrument_id: reference_instrument_id.to_string(),
-        overlap_start_ns: aligned_pairs
-            .first()
-            .map(|(p, _)| p.timestamp_ns)
-            .unwrap_or(0),
-        overlap_end_ns: aligned_pairs
-            .last()
-            .map(|(p, _)| p.timestamp_ns)
-            .unwrap_or(0),
+        overlap_start_ns,
+        overlap_end_ns,
         aligned_observation_count: aligned_pairs.len(),
         structural_vector_cosine_similarity: cosine_similarity,
         prama_state_agreement: prama_agreement,
@@ -167,7 +170,10 @@ pub fn compute_cross_asset_relation(
             reference_vector_sha256,
             structural_engine_version: ENGINE_VERSION.to_string(),
             structural_vector_version: STRUCTURAL_VECTOR_VERSION.to_string(),
-            computed_at_ns: chrono::Utc::now().timestamp_nanos_opt().unwrap_or(0),
+            // The relation is a deterministic function of the aligned prefix;
+            // its as-of time is therefore the last aligned observation rather
+            // than wall-clock execution time.
+            computed_at_ns: overlap_end_ns,
         },
     })
 }
@@ -624,6 +630,33 @@ mod tests {
         assert_eq!(r1.aligned_observation_count, r2.aligned_observation_count);
         assert_eq!(r1.prama_state_agreement, r2.prama_state_agreement);
         assert_eq!(r1.relation_classification, r2.relation_classification);
+    }
+
+    #[test]
+    fn cross_asset_relation_is_deterministic_for_identical_inputs() {
+        let primary_frames: Vec<_> = (0..50).map(|i| make_test_frame(1000 * i, "UP")).collect();
+        let reference_frames: Vec<_> = (0..50).map(|i| make_test_frame(1000 * i, "DOWN")).collect();
+        let config = AlignmentConfig::default();
+
+        let first = compute_cross_asset_relation(
+            "inst_A",
+            &primary_frames,
+            "inst_B",
+            &reference_frames,
+            config.clone(),
+        )
+        .expect("relation");
+        let second = compute_cross_asset_relation(
+            "inst_A",
+            &primary_frames,
+            "inst_B",
+            &reference_frames,
+            config,
+        )
+        .expect("relation");
+
+        assert_eq!(first, second);
+        assert_eq!(first.provenance.computed_at_ns, first.overlap_end_ns);
     }
 
     #[test]

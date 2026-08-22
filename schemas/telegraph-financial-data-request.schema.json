@@ -11,10 +11,11 @@
       "default": "AUTO"
     },
     "timeframe": {
-      "$ref": "#/$defs/Timeframe",
+      "$ref": "#/$defs/RegisteredFinancialTimeframe",
       "default": "D1"
     }
   },
+  "additionalProperties": false,
   "required": [
     "asset"
   ],
@@ -26,13 +27,9 @@
         "SUPPLIED_CORPUS"
       ]
     },
-    "Timeframe": {
+    "RegisteredFinancialTimeframe": {
       "type": "string",
       "enum": [
-        "M1",
-        "M5",
-        "H1",
-        "H4",
         "D1",
         "W1"
       ]

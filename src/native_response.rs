@@ -5,12 +5,12 @@
 //! uses the calibration machinery exactly as implemented.
 
 use crate::{
-    AssetClass, CalibrationScope, Direction, Horizon, Instrument, ProbabilitiesBp, RuntimeStatus,
-    TechnicalCounterReading, TechnicalDirectionHead, TechnicalStructuralContrast, Timeframe,
+    canonical, AssetClass, CalibrationScope, Direction, Horizon, Instrument, ProbabilitiesBp,
+    RuntimeStatus, TechnicalCounterReading, TechnicalDirectionHead, TechnicalStructuralContrast,
+    Timeframe,
 };
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
 #[allow(unused_imports)]
 use std::collections::BTreeMap;
 
@@ -298,12 +298,8 @@ impl NativeFinancialResponse {
     pub fn verify_hash(&self) -> bool {
         let mut clone = self.clone();
         clone.response_sha256 = None;
-        let canonical = serde_json::to_string(&clone).expect("response serializes");
-        let expected = format!(
-            "sha256:{}",
-            hex::encode(Sha256::digest(canonical.as_bytes()))
-        );
-        self.response_sha256.as_ref() == Some(&expected)
+        canonical::sha256(&clone)
+            .is_ok_and(|expected| self.response_sha256.as_ref() == Some(&expected))
     }
 }
 
@@ -809,11 +805,7 @@ mod tests {
 
         let mut clone = native.clone();
         clone.response_sha256 = None;
-        let canonical = serde_json::to_string(&clone).expect("response serializes");
-        let expected = format!(
-            "sha256:{}",
-            hex::encode(Sha256::digest(canonical.as_bytes()))
-        );
+        let expected = canonical::sha256(&clone).expect("response canonicalizes");
         native.response_sha256 = Some(expected.clone());
 
         assert!(native.verify_hash());

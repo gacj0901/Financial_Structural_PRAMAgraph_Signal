@@ -353,7 +353,7 @@ pub async fn binance_closed_daily(
         return Err(ProviderError::Unsupported(instrument.instrument_id.clone()));
     }
     let limit_string = limit.to_string();
-    let payload: Value = reqwest::Client::new()
+    let payload: Value = provider_client()?
         .get(BINANCE_KLINES_URL)
         .query(&[
             ("symbol", instrument.symbol.as_str()),
@@ -376,7 +376,7 @@ pub async fn binance_closed_m1(
         return Err(ProviderError::Unsupported(instrument.instrument_id.clone()));
     }
     let limit_string = limit.to_string();
-    let payload: Value = reqwest::Client::new()
+    let payload: Value = provider_client()?
         .get(BINANCE_KLINES_URL)
         .query(&[
             ("symbol", instrument.symbol.as_str()),
@@ -399,7 +399,7 @@ pub async fn binance_closed_m5(
         return Err(ProviderError::Unsupported(instrument.instrument_id.clone()));
     }
     let limit_string = limit.to_string();
-    let payload: Value = reqwest::Client::new()
+    let payload: Value = provider_client()?
         .get(BINANCE_KLINES_URL)
         .query(&[
             ("symbol", instrument.symbol.as_str()),
@@ -422,7 +422,7 @@ pub async fn binance_closed_h1(
         return Err(ProviderError::Unsupported(instrument.instrument_id.clone()));
     }
     let limit_string = limit.to_string();
-    let payload: Value = reqwest::Client::new()
+    let payload: Value = provider_client()?
         .get(BINANCE_KLINES_URL)
         .query(&[
             ("symbol", instrument.symbol.as_str()),
@@ -445,7 +445,7 @@ pub async fn binance_closed_h4(
         return Err(ProviderError::Unsupported(instrument.instrument_id.clone()));
     }
     let limit_string = limit.to_string();
-    let payload: Value = reqwest::Client::new()
+    let payload: Value = provider_client()?
         .get(BINANCE_KLINES_URL)
         .query(&[
             ("symbol", instrument.symbol.as_str()),

@@ -75,21 +75,22 @@
         "structural": { ... },
         "technical": { ... },
         "counter_reading": { ... },
-        "structural_contrast": { "state": "CONFIRMING", "evidence": [...] }
+        "structural_contrast": { "state": "NEUTRAL", "evidence": [...] }
       }
     }
   ],
   "provenance": {
     "primary_provider": "supplied_corpus",
     "secondary_provider": null,
-    "source_watermark": "",
+    "source_watermark": "1700000000000000000",
     "input_window_sha256": "sha256:...",
     "engine_version": "prama-protokol-rs/0.3.0@ddb91cad+...",
-    "engine_config_sha256": "default",
+    "engine_config_sha256": "sha256:...",
     "structural_vector_version": "financial_structural_vector_v2",
     "resolution_calibration_version": null,
     "resolution_profile_sha256": null,
-    "runtime_config_sha256": "default",
+    "runtime_config_sha256": "sha256:...",
+    "request_sha256": "sha256:...",
     "response_sha256": "sha256:7a6416f51a2e33bea77628925a88b762fc52cbac986ade1cc55abc68a2845e2c"
   }
 }
@@ -171,7 +172,7 @@
     "structural": { ... },
     "technical": { ... },
     "counter_reading": { ... },
-    "structural_contrast": { "state": "CONFIRMING", "evidence": [...] }
+    "structural_contrast": { "state": "NEUTRAL", "evidence": [...] }
   },
   "directional": {
     "direction": "UP",

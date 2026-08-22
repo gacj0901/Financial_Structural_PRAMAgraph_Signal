@@ -1,5 +1,5 @@
 use crate::calibration::{
-    resolve_direction, validate_profile_for_engine, DirectionalResolution,
+    resolve_direction, validate_profile_authority, DirectionalResolution,
     ResolutionCalibrationProfile,
 };
 use crate::canonical;
@@ -23,12 +23,21 @@ use std::path::Path;
 use thiserror::Error;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
 pub struct FinancialDataRequest {
     pub asset: String,
     #[serde(default = "default_timeframe")]
+    #[schemars(with = "RegisteredFinancialTimeframe")]
     pub timeframe: Timeframe,
     #[serde(default)]
     pub source: DataSourcePreference,
+}
+
+#[derive(JsonSchema)]
+#[allow(dead_code)]
+enum RegisteredFinancialTimeframe {
+    D1,
+    W1,
 }
 
 fn default_timeframe() -> Timeframe {
@@ -76,11 +85,15 @@ pub struct FinancialDataResponse {
     pub as_of_ns: i64,
     pub market: MarketBarResponse,
     pub structural: StructuralSnapshot,
+    #[schemars(with = "TechnicalDirectionHead", required)]
     pub technical: Option<TechnicalDirectionHead>,
+    #[schemars(with = "TechnicalCounterReading", required)]
     pub counter_reading: Option<TechnicalCounterReading>,
+    #[schemars(with = "TechnicalStructuralContrast", required)]
     pub structural_contrast: Option<TechnicalStructuralContrast>,
     pub directional: Option<DirectionalResolution>,
     pub provenance: ServiceProvenance,
+    #[schemars(with = "String", required)]
     pub response_sha256: Option<String>,
 }
 
@@ -126,26 +139,9 @@ async fn build_financial_data_response_internal(
         _ => return Err(ServiceError::Asset(request.asset.clone())),
     };
 
-    // Validate timeframe - all six canonical timeframes now supported
-    if !matches!(
-        request.timeframe,
-        Timeframe::M1
-            | Timeframe::M5
-            | Timeframe::H1
-            | Timeframe::H4
-            | Timeframe::D1
-            | Timeframe::W1
-    ) {
-        return Err(ServiceError::Timeframe);
-    }
-
-    // SuppliedCorpus only has D1 data - reject intraday timeframes early
-    if request.source == DataSourcePreference::SuppliedCorpus
-        && matches!(
-            request.timeframe,
-            Timeframe::M1 | Timeframe::M5 | Timeframe::H1 | Timeframe::H4
-        )
-    {
+    // The registered Telegraph contract exposes D1 and W1 only. Keep any
+    // experimental intraday provider helpers outside this public service path.
+    if !matches!(request.timeframe, Timeframe::D1 | Timeframe::W1) {
         return Err(ServiceError::Timeframe);
     }
 
@@ -421,7 +417,7 @@ async fn build_financial_data_response_internal(
     // Return early with appropriate error for corpus-based intraday requests
     let bars = match request.timeframe {
         Timeframe::D1 => bars,
-        Timeframe::W1 => aggregate_weekly(&bars).map_err(pipeline)?,
+        Timeframe::W1 => closed_weekly_once(bars)?,
         Timeframe::M1 | Timeframe::M5 | Timeframe::H1 | Timeframe::H4 => {
             if bars.is_empty() || bars[0].timeframe == Timeframe::D1 {
                 // Corpus fallback doesn't have intraday data
@@ -473,16 +469,13 @@ async fn build_financial_data_response_internal(
         )
         .map_err(pipeline)?;
 
-    // Step 1: Compute Technical Direction Head (authoritative H1 directional)
-    let technical = crate::technical::compute_technical_direction(&bars).map_err(pipeline)?;
-
-    // Step 1: Compute Counter Reading
-    let counter_reading = crate::technical::compute_counter_reading(&bars, &technical);
-
-    // Step 1: Compute full TechnicalStructuralContrast (includes structural_contrast + components)
+    // Compute the registered technical channel once, together with its
+    // independent structural contrast.
     let technical_structural_contrast =
         crate::technical::compute_technical_structural_contrast(&bars, &structural)
             .map_err(pipeline)?;
+    let technical = technical_structural_contrast.technical.clone();
+    let counter_reading = technical_structural_contrast.counter_reading.clone();
 
     // Optional: calibration-based directional (KNN) for backward compatibility / provenance
     // Optional: calibration-based directional (KNN) for backward compatibility / provenance
@@ -495,7 +488,13 @@ async fn build_financial_data_response_internal(
             if path.is_file() {
                 let profile: ResolutionCalibrationProfile =
                     serde_json::from_slice(&fs::read(path).map_err(pipeline)?).map_err(pipeline)?;
-                validate_profile_for_engine(&profile, ENGINE_VERSION).map_err(pipeline)?;
+                validate_profile_authority(
+                    &profile,
+                    ENGINE_VERSION,
+                    &instrument.instrument_id,
+                    request.timeframe,
+                )
+                .map_err(pipeline)?;
                 let vector = &frames
                     .last()
                     .ok_or_else(|| {
@@ -601,16 +600,108 @@ fn pipeline(error: impl std::fmt::Display) -> ServiceError {
     ServiceError::Pipeline(error.to_string())
 }
 
+fn closed_weekly_once(
+    bars: Vec<crate::MarketObservation>,
+) -> Result<Vec<crate::MarketObservation>, ServiceError> {
+    let Some(first) = bars.first() else {
+        return Ok(bars);
+    };
+    if bars.iter().any(|bar| bar.timeframe != first.timeframe) {
+        return Err(ServiceError::Pipeline(
+            "weekly input contains mixed timeframes".into(),
+        ));
+    }
+    match first.timeframe {
+        Timeframe::D1 => aggregate_weekly(&bars).map_err(pipeline),
+        Timeframe::W1 => Ok(bars),
+        timeframe => Err(ServiceError::Pipeline(format!(
+            "weekly input must contain D1 or W1 bars, found {timeframe:?}"
+        ))),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use chrono::{Days, NaiveDate};
+
+    fn closed_daily_week() -> Vec<crate::MarketObservation> {
+        let first = NaiveDate::from_ymd_opt(2026, 1, 5).unwrap();
+        (0..7)
+            .map(|offset| {
+                let date = first.checked_add_days(Days::new(offset)).unwrap();
+                let open_time_ns = date
+                    .and_hms_opt(0, 0, 0)
+                    .unwrap()
+                    .and_utc()
+                    .timestamp_nanos_opt()
+                    .unwrap();
+                crate::MarketObservation {
+                    instrument_id: "crypto:binance:BTCUSDT".into(),
+                    timeframe: Timeframe::D1,
+                    open_time_ns,
+                    close_time_ns: open_time_ns + 86_400_000_000_000,
+                    open: 100.0 + offset as f64,
+                    high: 102.0 + offset as f64,
+                    low: 99.0 + offset as f64,
+                    close: 101.0 + offset as f64,
+                    is_closed: true,
+                    source: "test".into(),
+                    volume: AvailableValue::available(1.0),
+                    quote_volume: AvailableValue::unavailable(),
+                    trade_count: AvailableValue::unavailable(),
+                    best_bid: AvailableValue::unavailable(),
+                    best_ask: AvailableValue::unavailable(),
+                    bid_size: AvailableValue::unavailable(),
+                    ask_size: AvailableValue::unavailable(),
+                }
+            })
+            .collect()
+    }
+
+    #[test]
+    fn weekly_finalization_aggregates_daily_input_exactly_once() {
+        let expected = aggregate_weekly(&closed_daily_week()).unwrap();
+        let actual = closed_weekly_once(closed_daily_week()).unwrap();
+
+        assert_eq!(actual, expected);
+        assert_eq!(actual.len(), 1);
+        assert_eq!(actual[0].timeframe, Timeframe::W1);
+    }
+
+    #[test]
+    fn weekly_finalization_preserves_preaggregated_input() {
+        let weekly = aggregate_weekly(&closed_daily_week()).unwrap();
+
+        assert_eq!(closed_weekly_once(weekly.clone()).unwrap(), weekly);
+    }
+
+    #[test]
+    fn registered_request_rejects_unknown_fields() {
+        let json = r#"{"asset":"BTC","timeframe":"D1","source":"AUTO","extra":true}"#;
+        assert!(serde_json::from_str::<FinancialDataRequest>(json).is_err());
+    }
+
+    #[test]
+    fn generated_response_schema_requires_registered_fields() {
+        let schema = serde_json::to_value(schemars::schema_for!(FinancialDataResponse)).unwrap();
+        let required = schema["required"].as_array().expect("required fields");
+        for field in [
+            "technical",
+            "counter_reading",
+            "structural_contrast",
+            "response_sha256",
+        ] {
+            assert!(required.iter().any(|value| value == field), "{field}");
+        }
+    }
 
     #[tokio::test]
-    async fn unsupported_intraday_corpus_request_fails_explicitly() {
+    async fn registered_endpoint_rejects_intraday_timeframe() {
         let request = FinancialDataRequest {
             asset: "BTC".into(),
             timeframe: Timeframe::M1,
-            source: DataSourcePreference::SuppliedCorpus,
+            source: DataSourcePreference::Auto,
         };
         assert!(matches!(
             build_financial_data_response("missing", &request).await,

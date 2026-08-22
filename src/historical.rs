@@ -169,17 +169,40 @@ pub fn cadence_anomalies(
         .collect()
 }
 
+/// Aggregates closed D1 observations into closed ISO-week observations.
+///
+/// A trailing week is emitted only after its end can be established from the
+/// supplied observations. This keeps an in-progress week out of downstream
+/// closed-bar replay without consulting wall-clock time. A later ISO week is
+/// sufficient evidence that an earlier week has closed; for a final continuous
+/// week, coverage through the ISO-week boundary is also sufficient. Holiday-
+/// shortened weeks remain valid once a later ISO week is observed.
 pub fn aggregate_weekly(
     daily: &[MarketObservation],
 ) -> Result<Vec<MarketObservation>, HistoricalError> {
     if daily.is_empty() {
         return Err(HistoricalError::EmptyAggregation);
     }
+    let authority = &daily[0];
+    for (index, bar) in daily.iter().enumerate() {
+        if bar.timeframe != Timeframe::D1 || !bar.is_closed {
+            return Err(HistoricalError::InvalidObservation {
+                row: index + 1,
+                message: "weekly aggregation requires closed D1 bars".into(),
+            });
+        }
+        if bar.instrument_id != authority.instrument_id || bar.source != authority.source {
+            return Err(HistoricalError::InvalidObservation {
+                row: index + 1,
+                message: "weekly aggregation cannot mix instrument or source authority".into(),
+            });
+        }
+        if index > 0 && daily[index - 1].open_time_ns >= bar.open_time_ns {
+            return Err(HistoricalError::NonIncreasing(index + 1));
+        }
+    }
     let mut weeks: Vec<Vec<&MarketObservation>> = Vec::new();
     for bar in daily {
-        if bar.timeframe != Timeframe::D1 || !bar.is_closed {
-            continue;
-        }
         let date = chrono::DateTime::<Utc>::from_timestamp_nanos(bar.open_time_ns);
         let key = (date.iso_week().year(), date.iso_week().week());
         let starts_new = weeks
@@ -194,7 +217,46 @@ pub fn aggregate_weekly(
         }
         weeks.last_mut().expect("week exists").push(bar);
     }
-    weeks.into_iter().map(aggregate_week).collect()
+    let week_count = weeks.len();
+    weeks
+        .into_iter()
+        .enumerate()
+        .filter_map(|(index, bars)| {
+            weekly_bucket_is_closed(&bars, index + 1 < week_count).then_some(bars)
+        })
+        .map(aggregate_week)
+        .collect()
+}
+
+fn weekly_bucket_is_closed(bars: &[&MarketObservation], has_later_week: bool) -> bool {
+    let Some(first) = bars.first() else {
+        return false;
+    };
+    if has_later_week {
+        return true;
+    }
+
+    let first_date = chrono::DateTime::<Utc>::from_timestamp_nanos(first.open_time_ns);
+    let week_start = first_date.date_naive().checked_sub_days(chrono::Days::new(
+        first_date.weekday().num_days_from_monday().into(),
+    ));
+    let week_start_ns = week_start
+        .and_then(|date| date.and_hms_opt(0, 0, 0))
+        .and_then(|date_time| date_time.and_utc().timestamp_nanos_opt());
+    let Some(next_week_start_ns) =
+        week_start_ns.and_then(|timestamp| timestamp.checked_add(7 * DAY_NS))
+    else {
+        return false;
+    };
+    // Closed-interval providers such as Binance encode a bar ending at the
+    // boundary as `boundary - 1 ms`. Accept that exact timestamp convention
+    // without treating an earlier partial day as a closed week.
+    const INCLUSIVE_CLOSE_MILLISECOND_NS: i64 = 1_000_000;
+    bars.last().is_some_and(|last| {
+        last.close_time_ns
+            .saturating_add(INCLUSIVE_CLOSE_MILLISECOND_NS)
+            >= next_week_start_ns
+    })
 }
 
 fn aggregate_week(bars: Vec<&MarketObservation>) -> Result<MarketObservation, HistoricalError> {
@@ -602,6 +664,11 @@ mod tests {
         writeln!(file, "Date,Open,High,Low,Close,Volume").unwrap();
         writeln!(file, "2026-01-05,10,12,9,11,5").unwrap();
         writeln!(file, "2026-01-06,11,14,10,13,7").unwrap();
+        writeln!(file, "2026-01-07,13,15,12,14,6").unwrap();
+        writeln!(file, "2026-01-08,14,16,13,15,6").unwrap();
+        writeln!(file, "2026-01-09,15,16,14,15,6").unwrap();
+        writeln!(file, "2026-01-10,15,16,14,15,6").unwrap();
+        writeln!(file, "2026-01-11,15,16,14,15,6").unwrap();
         let daily = load_daily_csv(file.path(), &btc(), "test").unwrap();
         let weekly = aggregate_weekly(&daily).unwrap();
         assert_eq!(weekly.len(), 1);
@@ -612,9 +679,101 @@ mod tests {
                 weekly[0].low,
                 weekly[0].close
             ),
-            (10.0, 14.0, 9.0, 13.0)
+            (10.0, 16.0, 9.0, 15.0)
         );
-        assert_eq!(weekly[0].volume.value, Some(12.0));
+        assert_eq!(weekly[0].volume.value, Some(42.0));
+        assert!(weekly[0].is_closed);
+    }
+
+    #[test]
+    fn weekly_aggregation_omits_an_in_progress_trailing_week() {
+        let mut file = tempfile::NamedTempFile::new().unwrap();
+        writeln!(file, "Date,Open,High,Low,Close").unwrap();
+        for day in 5..=14 {
+            writeln!(file, "2026-01-{day:02},10,12,9,11").unwrap();
+        }
+        let daily = load_daily_csv(file.path(), &btc(), "test").unwrap();
+        let weekly = aggregate_weekly(&daily).unwrap();
+
+        assert_eq!(weekly.len(), 1);
+        assert_eq!(
+            chrono::DateTime::<Utc>::from_timestamp_nanos(weekly[0].open_time_ns).date_naive(),
+            NaiveDate::from_ymd_opt(2026, 1, 5).unwrap()
+        );
+        assert!(weekly.iter().all(|bar| bar.is_closed));
+    }
+
+    #[test]
+    fn weekly_aggregation_does_not_close_a_partial_only_week() {
+        let mut file = tempfile::NamedTempFile::new().unwrap();
+        writeln!(file, "Date,Open,High,Low,Close").unwrap();
+        writeln!(file, "2026-01-05,10,12,9,11").unwrap();
+        writeln!(file, "2026-01-06,11,14,10,13").unwrap();
+        let daily = load_daily_csv(file.path(), &btc(), "test").unwrap();
+
+        assert!(aggregate_weekly(&daily).unwrap().is_empty());
+    }
+
+    #[test]
+    fn weekly_aggregation_keeps_a_closed_holiday_shortened_week() {
+        let mut file = tempfile::NamedTempFile::new().unwrap();
+        writeln!(file, "Date,Open,High,Low,Close").unwrap();
+        for day in 6..=9 {
+            writeln!(file, "2026-01-{day:02},10,12,9,11").unwrap();
+        }
+        // Observing the following ISO week is causal evidence that the prior
+        // shortened trading week has closed, even though Monday was absent.
+        writeln!(file, "2026-01-12,11,13,10,12").unwrap();
+        let daily = load_daily_csv(file.path(), &btc(), "test").unwrap();
+        let weekly = aggregate_weekly(&daily).unwrap();
+
+        assert_eq!(weekly.len(), 1);
+        assert_eq!(
+            chrono::DateTime::<Utc>::from_timestamp_nanos(weekly[0].open_time_ns).date_naive(),
+            NaiveDate::from_ymd_opt(2026, 1, 6).unwrap()
+        );
+    }
+
+    #[test]
+    fn weekly_aggregation_accepts_binance_inclusive_close_timestamp() {
+        let mut file = tempfile::NamedTempFile::new().unwrap();
+        writeln!(file, "Date,Open,High,Low,Close").unwrap();
+        for day in 5..=11 {
+            writeln!(file, "2026-01-{day:02},10,12,9,11").unwrap();
+        }
+        let mut daily = load_daily_csv(file.path(), &btc(), "binance_spot").unwrap();
+        for bar in &mut daily {
+            bar.close_time_ns = bar.close_time_ns.saturating_sub(1_000_000);
+        }
+
+        let weekly = aggregate_weekly(&daily).unwrap();
+
+        assert_eq!(weekly.len(), 1);
+        let next_week_start = NaiveDate::from_ymd_opt(2026, 1, 12)
+            .unwrap()
+            .and_hms_opt(0, 0, 0)
+            .unwrap()
+            .and_utc()
+            .timestamp_nanos_opt()
+            .unwrap();
+        assert_eq!(weekly[0].close_time_ns, next_week_start - 1_000_000);
+        assert!(weekly[0].is_closed);
+    }
+
+    #[test]
+    fn weekly_aggregation_rejects_mixed_authority() {
+        let mut file = tempfile::NamedTempFile::new().unwrap();
+        writeln!(file, "Date,Open,High,Low,Close").unwrap();
+        writeln!(file, "2026-01-05,10,12,9,11").unwrap();
+        writeln!(file, "2026-01-06,11,13,10,12").unwrap();
+        let mut daily = load_daily_csv(file.path(), &btc(), "source-a").unwrap();
+        daily[1].source = "source-b".into();
+
+        assert!(matches!(
+            aggregate_weekly(&daily),
+            Err(HistoricalError::InvalidObservation { message, .. })
+                if message.contains("authority")
+        ));
     }
 
     #[test]

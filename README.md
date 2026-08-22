@@ -29,11 +29,12 @@ The current implementation covers build stages 1–5 and a local Telegraph adapt
 
 No LLM participates in signal generation. Future outcomes are visible only to the offline
 profile builder; runtime resolution consumes only the current structural vector and a
-hash-verified profile. A generated BTC D1 profile is included for local replay and currently
-rejects the final corpus state as `UNRESOLVED`: its untouched-test probabilities do not
-outperform train/validation climatology under the Brier skill gate. Because this tail was
-inspected during development, the artifact is explicitly marked `DEVELOPMENT_AUDIT_CONSUMED`
-and is not eligible for publication.
+hash-verified, instrument/timeframe-bound profile. Nine D1/W1 profiles are included for
+development replay. All are explicitly marked `DEVELOPMENT_AUDIT_CONSUMED` and
+`profile_eligible_for_publication: false`; they provide diagnostics but make no prospective
+directional-performance claim. The registered top-level label remains the deterministic
+technical price-state channel, while PRAMAgraph is returned as an independent structural
+reading and the calibrated resolver remains fail-closed.
 
 ## Kernel authority
 
@@ -56,10 +57,11 @@ cargo run -- resolve-direction --input data\corpus\btc_calib.csv --instrument BT
 cargo run -- serve --bind 127.0.0.1:8080 --corpus data\corpus --calibration calibration\profiles
 ```
 
-For a genuinely new sealed evaluation, pass
-`--preregistered-protocol-sha256 sha256:<64 lowercase hex>` only when that protocol hash
-was frozen before any test outcomes were inspected. Without it the profile remains a
-development audit and direction/horizon publication is disabled.
+For a genuinely new prospective evaluation, pass the exact value emitted by
+`freeze-protocol` to `--preregistered-protocol-sha256`. The builder rejects any other
+well-formed SHA and does not promote evidence whose untouched segment does not begin after
+the public Telegraph registration boundary. Without both conditions, direction/horizon
+publication remains disabled.
 
 For Massive-backed `AUTO` requests, inject the credential into the process
 environment. Do not place the key in source, YAML, requests, or logs:
@@ -102,12 +104,10 @@ Deterministic multi-scale financial intelligence combining conventional price-st
 ```
 Client / Telegraph
     │
-    ▼
-Telegraph Adapter (/v1/telegraph/financial-data)
-    │   Single-timeframe, thin adapter
-    ▼
-Native Financial Service (/v1/financial/signal)
-    │   Multi-timeframe, core logic
+    ├── Telegraph service (/v1/telegraph/financial-data, registered D1/W1)
+    │
+    └── Native service (/v1/financial/signal, multi-timeframe corpus API)
+        │
     │   ┌──────────────────────────────────────┐
     │   │ PRAMAgraph Structural Path           │
     │   │  adapt_closed_bars → replay_frames   │
@@ -146,7 +146,9 @@ FinancialSignalResponse (canonical, SHA-256 hashed)
 | SP500 | SPX | D1, W1 | `sp500_calib.csv` |
 | NASDAQ | NDX | D1, W1 | `nasdaq_calib.csv` |
 
-*Note: Only BTC D1 calibration profile exists currently (`DEVELOPMENT_AUDIT_CONSUMED`). Other assets return `STALE_DATA` with calibration scope `UNAVAILABLE`.*
+*All nine committed profiles are development-only. Corpus-backed responses are explicitly
+`STALE_DATA`; the calibrated `directional` section remains `UNRESOLVED` until prospective
+publication gates are satisfied.*
 
 ### Local Run
 
@@ -198,10 +200,10 @@ ODCE channels, and Ergonektim-derived custody rules are documented in
 
 ## Next milestone
 
-1. Generate and evaluate immutable D1/W1 profiles for the remaining supported instruments.
-2. Add cross-scale integration after every participating scale has valid held-out evidence.
-3. Bind the final hackathon exact-match task schema when Telegraph publishes it.
-4. Deploy the HTTP service and validate the final YAML against the public endpoint.
+1. Collect genuinely post-registration outcome evidence without changing the registered API.
+2. Keep regenerated diagnostics bound to their profile identity with deterministic checks.
+3. Replace weekday-only BTC development calibration data before any calibrated crypto claim.
+4. Promote no profile until coverage and per-class prospective reliability gates pass.
 
 The discontinued `Prama_smm` application was reviewed only for product context. Its synthetic
 signal generator and heuristic trust/risk values are deliberately not reused.

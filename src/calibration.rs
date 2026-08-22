@@ -20,7 +20,15 @@ use thiserror::Error;
 pub const RESOLUTION_PROFILE_SCHEMA: &str = "pramagraph.resolution_calibration_profile.v2";
 pub const RESOLUTION_CALIBRATION_VERSION: &str = "financial_first_passage_weighted_neighbors_v2";
 pub const DEVELOPMENT_DATA_CUTOFF_NS: i64 = 1755734400000000000; // 2025-08-21T00:00:00Z (historical/development data cutoff)
-pub const PROTOCOL_FREEZE_TIMESTAMP_NS: i64 = 1766304000000000000; // 2026-07-21T00:00:00Z (actual protocol freeze/preregistration timestamp)
+/// Legacy emitted metadata retained for compatibility. Its historical date
+/// label was incorrect and it is not an evidence boundary or a protocol input.
+pub const PROTOCOL_FREEZE_TIMESTAMP_NS: i64 = 1766304000000000000;
+/// Conservative evidence boundary derived from the Telegraph Explorer's
+/// displayed registration date (2026-08-21), which does not expose an exact
+/// registration instant. Using 2026-08-23T00:00:00Z is safely after that
+/// calendar date in every civil timezone. Evidence at or before this instant
+/// remains development evidence.
+pub const TELEGRAPH_REGISTRATION_BOUNDARY_NS: i64 = 1787443200000000000;
 
 /// Frozen calibration protocol — all deterministic choices that affect calibration results.
 /// This protocol is serialized canonically and hashed to produce preregistered_protocol_sha256.
@@ -1118,13 +1126,29 @@ pub fn build_resolution_profile(
     frames: &[StructuralFrame],
     preregistered_protocol_sha256: Option<&str>,
 ) -> Result<ResolutionCalibrationProfile, CalibrationError> {
+    let expected_protocol_hash = CalibrationProtocol::frozen().sha256();
+    let protocol_hash = match preregistered_protocol_sha256 {
+        None => None,
+        Some(value) if value == expected_protocol_hash => Some(expected_protocol_hash),
+        Some(value) if !valid_sha256(value) => {
+            return Err(CalibrationError::InvalidProfile(
+                "invalid preregistered protocol hash".into(),
+            ));
+        }
+        Some(_) => {
+            return Err(CalibrationError::InvalidProfile(
+                "preregistered protocol hash differs from calibration authority".into(),
+            ));
+        }
+    };
+    let preregistered = protocol_hash.is_some();
     if instrument_id.trim().is_empty()
         || engine_version.trim().is_empty()
         || bars.len() < 16
         || frames.len() < 8
-        || bars
-            .iter()
-            .any(|bar| !bar.is_closed || bar.timeframe != timeframe)
+        || bars.iter().any(|bar| {
+            !bar.is_closed || bar.instrument_id != instrument_id || bar.timeframe != timeframe
+        })
     {
         return Err(CalibrationError::InsufficientData);
     }
@@ -1265,28 +1289,48 @@ pub fn build_resolution_profile(
     let validation_reliability_lower_bound_bp =
         wilson_lower_bp(validation_scored.0, validation_scored.1);
     let minimum_direction_edge_bp = median_u16(&mut validation_scored.2.clone()).unwrap_or(10_000);
-    let protocol_hash = preregistered_protocol_sha256
-        .map(str::to_owned)
-        .filter(|value| valid_sha256(value));
-    if preregistered_protocol_sha256.is_some() && protocol_hash.is_none() {
-        return Err(CalibrationError::InvalidProfile(
-            "invalid preregistered protocol hash".into(),
-        ));
-    }
-    let preregistered = protocol_hash.is_some();
+    // A supplied protocol hash identifies the frozen procedure, but it does
+    // not turn historical development outcomes into prospective evidence.
+    // Publication eligibility requires the parameter-selection segment to
+    // end no later than the public registration boundary and the untouched
+    // segment to begin strictly after it.
+    let parameter_selection_labels_matured = training.iter().chain(validation).all(|row| {
+        bar_positions
+            .get(&row.timestamp_ns)
+            .and_then(|bar_index| bar_index.checked_add(row.first_passage_bars))
+            .and_then(|outcome_index| bars.get(outcome_index))
+            .is_some_and(|outcome_bar| {
+                outcome_bar.close_time_ns <= TELEGRAPH_REGISTRATION_BOUNDARY_NS
+            })
+    });
+    let prospective_evidence = preregistered
+        && parameter_selection_labels_matured
+        && validation
+            .last()
+            .is_some_and(|row| row.timestamp_ns <= TELEGRAPH_REGISTRATION_BOUNDARY_NS)
+        && untouched_test
+            .first()
+            .is_some_and(|row| row.timestamp_ns > TELEGRAPH_REGISTRATION_BOUNDARY_NS);
     let publication = PublicationPolicy {
         minimum_direction_edge_bp,
         minimum_reliability_bp: validation_reliability_lower_bound_bp,
-        parameters_selected_on: "TEMPORAL_VALIDATION".into(),
-        reliability_evaluated_on: if preregistered {
+        parameters_selected_on: if preregistered {
+            "PREREGISTERED_PROTOCOL"
+        } else {
+            "TEMPORAL_VALIDATION"
+        }
+        .into(),
+        reliability_evaluated_on: if prospective_evidence {
             "UNTOUCHED_TEMPORAL_TEST"
+        } else if preregistered {
+            "PREREGISTERED_AWAITING_PROSPECTIVE_EVIDENCE"
         } else {
             "CONSUMED_DEVELOPMENT_AUDIT"
         }
         .into(),
         test_outcomes_used_for_parameter_selection: false,
         requires_positive_brier_skill: true,
-        profile_eligible_for_publication: preregistered,
+        profile_eligible_for_publication: prospective_evidence,
         preregistered_protocol_sha256: protocol_hash,
     };
 
@@ -1330,9 +1374,11 @@ pub fn build_resolution_profile(
         predicted_support: direction_support(&test_scored.3, false),
         confusion_matrix: confusion_matrix(&test_scored.3),
         temporal_split_timestamp_ns: test_split_timestamp,
-        untouched_test: preregistered,
-        evidence_status: if preregistered {
+        untouched_test: prospective_evidence,
+        evidence_status: if prospective_evidence {
             "PREREGISTERED_UNTOUCHED_TEST"
+        } else if preregistered {
+            "PREREGISTERED_AWAITING_PROSPECTIVE_EVIDENCE"
         } else {
             "DEVELOPMENT_AUDIT_CONSUMED"
         }
@@ -1349,7 +1395,7 @@ pub fn build_resolution_profile(
     let mut profile = ResolutionCalibrationProfile {
         schema: RESOLUTION_PROFILE_SCHEMA.to_owned(),
         calibration_version: RESOLUTION_CALIBRATION_VERSION.to_owned(),
-        profile_id: format!("{instrument_id}:{timeframe:?}:{RESOLUTION_CALIBRATION_VERSION}"),
+        profile_id: resolution_profile_id(instrument_id, timeframe),
         instrument_id: instrument_id.to_owned(),
         asset_class,
         timeframe,
@@ -3125,9 +3171,13 @@ fn dynamics_metric_order(
 }
 
 pub fn validate_profile(profile: &ResolutionCalibrationProfile) -> Result<(), CalibrationError> {
+    let expected_protocol_hash = CalibrationProtocol::frozen().sha256();
     if profile.schema != RESOLUTION_PROFILE_SCHEMA
         || profile.calibration_version != RESOLUTION_CALIBRATION_VERSION
         || profile.structural_vector_version != STRUCTURAL_VECTOR_VERSION
+        || profile.scope != CalibrationScope::Instrument
+        || profile.profile_id != resolution_profile_id(&profile.instrument_id, profile.timeframe)
+        || asset_class_from_instrument_id(&profile.instrument_id) != Some(profile.asset_class)
         || profile.samples.is_empty()
         || !profile.prefix_causality_verified
         || profile.runtime_recalibration
@@ -3148,12 +3198,10 @@ pub fn validate_profile(profile: &ResolutionCalibrationProfile) -> Result<(), Ca
         || profile.publication.profile_eligible_for_publication
             != profile.reliability.untouched_test
         || profile.publication.parameters_selected_on == "TEMPORAL_VALIDATION"
-            && profile
-                .publication
-                .preregistered_protocol_sha256
-                .as_ref()
-                .is_some_and(|value| valid_sha256(value))
-            && profile.publication.profile_eligible_for_publication
+            && profile.publication.preregistered_protocol_sha256.is_some()
+        || profile.publication.profile_eligible_for_publication
+            && (profile.publication.parameters_selected_on != "PREREGISTERED_PROTOCOL"
+                || profile.publication.preregistered_protocol_sha256.is_none())
         || profile.publication.reliability_evaluated_on
             != if profile.publication.profile_eligible_for_publication {
                 "UNTOUCHED_TEMPORAL_TEST"
@@ -3180,6 +3228,36 @@ pub fn validate_profile(profile: &ResolutionCalibrationProfile) -> Result<(), Ca
         || !profile.reliability.brier_skill_score.is_finite()
     {
         return Err(CalibrationError::InvalidProfile("field invariant".into()));
+    }
+    match profile.publication.preregistered_protocol_sha256.as_deref() {
+        Some(value) if value != expected_protocol_hash => {
+            return Err(CalibrationError::InvalidProfile(
+                "preregistered protocol hash differs from calibration authority".into(),
+            ));
+        }
+        None if profile.publication.parameters_selected_on == "PREREGISTERED_PROTOCOL" => {
+            return Err(CalibrationError::InvalidProfile(
+                "preregistered profile is missing its protocol hash".into(),
+            ));
+        }
+        _ => {}
+    }
+    if profile.reliability.untouched_test
+        && profile.reliability.temporal_split_timestamp_ns <= TELEGRAPH_REGISTRATION_BOUNDARY_NS
+    {
+        return Err(CalibrationError::InvalidProfile(
+            "prospective evidence does not follow Telegraph registration".into(),
+        ));
+    }
+    if profile.reliability.untouched_test
+        && profile
+            .samples
+            .iter()
+            .any(|sample| sample.timestamp_ns > TELEGRAPH_REGISTRATION_BOUNDARY_NS)
+    {
+        return Err(CalibrationError::InvalidProfile(
+            "calibration samples cross Telegraph registration".into(),
+        ));
     }
     let expected = profile
         .profile_sha256
@@ -3222,6 +3300,22 @@ pub fn validate_profile(profile: &ResolutionCalibrationProfile) -> Result<(), Ca
     Ok(())
 }
 
+fn resolution_profile_id(instrument_id: &str, timeframe: Timeframe) -> String {
+    format!("{instrument_id}:{timeframe:?}:{RESOLUTION_CALIBRATION_VERSION}")
+}
+
+fn asset_class_from_instrument_id(instrument_id: &str) -> Option<AssetClass> {
+    match instrument_id.split(':').next()? {
+        "crypto" => Some(AssetClass::Crypto),
+        "stock" => Some(AssetClass::Stock),
+        "index" => Some(AssetClass::Index),
+        "forex" => Some(AssetClass::Forex),
+        "futures" => Some(AssetClass::Futures),
+        "commodity" => Some(AssetClass::Commodity),
+        _ => None,
+    }
+}
+
 pub fn validate_profile_for_engine(
     profile: &ResolutionCalibrationProfile,
     expected_engine_version: &str,
@@ -3230,6 +3324,29 @@ pub fn validate_profile_for_engine(
     if profile.engine_version != expected_engine_version {
         return Err(CalibrationError::Incompatible(
             "engine version differs from calibration authority".into(),
+        ));
+    }
+    Ok(())
+}
+
+/// Validate a profile against the complete runtime authority that selected it.
+/// This prevents a valid, hash-preserved profile for one instrument or
+/// timeframe from being applied to another compatible structural vector.
+pub fn validate_profile_authority(
+    profile: &ResolutionCalibrationProfile,
+    expected_engine_version: &str,
+    expected_instrument_id: &str,
+    expected_timeframe: Timeframe,
+) -> Result<(), CalibrationError> {
+    validate_profile_for_engine(profile, expected_engine_version)?;
+    if profile.instrument_id != expected_instrument_id {
+        return Err(CalibrationError::Incompatible(
+            "instrument differs from calibration authority".into(),
+        ));
+    }
+    if profile.timeframe != expected_timeframe {
+        return Err(CalibrationError::Incompatible(
+            "timeframe differs from calibration authority".into(),
         ));
     }
     Ok(())
@@ -5485,7 +5602,7 @@ mod tests {
         let mut profile = ResolutionCalibrationProfile {
             schema: RESOLUTION_PROFILE_SCHEMA.into(),
             calibration_version: RESOLUTION_CALIBRATION_VERSION.into(),
-            profile_id: "test".into(),
+            profile_id: resolution_profile_id("crypto:test:TEST", Timeframe::D1),
             instrument_id: "crypto:test:TEST".into(),
             asset_class: AssetClass::Crypto,
             timeframe: Timeframe::D1,
@@ -5546,7 +5663,7 @@ mod tests {
                     "UP".into(),
                     BTreeMap::from([("UP".into(), 1)]),
                 )]),
-                temporal_split_timestamp_ns: 2,
+                temporal_split_timestamp_ns: TELEGRAPH_REGISTRATION_BOUNDARY_NS + 1,
                 untouched_test: true,
                 evidence_status: "PREREGISTERED_UNTOUCHED_TEST".into(),
             },
@@ -5951,6 +6068,192 @@ mod tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn preregistered_hash_must_match_frozen_protocol_exactly() {
+        let mut profile = signed_profile();
+        profile.publication.preregistered_protocol_sha256 =
+            Some(format!("sha256:{}", "0".repeat(64)));
+        profile.profile_sha256 = None;
+        profile.profile_sha256 = Some(canonical::sha256(&profile).unwrap());
+
+        assert!(matches!(
+            validate_profile(&profile),
+            Err(CalibrationError::InvalidProfile(reason))
+                if reason == "preregistered protocol hash differs from calibration authority"
+        ));
+    }
+
+    #[test]
+    fn temporal_validation_profile_cannot_be_publication_eligible() {
+        let mut profile = signed_profile();
+        profile.publication.parameters_selected_on = "TEMPORAL_VALIDATION".into();
+        profile.publication.preregistered_protocol_sha256 = None;
+        profile.profile_sha256 = None;
+        profile.profile_sha256 = Some(canonical::sha256(&profile).unwrap());
+
+        assert!(matches!(
+            validate_profile(&profile),
+            Err(CalibrationError::InvalidProfile(reason)) if reason == "field invariant"
+        ));
+    }
+
+    #[test]
+    fn prospective_evidence_must_follow_telegraph_registration() {
+        let mut profile = signed_profile();
+        profile.reliability.temporal_split_timestamp_ns = TELEGRAPH_REGISTRATION_BOUNDARY_NS;
+        profile.profile_sha256 = None;
+        profile.profile_sha256 = Some(canonical::sha256(&profile).unwrap());
+
+        assert!(matches!(
+            validate_profile(&profile),
+            Err(CalibrationError::InvalidProfile(reason))
+                if reason == "prospective evidence does not follow Telegraph registration"
+        ));
+    }
+
+    #[test]
+    fn prospective_profile_cannot_learn_from_post_registration_samples() {
+        let mut profile = signed_profile();
+        profile.samples[0].timestamp_ns = TELEGRAPH_REGISTRATION_BOUNDARY_NS + 1;
+        profile.reliability.temporal_split_timestamp_ns = TELEGRAPH_REGISTRATION_BOUNDARY_NS + 2;
+        profile.profile_sha256 = None;
+        profile.profile_sha256 = Some(canonical::sha256(&profile).unwrap());
+
+        assert!(matches!(
+            validate_profile(&profile),
+            Err(CalibrationError::InvalidProfile(reason))
+                if reason == "calibration samples cross Telegraph registration"
+        ));
+    }
+
+    #[test]
+    fn runtime_authority_binds_engine_instrument_and_timeframe() {
+        let profile = signed_profile();
+        assert!(validate_profile_authority(
+            &profile,
+            "test-engine",
+            "crypto:test:TEST",
+            Timeframe::D1,
+        )
+        .is_ok());
+        assert!(matches!(
+            validate_profile_authority(
+                &profile,
+                "test-engine",
+                "crypto:test:OTHER",
+                Timeframe::D1,
+            ),
+            Err(CalibrationError::Incompatible(reason))
+                if reason == "instrument differs from calibration authority"
+        ));
+        assert!(matches!(
+            validate_profile_authority(
+                &profile,
+                "test-engine",
+                "crypto:test:TEST",
+                Timeframe::W1,
+            ),
+            Err(CalibrationError::Incompatible(reason))
+                if reason == "timeframe differs from calibration authority"
+        ));
+
+        let mut wrong_class = signed_profile();
+        wrong_class.asset_class = AssetClass::Index;
+        let mut wrong_scope = signed_profile();
+        wrong_scope.scope = CalibrationScope::Global;
+        let mut wrong_id = signed_profile();
+        wrong_id.profile_id = "rehashable-but-not-canonical".into();
+        for mut invalid in [wrong_class, wrong_scope, wrong_id] {
+            invalid.profile_sha256 = None;
+            invalid.profile_sha256 = Some(canonical::sha256(&invalid).unwrap());
+            assert!(matches!(
+                validate_profile(&invalid),
+                Err(CalibrationError::InvalidProfile(reason)) if reason == "field invariant"
+            ));
+        }
+    }
+
+    #[test]
+    fn preregistered_builder_uses_protocol_semantics_without_promoting_old_evidence() {
+        let (instrument_id, bars, frames, _) = current_btc_inputs();
+        let protocol_hash = CalibrationProtocol::frozen().sha256();
+        let profile = build_resolution_profile(
+            &instrument_id,
+            AssetClass::Crypto,
+            Timeframe::D1,
+            "test-engine",
+            &bars,
+            &frames,
+            Some(&protocol_hash),
+        )
+        .unwrap();
+
+        assert_eq!(
+            profile.publication.parameters_selected_on,
+            "PREREGISTERED_PROTOCOL"
+        );
+        assert_eq!(
+            profile.publication.preregistered_protocol_sha256.as_deref(),
+            Some(protocol_hash.as_str())
+        );
+        assert!(!profile.publication.profile_eligible_for_publication);
+        assert_eq!(
+            profile.publication.reliability_evaluated_on,
+            "PREREGISTERED_AWAITING_PROSPECTIVE_EVIDENCE"
+        );
+        assert!(!profile.reliability.untouched_test);
+        assert_eq!(
+            profile.reliability.evidence_status,
+            "PREREGISTERED_AWAITING_PROSPECTIVE_EVIDENCE"
+        );
+    }
+
+    #[test]
+    fn parameter_selection_labels_must_mature_before_registration_boundary() {
+        let (instrument_id, mut bars, mut frames, _) = current_btc_inputs();
+        let baseline = build_resolution_profile(
+            &instrument_id,
+            AssetClass::Crypto,
+            Timeframe::D1,
+            "test-engine",
+            &bars,
+            &frames,
+            None,
+        )
+        .unwrap();
+        let desired_test_split = TELEGRAPH_REGISTRATION_BOUNDARY_NS + 86_400_000_000_000;
+        let shift = desired_test_split - baseline.reliability.temporal_split_timestamp_ns;
+        for bar in &mut bars {
+            bar.open_time_ns += shift;
+            bar.close_time_ns += shift;
+        }
+        for frame in &mut frames {
+            frame.timestamp_ns += shift;
+        }
+
+        let profile = build_resolution_profile(
+            &instrument_id,
+            AssetClass::Crypto,
+            Timeframe::D1,
+            "test-engine",
+            &bars,
+            &frames,
+            Some(&CalibrationProtocol::frozen().sha256()),
+        )
+        .unwrap();
+
+        assert_eq!(
+            profile.reliability.temporal_split_timestamp_ns,
+            desired_test_split
+        );
+        assert!(!profile.publication.profile_eligible_for_publication);
+        assert!(!profile.reliability.untouched_test);
+        assert_eq!(
+            profile.publication.reliability_evaluated_on,
+            "PREREGISTERED_AWAITING_PROSPECTIVE_EVIDENCE"
+        );
     }
 
     #[test]
@@ -6922,6 +7225,14 @@ mod protocol_tests {
         let h1 = p.sha256();
         let h2 = p.sha256();
         assert_eq!(h1, h2, "identical protocol → identical SHA-256");
+        assert_eq!(
+            h1, "sha256:d715790d6ce60d0f53a0672becc2bad1d354cd51b2fbb46c17eaedbcf54ea740",
+            "the registered protocol identity must remain byte-for-byte stable"
+        );
+        assert_eq!(
+            TELEGRAPH_REGISTRATION_BOUNDARY_NS,
+            1_787_443_200_000_000_000
+        );
     }
 
     #[test]
@@ -6941,7 +7252,7 @@ mod protocol_tests {
         let mut profile = ResolutionCalibrationProfile {
             schema: RESOLUTION_PROFILE_SCHEMA.into(),
             calibration_version: RESOLUTION_CALIBRATION_VERSION.into(),
-            profile_id: "test".into(),
+            profile_id: resolution_profile_id("crypto:test:TEST", Timeframe::D1),
             instrument_id: "crypto:test:TEST".into(),
             asset_class: AssetClass::Crypto,
             timeframe: Timeframe::D1,
@@ -6981,7 +7292,7 @@ mod protocol_tests {
                 test_outcomes_used_for_parameter_selection: false,
                 requires_positive_brier_skill: true,
                 profile_eligible_for_publication: false,
-                preregistered_protocol_sha256: Some(CalibrationProtocol::frozen().sha256()),
+                preregistered_protocol_sha256: None,
             },
             reliability: HeldOutReliability {
                 correct: 1,
@@ -7063,7 +7374,7 @@ mod protocol_tests {
         let mut profile = ResolutionCalibrationProfile {
             schema: RESOLUTION_PROFILE_SCHEMA.into(),
             calibration_version: RESOLUTION_CALIBRATION_VERSION.into(),
-            profile_id: "test".into(),
+            profile_id: resolution_profile_id("crypto:test:TEST", Timeframe::D1),
             instrument_id: "crypto:test:TEST".into(),
             asset_class: AssetClass::Crypto,
             timeframe: Timeframe::D1,

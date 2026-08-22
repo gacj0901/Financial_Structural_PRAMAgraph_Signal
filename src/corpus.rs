@@ -81,6 +81,7 @@ struct CorpusDefinition {
     rows: usize,
     start: &'static str,
     end: &'static str,
+    expected_sha256: &'static str,
     zero_volume_is_unavailable: bool,
 }
 
@@ -92,6 +93,7 @@ const CORPUS: [CorpusDefinition; 10] = [
         rows: 800,
         start: "2023-01-18",
         end: "2026-02-20",
+        expected_sha256: "sha256:832703c05ed61404a5e4e84c72335fdd7afaef2f0600eee5b0eba9e8684f1a6e",
         zero_volume_is_unavailable: false,
     },
     CorpusDefinition {
@@ -101,6 +103,7 @@ const CORPUS: [CorpusDefinition; 10] = [
         rows: 4_036,
         start: "2010-07-19",
         end: "2026-02-20",
+        expected_sha256: "sha256:a39974c14c7d96eecfec4cab83188ed7558f28e653964c36a34c508b0a498173",
         zero_volume_is_unavailable: false,
     },
     CorpusDefinition {
@@ -110,6 +113,7 @@ const CORPUS: [CorpusDefinition; 10] = [
         rows: 800,
         start: "2023-01-17",
         end: "2026-02-20",
+        expected_sha256: "sha256:b9574afdbff404ead9187b3d689b99e609103694c5b58c0176c6318f4cb83704",
         zero_volume_is_unavailable: false,
     },
     CorpusDefinition {
@@ -119,6 +123,7 @@ const CORPUS: [CorpusDefinition; 10] = [
         rows: 15_186,
         start: "1793-03-01",
         end: "2026-02-20",
+        expected_sha256: "sha256:431090e147380451039359a3eaf862f3b1e90aadbd986e3ccd2296aef6836ed5",
         zero_volume_is_unavailable: false,
     },
     CorpusDefinition {
@@ -128,6 +133,7 @@ const CORPUS: [CorpusDefinition; 10] = [
         rows: 800,
         start: "2022-12-12",
         end: "2026-02-20",
+        expected_sha256: "sha256:c94aa633e297906da426d940bdfda9ac5b37a234ea7e64ccba01bb8b59c226e4",
         zero_volume_is_unavailable: false,
     },
     CorpusDefinition {
@@ -137,6 +143,7 @@ const CORPUS: [CorpusDefinition; 10] = [
         rows: 10_176,
         start: "1985-10-01",
         end: "2026-02-20",
+        expected_sha256: "sha256:0048a6ecf2638e3e05f28273ee52b5040001606205546e45f77937ebb5e21954",
         zero_volume_is_unavailable: false,
     },
     CorpusDefinition {
@@ -146,6 +153,7 @@ const CORPUS: [CorpusDefinition; 10] = [
         rows: 800,
         start: "2022-12-12",
         end: "2026-02-20",
+        expected_sha256: "sha256:d41340eb68958937ba1e98d25109559a033207cad0dd27d90a6dfdef6d509156",
         zero_volume_is_unavailable: false,
     },
     CorpusDefinition {
@@ -155,6 +163,7 @@ const CORPUS: [CorpusDefinition; 10] = [
         rows: 39_639,
         start: "1789-05-01",
         end: "2026-02-20",
+        expected_sha256: "sha256:0949a29543a0b6aae2e9be66652850959f9342d04293b30b69e3870ac1bbe681",
         zero_volume_is_unavailable: true,
     },
     CorpusDefinition {
@@ -164,6 +173,7 @@ const CORPUS: [CorpusDefinition; 10] = [
         rows: 800,
         start: "2023-12-16",
         end: "2026-02-22",
+        expected_sha256: "sha256:ff988dc105665896601a6c99fddcaa553b241123f8142d1aa2d61d2cb71ea1f5",
         zero_volume_is_unavailable: false,
     },
     CorpusDefinition {
@@ -173,15 +183,36 @@ const CORPUS: [CorpusDefinition; 10] = [
         rows: 4_048,
         start: "2015-01-21",
         end: "2026-02-22",
+        expected_sha256: "sha256:668024a9dbc834540bb4067a7050ad1c1cd07d92219fca8b64e43f881525a8b3",
         zero_volume_is_unavailable: true,
     },
 ];
 
 pub fn audit_corpus(directory: impl AsRef<Path>) -> Result<CorpusAuditReport, CorpusError> {
-    let directory = directory.as_ref();
+    audit_definitions(directory.as_ref(), CORPUS)
+}
+
+/// Audit only corpus inputs that the runtime can actually serve.
+///
+/// Long historical research files are deliberately excluded from readiness:
+/// their absence must not take the online API down when the serving path uses
+/// only the pinned calibration corpora.
+pub fn audit_runtime_corpus(directory: impl AsRef<Path>) -> Result<CorpusAuditReport, CorpusError> {
+    audit_definitions(
+        directory.as_ref(),
+        CORPUS
+            .into_iter()
+            .filter(|definition| definition.role == CorpusRole::Calibration),
+    )
+}
+
+fn audit_definitions(
+    directory: &Path,
+    definitions: impl IntoIterator<Item = CorpusDefinition>,
+) -> Result<CorpusAuditReport, CorpusError> {
     let resolver = AssetResolver::default();
-    let mut files = Vec::with_capacity(CORPUS.len());
-    for definition in CORPUS {
+    let mut files = Vec::new();
+    for definition in definitions {
         let instrument = resolve(&resolver, definition.query)?;
         files.push(audit_file(
             directory.join(definition.file),
@@ -233,9 +264,11 @@ fn audit_file(
         .count();
     let volume_unavailable_rows = observations.len() - volume_available_rows;
     let malformed_rows_excluded = raw_rows - observations.len();
+    let input_sha256 = format!("sha256:{}", hex::encode(Sha256::digest(bytes)));
     let accepted = raw_rows == definition.rows
         && actual_start == definition.start
-        && actual_end == definition.end;
+        && actual_end == definition.end
+        && input_sha256 == definition.expected_sha256;
     let status = if !accepted {
         CorpusFileStatus::Rejected
     } else if malformed_rows_excluded > 0 {
@@ -262,7 +295,7 @@ fn audit_file(
         .len(),
         volume_available_rows,
         volume_unavailable_rows,
-        input_sha256: format!("sha256:{}", hex::encode(Sha256::digest(bytes))),
+        input_sha256,
         status,
         accepted,
     })
@@ -279,4 +312,57 @@ fn date_string(timestamp_ns: i64) -> String {
     chrono::DateTime::<Utc>::from_timestamp_nanos(timestamp_ns)
         .format("%Y-%m-%d")
         .to_string()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const RUNTIME_FILES: [&str; 5] = [
+        "btc_calib.csv",
+        "gold_calib.csv",
+        "nasdaq_calib.csv",
+        "sp500_calib.csv",
+        "xrp_calib.csv",
+    ];
+
+    fn copy_runtime_corpus(destination: &Path) {
+        let source = Path::new(env!("CARGO_MANIFEST_DIR")).join("data/corpus");
+        for file in RUNTIME_FILES {
+            fs::copy(source.join(file), destination.join(file)).unwrap();
+        }
+    }
+
+    #[test]
+    fn runtime_audit_ignores_unused_historical_files() {
+        let directory = tempfile::tempdir().unwrap();
+        copy_runtime_corpus(directory.path());
+
+        let report = audit_runtime_corpus(directory.path()).unwrap();
+        assert!(report.all_files_accepted);
+        assert_eq!(report.files.len(), RUNTIME_FILES.len());
+        assert!(report
+            .files
+            .iter()
+            .all(|file| file.role == CorpusRole::Calibration));
+    }
+
+    #[test]
+    fn runtime_audit_rejects_byte_drift_even_when_csv_still_parses() {
+        let directory = tempfile::tempdir().unwrap();
+        copy_runtime_corpus(directory.path());
+        let path = directory.path().join("btc_calib.csv");
+        let mut bytes = fs::read(&path).unwrap();
+        bytes.push(b'\n');
+        fs::write(path, bytes).unwrap();
+
+        let report = audit_runtime_corpus(directory.path()).unwrap();
+        assert!(!report.all_files_accepted);
+        let btc = report
+            .files
+            .iter()
+            .find(|file| file.file == "btc_calib.csv")
+            .unwrap();
+        assert_eq!(btc.status, CorpusFileStatus::Rejected);
+    }
 }

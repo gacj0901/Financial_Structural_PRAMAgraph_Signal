@@ -298,6 +298,10 @@ pub struct Provenance {
     pub resolution_calibration_version: Option<String>,
     pub resolution_profile_sha256: Option<String>,
     pub runtime_config_sha256: String,
+    /// Canonical SHA-256 of the native request that produced this response.
+    /// This field belongs to the native API contract; the registered Telegraph
+    /// response uses `service::ServiceProvenance` and is intentionally unchanged.
+    pub request_sha256: String,
     pub response_sha256: Option<String>,
 }
 

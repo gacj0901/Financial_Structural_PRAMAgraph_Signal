@@ -5,195 +5,305 @@
   "timeframe": "D1",
   "base_structural_vector_version": "financial_structural_vector_v2",
   "calibration_profile_id": "crypto:binance:BTCUSDT:D1:financial_first_passage_weighted_neighbors_v2",
-  "calibration_profile_sha256": "sha256:bdc99d9e17d1b393d07cf87d12f7f62247883684a8ffb214cf05f01cd7c9d5fe",
-  "diagnostic_generation_timestamp_unix_seconds": 1786960213,
+  "calibration_profile_sha256": "sha256:e985d84b5583f7a17970955a764424c915d9279e17d79811b5ee82709d3e2f1f",
+  "diagnostic_generation_timestamp_unix_seconds": 1787366586,
   "evidence_status": "LATER_TIME_DEVELOPMENT_AUDIT_NOT_A_PRODUCTION_CLAIM",
   "method": "FROZEN_ORIGINAL_A_NORMALIZATION_AND_ESTIMATOR; FROZEN_VALIDATION_ONLY_BOUNDED_SLOPE_ONLY_DELTA_VELOCITY; CAUSAL_LIBRARY_GROWTH_AFTER_LABEL_MATURITY; NO_FORWARD_REFIT",
-  "frozen_feature_cutoff_timestamp_ns": 1771545600000000000,
-  "frozen_feature_source_end_timestamp_ns": 1771632000000000000,
-  "forward_feature_start_timestamp_ns": 1771891200000000000,
+  "frozen_feature_cutoff_timestamp_ns": 1770940800000000000,
+  "frozen_feature_source_end_timestamp_ns": 1771027200000000000,
+  "forward_feature_start_timestamp_ns": 1771286400000000000,
   "forward_feature_end_timestamp_ns": 1785542400000000000,
   "label_source_end_timestamp_ns": 1786752000000000000,
   "required_horizon_bars": 10,
   "frozen_estimator": {
-    "neighbor_count": 27,
+    "neighbor_count": 26,
     "minimum_support": 10,
-    "maximum_distance": 1.337884916163909,
-    "distance_power": 1.0,
+    "maximum_distance": 1.440129607043761,
+    "distance_power": 2.0,
     "selected_on": "CAUSAL_TEMPORAL_VALIDATION"
   },
   "frozen_velocity_fit": {
-    "feature_mean_on_validation": -0.00021294313778223866,
-    "feature_std_on_validation": 0.011338168892153843,
+    "feature_mean_on_validation": 0.00027077860477552485,
+    "feature_std_on_validation": 0.015879083714524355,
     "intercept_only_residual": {
       "DOWN": 0.0,
       "RANGE": 0.0,
       "UP": 0.0
     },
     "feature_residual_slope": {
-      "DOWN": -0.05634772681432397,
-      "RANGE": 0.06596459726342717,
-      "UP": -0.00961687044910319
+      "DOWN": -0.10793278652693429,
+      "RANGE": 0.014606451686360437,
+      "UP": 0.09332633484057397
     },
     "probability_projection": "CLAMP_NEGATIVE_TO_ZERO_THEN_RENORMALIZE"
   },
   "forward_velocity_support": {
-    "validation_standardized_minimum": -3.0292607347349163,
-    "validation_standardized_maximum": 2.305165447961937,
-    "evaluation_standardized_minimum": -3.931552637143912,
-    "evaluation_standardized_maximum": 3.2883835602070706,
+    "validation_standardized_minimum": -2.648263489093012,
+    "validation_standardized_maximum": 2.7332109618215212,
+    "evaluation_standardized_minimum": -2.837715976626049,
+    "evaluation_standardized_maximum": 2.3175472279670184,
     "evaluation_below_validation_minimum": 2,
-    "evaluation_above_validation_maximum": 1
+    "evaluation_above_validation_maximum": 0
   },
   "source_a_metrics": {
-    "observations": 25,
-    "multiclass_brier_score": 0.542370388,
+    "observations": 20,
+    "multiclass_brier_score": 0.4935595950000001,
     "brier_delta_vs_raw_a": 0.0,
     "brier_delta_vs_intercept_only": null,
-    "accuracy": 0.44,
+    "accuracy": 0.5,
     "predicted_direction_counts": {
       "DOWN": 9,
       "RANGE": 0,
-      "UP": 16
+      "UP": 11
     }
   },
   "source_a_plus_bounded_velocity_metrics": {
-    "observations": 25,
-    "multiclass_brier_score": 0.5277615073549742,
-    "brier_delta_vs_raw_a": -0.014608880645025857,
+    "observations": 20,
+    "multiclass_brier_score": 0.44425033240318273,
+    "brier_delta_vs_raw_a": -0.04930926259681734,
     "brier_delta_vs_intercept_only": null,
-    "accuracy": 0.52,
+    "accuracy": 0.7,
     "predicted_direction_counts": {
-      "DOWN": 11,
+      "DOWN": 13,
       "RANGE": 0,
-      "UP": 14
+      "UP": 7
     }
   },
   "forward_a_metrics": {
-    "observations": 115,
-    "resolved": 110,
-    "unresolved": 5,
-    "coverage": 0.9565217391304348,
-    "correct": 50,
-    "accuracy": 0.45454545454545453,
-    "balanced_accuracy": 0.3771,
-    "multiclass_brier_score": 0.6449375863636364,
-    "causal_climatology_brier_score": 0.6352939500340096,
-    "brier_skill_score": -0.015179801931232806,
-    "classwise_calibration_error": 0.057017575757575746,
+    "observations": 120,
+    "resolved": 119,
+    "unresolved": 1,
+    "coverage": 0.9916666666666667,
+    "correct": 51,
+    "accuracy": 0.42857142857142855,
+    "balanced_accuracy": 0.3578,
+    "multiclass_brier_score": 0.6527138546218485,
+    "causal_climatology_brier_score": 0.6447853452832804,
+    "brier_skill_score": -0.012296354742809434,
+    "classwise_calibration_error": 0.06719383753501403,
     "actual_direction_counts": {
-      "DOWN": 43,
+      "DOWN": 47,
       "RANGE": 22,
       "UNRESOLVED": 0,
-      "UP": 50
+      "UP": 51
     },
     "predicted_direction_counts": {
-      "DOWN": 55,
+      "DOWN": 51,
       "RANGE": 1,
-      "UNRESOLVED": 5,
-      "UP": 54
+      "UNRESOLVED": 1,
+      "UP": 67
     },
     "confusion_matrix": {
       "DOWN": {
-        "DOWN": 24,
-        "RANGE": 0,
-        "UP": 19
-      },
-      "RANGE": {
-        "DOWN": 8,
-        "RANGE": 1,
-        "UP": 10
-      },
-      "UP": {
-        "DOWN": 23,
+        "DOWN": 22,
         "RANGE": 0,
         "UP": 25
-      }
-    }
-  },
-  "forward_a_plus_bounded_velocity_metrics": {
-    "observations": 115,
-    "resolved": 110,
-    "unresolved": 5,
-    "coverage": 0.9565217391304348,
-    "correct": 49,
-    "accuracy": 0.44545454545454544,
-    "balanced_accuracy": 0.3694,
-    "multiclass_brier_score": 0.6489799690909092,
-    "causal_climatology_brier_score": 0.6352939500340096,
-    "brier_skill_score": -0.021542813458505172,
-    "classwise_calibration_error": 0.04966666666666667,
-    "actual_direction_counts": {
-      "DOWN": 43,
-      "RANGE": 22,
-      "UNRESOLVED": 0,
-      "UP": 50
-    },
-    "predicted_direction_counts": {
-      "DOWN": 53,
-      "RANGE": 1,
-      "UNRESOLVED": 5,
-      "UP": 56
-    },
-    "confusion_matrix": {
-      "DOWN": {
-        "DOWN": 23,
-        "RANGE": 0,
-        "UP": 20
       },
       "RANGE": {
         "DOWN": 7,
         "RANGE": 1,
-        "UP": 11
+        "UP": 14
+      },
+      "UP": {
+        "DOWN": 22,
+        "RANGE": 0,
+        "UP": 28
+      }
+    }
+  },
+  "forward_a_plus_bounded_velocity_metrics": {
+    "observations": 120,
+    "resolved": 119,
+    "unresolved": 1,
+    "coverage": 0.9916666666666667,
+    "correct": 51,
+    "accuracy": 0.42857142857142855,
+    "balanced_accuracy": 0.3583,
+    "multiclass_brier_score": 0.6807121430252101,
+    "causal_climatology_brier_score": 0.6447853452832804,
+    "brier_skill_score": -0.05571900478933123,
+    "classwise_calibration_error": 0.066896918767507,
+    "actual_direction_counts": {
+      "DOWN": 47,
+      "RANGE": 22,
+      "UNRESOLVED": 0,
+      "UP": 51
+    },
+    "predicted_direction_counts": {
+      "DOWN": 51,
+      "RANGE": 1,
+      "UNRESOLVED": 1,
+      "UP": 67
+    },
+    "confusion_matrix": {
+      "DOWN": {
+        "DOWN": 23,
+        "RANGE": 0,
+        "UP": 24
+      },
+      "RANGE": {
+        "DOWN": 5,
+        "RANGE": 1,
+        "UP": 16
       },
       "UP": {
         "DOWN": 23,
         "RANGE": 0,
-        "UP": 25
+        "UP": 27
       }
     }
   },
   "queries": [
     {
+      "query_timestamp_ns": 1771286400000000000,
+      "actual_direction": "DOWN",
+      "causal_library_size": 777,
+      "selected_neighbor_count": 26,
+      "baseline_probabilities": [
+        0.568,
+        0.0602,
+        0.3718
+      ],
+      "baseline_direction": "UP",
+      "velocity_value": 0.007656504528884809,
+      "velocity_standardized_raw": 0.46512292880940437,
+      "velocity_standardized_bounded": 0.46512292880940437,
+      "corrected_probabilities": [
+        0.6114082181960949,
+        0.06699379558787302,
+        0.32159798621603214
+      ],
+      "corrected_direction": "UP",
+      "decision_changed": false
+    },
+    {
+      "query_timestamp_ns": 1771372800000000000,
+      "actual_direction": "DOWN",
+      "causal_library_size": 778,
+      "selected_neighbor_count": 26,
+      "baseline_probabilities": [
+        0.7008,
+        0.0471,
+        0.2521
+      ],
+      "baseline_direction": "UP",
+      "velocity_value": -0.009870108677257567,
+      "velocity_standardized_raw": -0.6386317664385998,
+      "velocity_standardized_bounded": -0.6386317664385998,
+      "corrected_probabilities": [
+        0.641198837925524,
+        0.037771855958139575,
+        0.32102930611633634
+      ],
+      "corrected_direction": "UP",
+      "decision_changed": false
+    },
+    {
+      "query_timestamp_ns": 1771459200000000000,
+      "actual_direction": "UP",
+      "causal_library_size": 778,
+      "selected_neighbor_count": 26,
+      "baseline_probabilities": [
+        0.5303,
+        0.0,
+        0.4697
+      ],
+      "baseline_direction": "UP",
+      "velocity_value": -0.0018823565808748595,
+      "velocity_standardized_raw": -0.1355956819901985,
+      "velocity_standardized_bounded": -0.1355956819901985,
+      "corrected_probabilities": [
+        0.5166221447399527,
+        0.0,
+        0.48337785526004734
+      ],
+      "corrected_direction": "UP",
+      "decision_changed": false
+    },
+    {
+      "query_timestamp_ns": 1771545600000000000,
+      "actual_direction": "DOWN",
+      "causal_library_size": 778,
+      "selected_neighbor_count": 26,
+      "baseline_probabilities": [
+        0.6199,
+        0.0308,
+        0.3493
+      ],
+      "baseline_direction": "UP",
+      "velocity_value": 0.011629642324118998,
+      "velocity_standardized_raw": 0.7153349603512509,
+      "velocity_standardized_bounded": 0.7153349603512509,
+      "corrected_probabilities": [
+        0.6866595900329096,
+        0.041248505537935104,
+        0.27209190442915543
+      ],
+      "corrected_direction": "UP",
+      "decision_changed": false
+    },
+    {
+      "query_timestamp_ns": 1771632000000000000,
+      "actual_direction": "DOWN",
+      "causal_library_size": 778,
+      "selected_neighbor_count": 26,
+      "baseline_probabilities": [
+        0.5076,
+        0.0532,
+        0.4392
+      ],
+      "baseline_direction": "UP",
+      "velocity_value": -0.008659702078309987,
+      "velocity_standardized_raw": -0.5624052901060618,
+      "velocity_standardized_bounded": -0.5624052901060618,
+      "corrected_probabilities": [
+        0.45511277557945157,
+        0.04498525430191228,
+        0.4999019701186361
+      ],
+      "corrected_direction": "DOWN",
+      "decision_changed": true
+    },
+    {
       "query_timestamp_ns": 1771891200000000000,
       "actual_direction": "UP",
       "causal_library_size": 778,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.391,
-        0.0768,
-        0.5322
+        0.3834,
+        0.0782,
+        0.5384
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.0225152388849182,
-      "velocity_standardized_raw": 2.0045725406708863,
-      "velocity_standardized_bounded": 2.0045725406708863,
+      "velocity_standardized_raw": 1.4008654831762117,
+      "velocity_standardized_bounded": 1.4008654831762117,
       "corrected_probabilities": [
-        0.3717222855705385,
-        0.20903082033068,
-        0.4192468940987816
+        0.5141376411495056,
+        0.0986616739991033,
+        0.38720068485139125
       ],
-      "corrected_direction": "DOWN",
-      "decision_changed": false
+      "corrected_direction": "UP",
+      "decision_changed": true
     },
     {
       "query_timestamp_ns": 1771977600000000000,
       "actual_direction": "UP",
       "causal_library_size": 781,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4917,
-        0.1719,
-        0.3364
+        0.4891,
+        0.1563,
+        0.3546
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.008840216241266647,
-      "velocity_standardized_raw": -0.7609053265606751,
-      "velocity_standardized_bounded": -0.7609053265606751,
+      "velocity_standardized_raw": -0.5737733366635307,
+      "velocity_standardized_bounded": -0.5737733366635307,
       "corrected_probabilities": [
-        0.4990175279495666,
-        0.12170718657782853,
-        0.37927528547260486
+        0.43555183745994597,
+        0.1479192074791023,
+        0.41652895506095167
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -202,20 +312,20 @@
       "query_timestamp_ns": 1772064000000000000,
       "actual_direction": "UP",
       "causal_library_size": 785,
-      "selected_neighbor_count": 13,
+      "selected_neighbor_count": 21,
       "baseline_probabilities": [
-        0.7036,
-        0.0,
-        0.2964
+        0.6441,
+        0.029,
+        0.3269
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.037071305050027675,
-      "velocity_standardized_raw": 3.2883835602070706,
-      "velocity_standardized_bounded": 2.305165447961937,
+      "velocity_standardized_raw": 2.3175472279670184,
+      "velocity_standardized_bounded": 2.3175472279670184,
       "corrected_probabilities": [
-        0.6814315225232012,
-        0.15205931040037685,
-        0.16650916707642202
+        0.8603881886060938,
+        0.0628511416161588,
+        0.07676066977774747
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -224,34 +334,42 @@
       "query_timestamp_ns": 1772150400000000000,
       "actual_direction": "UP",
       "causal_library_size": 787,
-      "selected_neighbor_count": 9,
-      "baseline_probabilities": null,
-      "baseline_direction": "UNRESOLVED",
-      "velocity_value": null,
-      "velocity_standardized_raw": null,
-      "velocity_standardized_bounded": null,
-      "corrected_probabilities": null,
-      "corrected_direction": "UNRESOLVED",
+      "selected_neighbor_count": 11,
+      "baseline_probabilities": [
+        0.6522,
+        0.0,
+        0.3478
+      ],
+      "baseline_direction": "UP",
+      "velocity_value": 0.001246423535530311,
+      "velocity_standardized_raw": 0.061442142902891725,
+      "velocity_standardized_bounded": 0.061442142902891725,
+      "corrected_probabilities": [
+        0.6579341700018777,
+        0.0008974516918175418,
+        0.3411683783063048
+      ],
+      "corrected_direction": "UP",
       "decision_changed": false
     },
     {
       "query_timestamp_ns": 1772236800000000000,
       "actual_direction": "UP",
       "causal_library_size": 787,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4814,
-        0.062,
-        0.4566
+        0.5525,
+        0.029,
+        0.4185
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.04478955094611274,
-      "velocity_standardized_raw": -3.931552637143912,
-      "velocity_standardized_bounded": -3.0292607347349163,
+      "velocity_standardized_raw": -2.837715976626049,
+      "velocity_standardized_bounded": -2.648263489093012,
       "corrected_probabilities": [
-        0.4486915586489375,
+        0.3024193317357886,
         0.0,
-        0.5513084413510626
+        0.6975806682642114
       ],
       "corrected_direction": "DOWN",
       "decision_changed": true
@@ -260,20 +378,20 @@
       "query_timestamp_ns": 1772496000000000000,
       "actual_direction": "UP",
       "causal_library_size": 787,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4981,
-        0.1384,
-        0.3635
+        0.5041,
+        0.131,
+        0.3649
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.017236294487155614,
-      "velocity_standardized_raw": 1.5389819812097654,
-      "velocity_standardized_bounded": 1.5389819812097654,
+      "velocity_standardized_raw": 1.0684190717416517,
+      "velocity_standardized_bounded": 1.0684190717416517,
       "corrected_probabilities": [
-        0.4832998096632015,
-        0.2399183265861734,
-        0.2767818637506251
+        0.6038116360394166,
+        0.1466058115521805,
+        0.24958255240840302
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -282,20 +400,20 @@
       "query_timestamp_ns": 1772582400000000000,
       "actual_direction": "UP",
       "causal_library_size": 788,
-      "selected_neighbor_count": 25,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5459,
-        0.1305,
-        0.3236
+        0.5867,
+        0.0937,
+        0.3196
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.0018683086942975283,
-      "velocity_standardized_raw": -0.1459993736432012,
-      "velocity_standardized_bounded": -0.1459993736432012,
+      "velocity_standardized_raw": -0.13471100332549182,
+      "velocity_standardized_bounded": -0.13471100332549182,
       "corrected_probabilities": [
-        0.5473040570619769,
-        0.12086921011691361,
-        0.3318267328211095
+        0.5741279157969355,
+        0.09173235023830507,
+        0.33413973396475943
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -304,20 +422,20 @@
       "query_timestamp_ns": 1772668800000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 788,
-      "selected_neighbor_count": 10,
+      "selected_neighbor_count": 14,
       "baseline_probabilities": [
-        0.6664,
-        0.0,
-        0.3336
+        0.5481,
+        0.0716,
+        0.3803
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.022482454750697,
-      "velocity_standardized_raw": 2.00168105664617,
-      "velocity_standardized_bounded": 2.00168105664617,
+      "velocity_standardized_raw": 1.3988008719674925,
+      "velocity_standardized_bounded": 1.3988008719674925,
       "corrected_probabilities": [
-        0.6471500925978098,
-        0.13204008475149595,
-        0.22080982265069427
+        0.6786449585525249,
+        0.09203151735523202,
+        0.22932352409224308
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -326,20 +444,20 @@
       "query_timestamp_ns": 1772755200000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 792,
-      "selected_neighbor_count": 11,
+      "selected_neighbor_count": 14,
       "baseline_probabilities": [
-        0.8232,
+        0.8031,
         0.0,
-        0.1768
+        0.1969
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.003569966279812632,
-      "velocity_standardized_raw": 0.3336437703104504,
-      "velocity_standardized_bounded": 0.3336437703104504,
+      "velocity_standardized_raw": 0.20776939868510114,
+      "velocity_standardized_bounded": 0.20776939868510114,
       "corrected_probabilities": [
-        0.8199913910847741,
-        0.022008676937980257,
-        0.1579999319772457
+        0.8224903564713105,
+        0.0030347736837980895,
+        0.17447486984489147
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -350,18 +468,18 @@
       "causal_library_size": 792,
       "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4922,
-        0.0614,
-        0.4464
+        0.5986,
+        0.0433,
+        0.3581
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.04237670716271882,
-      "velocity_standardized_raw": -3.718745454048973,
-      "velocity_standardized_bounded": -3.0292607347349163,
+      "velocity_standardized_raw": -2.6857649052183876,
+      "velocity_standardized_bounded": -2.648263489093012,
       "corrected_probabilities": [
-        0.4579418778572241,
-        0.0,
-        0.5420581221427759
+        0.351447274870839,
+        0.004618267293810605,
+        0.6439344578353504
       ],
       "corrected_direction": "DOWN",
       "decision_changed": true
@@ -370,20 +488,20 @@
       "query_timestamp_ns": 1773100800000000000,
       "actual_direction": "UP",
       "causal_library_size": 792,
-      "selected_neighbor_count": 20,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5446,
-        0.0,
-        0.4554
+        0.5425,
+        0.0219,
+        0.4356
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.008044914078181812,
-      "velocity_standardized_raw": -0.690761534326711,
-      "velocity_standardized_bounded": -0.690761534326711,
+      "velocity_standardized_raw": -0.5236884465412257,
+      "velocity_standardized_bounded": -0.5236884465412257,
       "corrected_probabilities": [
-        0.5272197701987881,
-        0.0,
-        0.47278022980121176
+        0.4936260766859536,
+        0.014250770006890437,
+        0.492123153307156
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -392,20 +510,20 @@
       "query_timestamp_ns": 1773187200000000000,
       "actual_direction": "UP",
       "causal_library_size": 794,
-      "selected_neighbor_count": 17,
+      "selected_neighbor_count": 22,
       "baseline_probabilities": [
-        0.6429,
-        0.0,
-        0.3571
+        0.6087,
+        0.0543,
+        0.337
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.001447726082267964,
-      "velocity_standardized_raw": 0.1464671443727926,
-      "velocity_standardized_bounded": 0.1464671443727926,
+      "velocity_standardized_raw": 0.07411935717776355,
+      "velocity_standardized_bounded": 0.07411935717776355,
       "corrected_probabilities": [
-        0.6414914444475168,
-        0.009661646190875506,
-        0.3488469093616077
+        0.6156172879461401,
+        0.0553826208096411,
+        0.32900009124421886
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -414,20 +532,20 @@
       "query_timestamp_ns": 1773273600000000000,
       "actual_direction": "UP",
       "causal_library_size": 794,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4792,
-        0.0615,
-        0.4593
+        0.5964,
+        0.047,
+        0.3566
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.01105718718545067,
-      "velocity_standardized_raw": 0.9939991572212319,
-      "velocity_standardized_bounded": 0.9939991572212319,
+      "velocity_standardized_raw": 0.679284067934536,
+      "velocity_standardized_bounded": 0.679284067934536,
       "corrected_probabilities": [
-        0.4696408388784857,
-        0.1270687540862846,
-        0.4032904070352298
+        0.6597950923759257,
+        0.056921929919600184,
+        0.2832829777044742
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -436,20 +554,20 @@
       "query_timestamp_ns": 1773360000000000000,
       "actual_direction": "UP",
       "causal_library_size": 794,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5116,
-        0.0312,
-        0.4572
+        0.6696,
+        0.0205,
+        0.3099
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.004036190167546177,
-      "velocity_standardized_raw": -0.3372014534383655,
-      "velocity_standardized_bounded": -0.3372014534383655,
+      "velocity_standardized_raw": -0.27123534643136765,
+      "velocity_standardized_bounded": -0.27123534643136765,
       "corrected_probabilities": [
-        0.5148428226929661,
-        0.008956641927295929,
-        0.476200535379738
+        0.6442865992383471,
+        0.016538214016716995,
+        0.3391751867449359
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -458,20 +576,20 @@
       "query_timestamp_ns": 1773446400000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 794,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5533,
-        0.1021,
-        0.3446
+        0.5501,
+        0.0915,
+        0.3584
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.01895029570866283,
-      "velocity_standardized_raw": 1.6901528834789425,
-      "velocity_standardized_bounded": 1.6901528834789425,
+      "velocity_standardized_raw": 1.1763598857282576,
+      "velocity_standardized_bounded": 1.1763598857282576,
       "corrected_probabilities": [
-        0.5370460186804048,
-        0.2135902542723086,
-        0.24936372704728663
+        0.6598853565884947,
+        0.10868244383666226,
+        0.2314321995748431
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -480,20 +598,20 @@
       "query_timestamp_ns": 1773705600000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 795,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4597,
-        0.0398,
-        0.5005
+        0.4242,
+        0.0415,
+        0.5343
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.014116374117372016,
-      "velocity_standardized_raw": -1.2262501213234818,
-      "velocity_standardized_bounded": -1.2262501213234818,
+      "velocity_standardized_raw": -0.9060442643165758,
+      "velocity_standardized_bounded": -0.9060442643165758,
       "corrected_probabilities": [
-        0.45288409093846055,
-        0.0,
-        0.5471159090615394
+        0.3396422096080098,
+        0.028265908227555953,
+        0.6320918821644342
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -502,20 +620,20 @@
       "query_timestamp_ns": 1773792000000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 797,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3837,
-        0.0915,
-        0.5248
+        0.3874,
+        0.1125,
+        0.5001
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.013816819549487902,
-      "velocity_standardized_raw": -1.1998301084683718,
-      "velocity_standardized_bounded": -1.1998301084683718,
+      "velocity_standardized_raw": -0.8871795380345351,
+      "velocity_standardized_bounded": -0.8871795380345351,
       "corrected_probabilities": [
-        0.39523861071407373,
-        0.012353690110349716,
-        0.5924076991755766
+        0.30460278536968327,
+        0.099541454940571,
+        0.5958557596897457
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -524,20 +642,20 @@
       "query_timestamp_ns": 1773878400000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 800,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4315,
-        0.1109,
-        0.4576
+        0.4007,
+        0.1089,
+        0.4904
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.018662330714081583,
-      "velocity_standardized_raw": 1.6647550439053478,
-      "velocity_standardized_bounded": 1.6647550439053478,
+      "velocity_standardized_raw": 1.1582250235562137,
+      "velocity_standardized_bounded": 1.1582250235562137,
       "corrected_probabilities": [
-        0.4154902664132712,
-        0.22071489601347527,
-        0.3637948375732536
+        0.5087928963691388,
+        0.1258175578485075,
+        0.3653895457823537
       ],
       "corrected_direction": "UP",
       "decision_changed": true
@@ -546,20 +664,20 @@
       "query_timestamp_ns": 1773964800000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 800,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4717,
-        0.1653,
-        0.363
+        0.5192,
+        0.1468,
+        0.334
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.005278753255646701,
-      "velocity_standardized_raw": -0.44679261404988124,
-      "velocity_standardized_bounded": -0.44679261404988124,
+      "velocity_standardized_raw": -0.3494869074432899,
+      "velocity_standardized_bounded": -0.3494869074432899,
       "corrected_probabilities": [
-        0.47599674668693387,
-        0.13582750515392572,
-        0.38817574815914035
+        0.48658366785355084,
+        0.14169523637141407,
+        0.3717210957750351
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -568,20 +686,20 @@
       "query_timestamp_ns": 1774051200000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 802,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4665,
-        0.1336,
-        0.3999
+        0.5073,
+        0.094,
+        0.3987
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.0031303033754652883,
-      "velocity_standardized_raw": -0.2573043553533499,
-      "velocity_standardized_bounded": -0.2573043553533499,
+      "velocity_standardized_raw": -0.2141862869033114,
+      "velocity_standardized_bounded": -0.2141862869033114,
       "corrected_probabilities": [
-        0.46897446265142323,
-        0.11662702182499052,
-        0.41439851552358625
+        0.48731077887020235,
+        0.09087149834846586,
+        0.42181772278133184
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -590,20 +708,20 @@
       "query_timestamp_ns": 1774310400000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 802,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4223,
-        0.1033,
-        0.4744
+        0.4546,
+        0.0693,
+        0.4761
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.020315559600612036,
-      "velocity_standardized_raw": 1.8105659682490933,
-      "velocity_standardized_bounded": 1.8105659682490933,
+      "velocity_standardized_raw": 1.2623386434761257,
+      "velocity_standardized_bounded": 1.2623386434761257,
       "corrected_probabilities": [
-        0.4048880216437934,
-        0.2227332549144185,
-        0.37237872344178813
+        0.5724094389232488,
+        0.0877382884077598,
+        0.33985227266899154
       ],
       "corrected_direction": "UP",
       "decision_changed": true
@@ -612,20 +730,20 @@
       "query_timestamp_ns": 1774396800000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 802,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4621,
-        0.1001,
-        0.4378
+        0.4978,
+        0.0639,
+        0.4383
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.008063545250915481,
-      "velocity_standardized_raw": -0.692404760222434,
-      "velocity_standardized_bounded": -0.692404760222434,
+      "velocity_standardized_raw": -0.5248617618954755,
+      "velocity_standardized_bounded": -0.5248617618954755,
       "corrected_probabilities": [
-        0.46875876687740153,
-        0.054425798848647275,
-        0.47681543427395123
+        0.4488165754643293,
+        0.056233632032855724,
+        0.494949792502815
       ],
       "corrected_direction": "DOWN",
       "decision_changed": true
@@ -634,20 +752,20 @@
       "query_timestamp_ns": 1774483200000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 802,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3894,
-        0.0793,
-        0.5313
+        0.4248,
+        0.0868,
+        0.4884
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.015506678599480846,
-      "velocity_standardized_raw": -1.3488717276280888,
-      "velocity_standardized_bounded": -1.3488717276280888,
+      "velocity_standardized_raw": -0.9935999764158288,
+      "velocity_standardized_bounded": -0.9935999764158288,
       "corrected_probabilities": [
-        0.3985151822874211,
-        0.0,
-        0.6014848177125789
+        0.33207095590343,
+        0.07228702994891333,
+        0.5956420141476566
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -656,42 +774,42 @@
       "query_timestamp_ns": 1774569600000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 802,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3766,
-        0.2239,
-        0.3995
+        0.3964,
+        0.2304,
+        0.3732
       ],
-      "baseline_direction": "DOWN",
+      "baseline_direction": "UP",
       "velocity_value": 0.011406553392524943,
-      "velocity_standardized_raw": 1.0248124402475625,
-      "velocity_standardized_bounded": 1.0248124402475625,
+      "velocity_standardized_raw": 0.7012857283171633,
+      "velocity_standardized_bounded": 0.7012857283171633,
       "corrected_probabilities": [
-        0.36674451152750986,
-        0.29150133989148047,
-        0.34175414858100966
+        0.46184842669984333,
+        0.24064329610899873,
+        0.29750827719115797
       ],
       "corrected_direction": "UP",
-      "decision_changed": true
+      "decision_changed": false
     },
     {
       "query_timestamp_ns": 1774656000000000000,
       "actual_direction": "UP",
       "causal_library_size": 802,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3897,
-        0.1187,
-        0.4916
+        0.4023,
+        0.1306,
+        0.4671
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.014163448455853968,
-      "velocity_standardized_raw": -1.2304019679690656,
-      "velocity_standardized_bounded": -1.2304019679690656,
+      "velocity_standardized_raw": -0.909008814370487,
+      "velocity_standardized_bounded": -0.909008814370487,
       "corrected_probabilities": [
-        0.4015326163262801,
-        0.03753702971079237,
-        0.5609303539629275
+        0.31746553901702684,
+        0.1173226066704217,
+        0.5652118543125515
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -700,20 +818,20 @@
       "query_timestamp_ns": 1774915200000000000,
       "actual_direction": "UP",
       "causal_library_size": 807,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3778,
-        0.1183,
-        0.5039
+        0.4003,
+        0.129,
+        0.4707
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.0013053937213893868,
-      "velocity_standardized_raw": -0.09635158851471491,
-      "velocity_standardized_bounded": -0.09635158851471491,
+      "velocity_standardized_raw": -0.09926091168114512,
+      "velocity_standardized_bounded": -0.09926091168114512,
       "corrected_probabilities": [
-        0.37872660074431136,
-        0.11194420626793537,
-        0.5093291929877534
+        0.3910363429198648,
+        0.12755015028918526,
+        0.4814135067909499
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -722,20 +840,20 @@
       "query_timestamp_ns": 1775001600000000000,
       "actual_direction": "UP",
       "causal_library_size": 809,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5363,
-        0.1979,
-        0.2658
+        0.4681,
+        0.2185,
+        0.3134
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.003979319998513575,
-      "velocity_standardized_raw": 0.3697478116767967,
-      "velocity_standardized_bounded": 0.3697478116767967,
+      "velocity_standardized_raw": 0.23354882815725092,
+      "velocity_standardized_bounded": 0.23354882815725092,
       "corrected_probabilities": [
-        0.5327441831962648,
-        0.2222902654862934,
-        0.24496555131744174
+        0.4898962561382273,
+        0.22191131967488498,
+        0.2881924241868878
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -744,20 +862,20 @@
       "query_timestamp_ns": 1775088000000000000,
       "actual_direction": "UP",
       "causal_library_size": 809,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.407,
-        0.1056,
-        0.4874
+        0.4192,
+        0.1031,
+        0.4777
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.004087499728363928,
-      "velocity_standardized_raw": 0.37928901104323187,
-      "velocity_standardized_bounded": 0.37928901104323187,
+      "velocity_standardized_raw": 0.24036154681250949,
+      "velocity_standardized_bounded": 0.24036154681250949,
       "corrected_probabilities": [
-        0.40335242671802873,
-        0.13061964685991037,
-        0.46602792642206087
+        0.44163206220062257,
+        0.10661082932077579,
+        0.45175710847860173
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -766,20 +884,20 @@
       "query_timestamp_ns": 1775174400000000000,
       "actual_direction": "UP",
       "causal_library_size": 809,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3672,
-        0.1077,
-        0.5251
+        0.3469,
+        0.1059,
+        0.5472
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.004589870059938434,
-      "velocity_standardized_raw": 0.4235969002935104,
-      "velocity_standardized_bounded": 0.4235969002935104,
+      "velocity_standardized_raw": 0.27199878360816887,
+      "velocity_standardized_bounded": 0.27199878360816887,
       "corrected_probabilities": [
-        0.36312632348723567,
-        0.13564239892989755,
-        0.5012312775828669
+        0.37228464955524476,
+        0.10987293709152152,
+        0.5178424133532338
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -788,42 +906,42 @@
       "query_timestamp_ns": 1775260800000000000,
       "actual_direction": "UP",
       "causal_library_size": 809,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4307,
-        0.1104,
-        0.4589
+        0.3574,
+        0.1098,
+        0.5328
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.00818258128682722,
-      "velocity_standardized_raw": 0.7404656346598671,
-      "velocity_standardized_bounded": 0.7404656346598671,
+      "velocity_standardized_raw": 0.49825309975630966,
+      "velocity_standardized_bounded": 0.49825309975630966,
       "corrected_probabilities": [
-        0.4235790379194631,
-        0.15924451737774614,
-        0.41717644470279075
+        0.40390013562321125,
+        0.11707770982916986,
+        0.479022154547619
       ],
-      "corrected_direction": "UP",
-      "decision_changed": true
+      "corrected_direction": "DOWN",
+      "decision_changed": false
     },
     {
       "query_timestamp_ns": 1775520000000000000,
       "actual_direction": "UP",
       "causal_library_size": 809,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4461,
-        0.1122,
-        0.4417
+        0.4568,
+        0.1125,
+        0.4307
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.0029715813870043045,
-      "velocity_standardized_raw": 0.2808676211368023,
-      "velocity_standardized_bounded": 0.2808676211368023,
+      "velocity_standardized_raw": 0.17008555599202468,
+      "velocity_standardized_bounded": 0.17008555599202468,
       "corrected_probabilities": [
-        0.44339893247417955,
-        0.130727319512626,
-        0.4258737480131944
+        0.47267346155005685,
+        0.11498434645614526,
+        0.4123421919937979
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -832,20 +950,20 @@
       "query_timestamp_ns": 1775606400000000000,
       "actual_direction": "UP",
       "causal_library_size": 809,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3264,
-        0.1149,
-        0.5587
+        0.2995,
+        0.1215,
+        0.579
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.019525868664491783,
-      "velocity_standardized_raw": -1.703354898873868,
-      "velocity_standardized_bounded": -1.703354898873868,
+      "velocity_standardized_raw": -1.2467121922885018,
+      "velocity_standardized_bounded": -1.2467121922885018,
       "corrected_probabilities": [
-        0.34278094339131526,
-        0.002538880099099583,
-        0.6546801765095851
+        0.18314892049265727,
+        0.10328995859654153,
+        0.7135611209108011
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -854,20 +972,20 @@
       "query_timestamp_ns": 1775692800000000000,
       "actual_direction": "UP",
       "causal_library_size": 809,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.417,
-        0.0724,
-        0.5106
+        0.4405,
+        0.0721,
+        0.4874
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.0038969275178615077,
-      "velocity_standardized_raw": -0.324918813180551,
-      "velocity_standardized_bounded": -0.324918813180551,
+      "velocity_standardized_raw": -0.2624651521186261,
+      "velocity_standardized_bounded": -0.2624651521186261,
       "corrected_probabilities": [
-        0.4201247021328337,
-        0.05096686134523423,
-        0.5289084365219321
+        0.41600508932939495,
+        0.06826631543622605,
+        0.515728595234379
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -876,42 +994,42 @@
       "query_timestamp_ns": 1775779200000000000,
       "actual_direction": "UP",
       "causal_library_size": 813,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4605,
-        0.0677,
-        0.4718
+        0.4944,
+        0.0333,
+        0.4723
       ],
-      "baseline_direction": "DOWN",
+      "baseline_direction": "UP",
       "velocity_value": 0.004248450016294093,
-      "velocity_standardized_raw": 0.3934844503122257,
-      "velocity_standardized_bounded": 0.3934844503122257,
+      "velocity_standardized_raw": 0.25049754022521165,
+      "velocity_standardized_bounded": 0.25049754022521165,
       "corrected_probabilities": [
-        0.4567159110176108,
-        0.09365604329426698,
-        0.44962804568812226
+        0.5177780173157982,
+        0.036958880218851686,
+        0.4452631024653501
       ],
       "corrected_direction": "UP",
-      "decision_changed": true
+      "decision_changed": false
     },
     {
       "query_timestamp_ns": 1775865600000000000,
       "actual_direction": "UP",
       "causal_library_size": 814,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4352,
-        0.0815,
-        0.4833
+        0.4084,
+        0.0942,
+        0.4974
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.004878284303853586,
-      "velocity_standardized_raw": -0.41147218836189875,
-      "velocity_standardized_bounded": -0.41147218836189875,
+      "velocity_standardized_raw": -0.32426700439392114,
+      "velocity_standardized_bounded": -0.32426700439392114,
       "corrected_probabilities": [
-        0.4391570747288853,
-        0.05435740280960631,
-        0.5064855224615084
+        0.37813734897018303,
+        0.08946360966683937,
+        0.5323990413629776
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -920,20 +1038,20 @@
       "query_timestamp_ns": 1776124800000000000,
       "actual_direction": "UP",
       "causal_library_size": 816,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.7108,
-        0.081,
-        0.2082
+        0.7095,
+        0.0911,
+        0.1994
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.00951577223130046,
-      "velocity_standardized_raw": 0.8580499604142512,
-      "velocity_standardized_bounded": 0.8580499604142512,
+      "velocity_standardized_raw": 0.5822120339392557,
+      "velocity_standardized_bounded": 0.5822120339392557,
       "corrected_probabilities": [
-        0.702548244691838,
-        0.13760092007062572,
-        0.15985083523753627
+        0.7638357152276266,
+        0.09960405194495138,
+        0.13656023282742208
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -942,42 +1060,42 @@
       "query_timestamp_ns": 1776211200000000000,
       "actual_direction": "UP",
       "causal_library_size": 816,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5268,
-        0.07,
-        0.4032
+        0.521,
+        0.0682,
+        0.4108
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.012337251916723871,
-      "velocity_standardized_raw": -1.069335700875986,
-      "velocity_standardized_bounded": -1.069335700875986,
+      "velocity_standardized_raw": -0.7940023963704544,
+      "velocity_standardized_bounded": -0.7940023963704544,
       "corrected_probabilities": [
-        0.5367947069297395,
-        0.0,
-        0.4632052930702606
+        0.4468986664921129,
+        0.05660244235856055,
+        0.4964988911493266
       ],
-      "corrected_direction": "UP",
-      "decision_changed": false
+      "corrected_direction": "DOWN",
+      "decision_changed": true
     },
     {
       "query_timestamp_ns": 1776297600000000000,
       "actual_direction": "UP",
       "causal_library_size": 818,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.7041,
-        0.041,
-        0.2549
+        0.6948,
+        0.0465,
+        0.2587
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.012819611242559396,
-      "velocity_standardized_raw": 1.149440840430621,
-      "velocity_standardized_bounded": 1.149440840430621,
+      "velocity_standardized_raw": 0.7902743548297845,
+      "velocity_standardized_bounded": 0.7902743548297845,
       "corrected_probabilities": [
-        0.6930459763486704,
-        0.11682240211714115,
-        0.19013162153418844
+        0.768553409054763,
+        0.05804310418279091,
+        0.17340348676244613
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -986,20 +1104,20 @@
       "query_timestamp_ns": 1776384000000000000,
       "actual_direction": "UP",
       "causal_library_size": 818,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.631,
+        0.6215,
         0.0,
-        0.369
+        0.3785
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.009282424047499249,
-      "velocity_standardized_raw": -0.7999070216702456,
-      "velocity_standardized_bounded": -0.7999070216702456,
+      "velocity_standardized_raw": -0.6016217827188985,
+      "velocity_standardized_bounded": -0.6016217827188985,
       "corrected_probabilities": [
-        0.6066807614626615,
+        0.5604280492289858,
         0.0,
-        0.3933192385373387
+        0.4395719507710143
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -1008,20 +1126,20 @@
       "query_timestamp_ns": 1776470400000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 818,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4805,
-        0.0767,
-        0.4428
+        0.4943,
+        0.0814,
+        0.4243
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.01589607131635198,
-      "velocity_standardized_raw": 1.4207774295267255,
-      "velocity_standardized_bounded": 1.4207774295267255,
+      "velocity_standardized_raw": 0.98401727659413,
+      "velocity_standardized_bounded": 0.98401727659413,
       "corrected_probabilities": [
-        0.4668365675232316,
-        0.17042101093969772,
-        0.3627424215370707
+        0.5861347258443335,
+        0.09577300080911613,
+        0.31809227334655055
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -1030,20 +1148,20 @@
       "query_timestamp_ns": 1776729600000000000,
       "actual_direction": "UP",
       "causal_library_size": 822,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.6731,
-        0.0389,
-        0.288
+        0.7009,
+        0.0413,
+        0.2578
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.007256511818769473,
-      "velocity_standardized_raw": -0.6212262974722023,
-      "velocity_standardized_bounded": -0.6212262974722023,
+      "velocity_standardized_raw": -0.4740380842415926,
+      "velocity_standardized_bounded": -0.4740380842415926,
       "corrected_probabilities": [
-        0.677665425353771,
-        0.0,
-        0.32233457464622906
+        0.656659763022885,
+        0.03437598562503033,
+        0.3089642513520847
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -1052,20 +1170,20 @@
       "query_timestamp_ns": 1776816000000000000,
       "actual_direction": "UP",
       "causal_library_size": 822,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.552,
-        0.0398,
-        0.4082
+        0.5353,
+        0.0435,
+        0.4212
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.004901119648151224,
-      "velocity_standardized_raw": -0.4134862123647905,
-      "velocity_standardized_bounded": -0.4134862123647905,
+      "velocity_standardized_raw": -0.32570508134522225,
+      "velocity_standardized_bounded": -0.32570508134522225,
       "corrected_probabilities": [
-        0.5559764433368026,
-        0.012524548527376677,
-        0.43149900813582076
+        0.5049031385190994,
+        0.038742604465328914,
+        0.45635425701557164
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -1074,42 +1192,42 @@
       "query_timestamp_ns": 1776902400000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 822,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3662,
-        0.1055,
-        0.5283
+        0.3727,
+        0.0731,
+        0.5542
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.018411204640913247,
-      "velocity_standardized_raw": 1.642606311111103,
-      "velocity_standardized_bounded": 1.642606311111103,
+      "velocity_standardized_raw": 1.1424101265707765,
+      "velocity_standardized_bounded": 1.1424101265707765,
       "corrected_probabilities": [
-        0.35040326790716525,
-        0.21385386377480764,
-        0.4357428683180271
+        0.47931694999760677,
+        0.08978655831976495,
+        0.43089649168262845
       ],
-      "corrected_direction": "DOWN",
-      "decision_changed": false
+      "corrected_direction": "UP",
+      "decision_changed": true
     },
     {
       "query_timestamp_ns": 1776988800000000000,
       "actual_direction": "UP",
       "causal_library_size": 825,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3633,
-        0.0782,
-        0.5585
+        0.3363,
+        0.0847,
+        0.579
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.00216629710789399,
-      "velocity_standardized_raw": 0.20984342959670435,
-      "velocity_standardized_bounded": 0.20984342959670435,
+      "velocity_standardized_raw": 0.1193720328701752,
+      "velocity_standardized_bounded": 0.1193720328701752,
       "corrected_probabilities": [
-        0.361281962922973,
-        0.09204223732172294,
-        0.5466757997553041
+        0.34744055431024196,
+        0.08644360183082084,
+        0.5661158438589372
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1118,20 +1236,20 @@
       "query_timestamp_ns": 1777075200000000000,
       "actual_direction": "UP",
       "causal_library_size": 825,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.329,
+        0.3014,
         0.0,
-        0.671
+        0.6986
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.021163941542717467,
-      "velocity_standardized_raw": -1.8478290987033705,
-      "velocity_standardized_bounded": -1.8478290987033705,
+      "velocity_standardized_raw": -1.3498713485518676,
+      "velocity_standardized_bounded": -1.3498713485518676,
       "corrected_probabilities": [
-        0.3090944125701342,
+        0.17202957650903866,
         0.0,
-        0.6909055874298657
+        0.8279704234909613
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1140,20 +1258,20 @@
       "query_timestamp_ns": 1777334400000000000,
       "actual_direction": "UP",
       "causal_library_size": 825,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.1608,
-        0.0686,
-        0.7706
+        0.1777,
+        0.0654,
+        0.7569
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.015120670917369234,
-      "velocity_standardized_raw": 1.3523889263779205,
-      "velocity_standardized_bounded": 1.3523889263779205,
+      "velocity_standardized_raw": 0.9351857184939922,
+      "velocity_standardized_bounded": 0.9351857184939922,
       "corrected_probabilities": [
-        0.1477942508982218,
-        0.15780979087203817,
-        0.69439595822974
+        0.26497745550229307,
+        0.07905974501495677,
+        0.6559627994827503
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1162,20 +1280,20 @@
       "query_timestamp_ns": 1777420800000000000,
       "actual_direction": "UP",
       "causal_library_size": 825,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5281,
-        0.0693,
-        0.4026
+        0.5542,
+        0.066,
+        0.3798
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.008729791601275322,
-      "velocity_standardized_raw": -0.7511661313659607,
-      "velocity_standardized_bounded": -0.7511661313659607,
+      "velocity_standardized_raw": -0.5668192427134925,
+      "velocity_standardized_bounded": -0.5668192427134925,
       "corrected_probabilities": [
-        0.5353238673711005,
-        0.019749628666517777,
-        0.44492650396238176
+        0.5013008375604401,
+        0.057720782116405966,
+        0.44097838032315395
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -1184,20 +1302,20 @@
       "query_timestamp_ns": 1777507200000000000,
       "actual_direction": "UP",
       "causal_library_size": 825,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5979,
-        0.0668,
-        0.3353
+        0.6217,
+        0.034,
+        0.3443
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.00011717935118033505,
-      "velocity_standardized_raw": 0.008446142186872289,
-      "velocity_standardized_bounded": 0.008446142186872289,
+      "velocity_standardized_raw": -0.024432011502086907,
+      "velocity_standardized_bounded": -0.024432011502086907,
       "corrected_probabilities": [
-        0.5978187745447942,
-        0.06735714636778667,
-        0.3348240790874192
+        0.6194198499137276,
+        0.03364313500439417,
+        0.34693701508187835
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -1206,20 +1324,20 @@
       "query_timestamp_ns": 1777593600000000000,
       "actual_direction": "UP",
       "causal_library_size": 825,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3282,
-        0.0692,
-        0.6026
+        0.3327,
+        0.0667,
+        0.6006
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.00570113987599513,
-      "velocity_standardized_raw": 0.5216083011314101,
-      "velocity_standardized_bounded": 0.5216083011314101,
+      "velocity_standardized_raw": 0.3419820292434466,
+      "velocity_standardized_bounded": 0.3419820292434466,
       "corrected_probabilities": [
-        0.3231837605428424,
-        0.1036076815133939,
-        0.5732085579437637
+        0.36461592937063286,
+        0.0716951439877479,
+        0.5636889266416193
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1228,20 +1346,20 @@
       "query_timestamp_ns": 1777680000000000000,
       "actual_direction": "UP",
       "causal_library_size": 825,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3341,
-        0.0679,
-        0.598
+        0.343,
+        0.0632,
+        0.5938
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.0028259443862749187,
-      "velocity_standardized_raw": -0.2304606037665315,
-      "velocity_standardized_bounded": -0.2304606037665315,
+      "velocity_standardized_raw": -0.19501899774090356,
+      "velocity_standardized_bounded": -0.19501899774090356,
       "corrected_probabilities": [
-        0.33631630977004484,
-        0.052697759087454485,
-        0.6109859311425007
+        0.3247995917165593,
+        0.06035146443157506,
+        0.6148489438518656
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1250,20 +1368,20 @@
       "query_timestamp_ns": 1777939200000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 826,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3989,
-        0.0339,
-        0.5672
+        0.37,
+        0.0315,
+        0.5985
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.014519919729628662,
-      "velocity_standardized_raw": -1.261841901274467,
-      "velocity_standardized_bounded": -1.261841901274467,
+      "velocity_standardized_raw": -0.9314579229074383,
+      "velocity_standardized_bounded": -0.9314579229074383,
       "corrected_probabilities": [
-        0.39170925267306217,
-        0.0,
-        0.6082907473269378
+        0.2830704459968349,
+        0.01789470485117486,
+        0.6990348491519903
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1272,20 +1390,20 @@
       "query_timestamp_ns": 1778025600000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 831,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4757,
-        0.1053,
-        0.419
+        0.5277,
+        0.1005,
+        0.3718
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.0035899755482932663,
-      "velocity_standardized_raw": 0.3354085410305691,
-      "velocity_standardized_bounded": 0.3354085410305691,
+      "velocity_standardized_raw": 0.20902950089504993,
+      "velocity_standardized_bounded": 0.20902950089504993,
       "corrected_probabilities": [
-        0.4724744195133863,
-        0.12742508932779517,
-        0.4001004911588185
+        0.5472079571920895,
+        0.10355317930584759,
+        0.34923886350206296
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -1294,42 +1412,42 @@
       "query_timestamp_ns": 1778112000000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 832,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4911,
-        0.0764,
-        0.4325
+        0.493,
+        0.0792,
+        0.4278
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.006577822028041538,
-      "velocity_standardized_raw": -0.5613674439674184,
-      "velocity_standardized_bounded": -0.5613674439674184,
+      "velocity_standardized_raw": -0.4312969662445166,
+      "velocity_standardized_bounded": -0.4312969662445166,
       "corrected_probabilities": [
-        0.49649859798297885,
-        0.03936962264188972,
-        0.4641317793751314
+        0.4527486349125405,
+        0.07290028170007565,
+        0.4743510833873838
       ],
-      "corrected_direction": "UP",
-      "decision_changed": false
+      "corrected_direction": "DOWN",
+      "decision_changed": true
     },
     {
       "query_timestamp_ns": 1778198400000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 836,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5601,
-        0.0758,
-        0.3641
+        0.5551,
+        0.0792,
+        0.3657
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.001384589510724745,
-      "velocity_standardized_raw": 0.14089864630720897,
-      "velocity_standardized_bounded": 0.14089864630720897,
+      "velocity_standardized_raw": 0.07014327312415604,
+      "velocity_standardized_bounded": 0.07014327312415604,
       "corrected_probabilities": [
-        0.5587449959720096,
-        0.08509432245861712,
-        0.3561606815693733
+        0.5616462145943989,
+        0.08022454433001118,
+        0.35812924107559
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -1338,20 +1456,20 @@
       "query_timestamp_ns": 1778284800000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 836,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.6871,
-        0.0328,
-        0.2801
+        0.7019,
+        0.0289,
+        0.2692
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.009129966322266878,
-      "velocity_standardized_raw": 0.8240227808314382,
-      "velocity_standardized_bounded": 0.8240227808314382,
+      "velocity_standardized_raw": 0.5579155495847654,
+      "velocity_standardized_bounded": 0.5579155495847654,
       "corrected_probabilities": [
-        0.6791754796696343,
-        0.08715633087343513,
-        0.23366818945693058
+        0.7539682133933107,
+        0.037049166520079106,
+        0.20898262008661028
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -1360,20 +1478,20 @@
       "query_timestamp_ns": 1778544000000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 836,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5387,
-        0.1088,
-        0.3525
+        0.5773,
+        0.1099,
+        0.3128
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.0017477753247662035,
-      "velocity_standardized_raw": -0.13536861212625684,
-      "velocity_standardized_bounded": -0.13536861212625684,
+      "velocity_standardized_raw": -0.12712030277259562,
+      "velocity_standardized_bounded": -0.12712030277259562,
       "corrected_probabilities": [
-        0.5400018224056932,
-        0.09987046401898239,
-        0.3601277135753245
+        0.5654363280584096,
+        0.10804322343919658,
+        0.3265204485023938
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -1382,20 +1500,20 @@
       "query_timestamp_ns": 1778630400000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 836,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4962,
-        0.0475,
-        0.4563
+        0.53,
+        0.0618,
+        0.4082
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.007544881776449361,
-      "velocity_standardized_raw": -0.6466598538447348,
-      "velocity_standardized_bounded": -0.6466598538447348,
+      "velocity_standardized_raw": -0.492198449339745,
+      "velocity_standardized_bounded": -0.492198449339745,
       "corrected_probabilities": [
-        0.5024188440390609,
-        0.004843343174705397,
-        0.4927378127862338
+        0.4840649227089077,
+        0.05461072712961749,
+        0.46132435016147477
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -1404,42 +1522,42 @@
       "query_timestamp_ns": 1778716800000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 836,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3993,
-        0.145,
-        0.4557
+        0.4482,
+        0.1438,
+        0.408
       ],
-      "baseline_direction": "DOWN",
+      "baseline_direction": "UP",
       "velocity_value": 0.003995350610997099,
-      "velocity_standardized_raw": 0.37116167423573404,
-      "velocity_standardized_bounded": 0.37116167423573404,
+      "velocity_standardized_raw": 0.2345583708217852,
+      "velocity_standardized_bounded": 0.2345583708217852,
       "corrected_probabilities": [
-        0.3957305862632027,
-        0.16948353036057953,
-        0.43478588337621776
+        0.4700904730549734,
+        0.14722606551103984,
+        0.38268346143398674
       ],
-      "corrected_direction": "DOWN",
+      "corrected_direction": "UP",
       "decision_changed": false
     },
     {
       "query_timestamp_ns": 1778803200000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 836,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3676,
-        0.1418,
-        0.4906
+        0.4229,
+        0.1361,
+        0.441
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.001992486816183999,
-      "velocity_standardized_raw": -0.15695159380040877,
-      "velocity_standardized_bounded": -0.15695159380040877,
+      "velocity_standardized_raw": -0.1425312355327751,
+      "velocity_standardized_bounded": -0.1425312355327751,
       "corrected_probabilities": [
-        0.36910938314435876,
-        0.13144675132510303,
-        0.49944386553053816
+        0.4095980821874275,
+        0.13401812439439326,
+        0.4563837934181792
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1448,20 +1566,20 @@
       "query_timestamp_ns": 1778889600000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 836,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3735,
-        0.1061,
-        0.5204
+        0.3594,
+        0.1031,
+        0.5375
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.0017317639193968775,
-      "velocity_standardized_raw": -0.1339564435899065,
-      "velocity_standardized_bounded": -0.1339564435899065,
+      "velocity_standardized_raw": -0.1261119696938626,
+      "velocity_standardized_bounded": -0.1261119696938626,
       "corrected_probabilities": [
-        0.37478824176382675,
-        0.09726361714775082,
-        0.5279481410884225
+        0.3476304320889463,
+        0.10125795160759485,
+        0.5511116163034588
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1470,20 +1588,20 @@
       "query_timestamp_ns": 1779148800000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 836,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3247,
-        0.0331,
-        0.6422
+        0.2917,
+        0.0296,
+        0.6787
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.005139069383365317,
-      "velocity_standardized_raw": 0.4720349971899975,
-      "velocity_standardized_bounded": 0.4720349971899975,
+      "velocity_standardized_raw": 0.3065851195265657,
+      "velocity_standardized_bounded": 0.3065851195265657,
       "corrected_probabilities": [
-        0.320160500584581,
-        0.06423759848388116,
-        0.6156019009315379
+        0.32031246552207365,
+        0.03407812073612182,
+        0.6456094137418045
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1492,20 +1610,20 @@
       "query_timestamp_ns": 1779235200000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 843,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3597,
-        0.1001,
-        0.5402
+        0.3552,
+        0.0911,
+        0.5537
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.006628870885088937,
-      "velocity_standardized_raw": 0.6034320081089812,
-      "velocity_standardized_bounded": 0.6034320081089812,
+      "velocity_standardized_raw": 0.40040674856432446,
+      "velocity_standardized_bounded": 0.40040674856432446,
       "corrected_probabilities": [
-        0.35389687255317376,
-        0.13990514939077006,
-        0.5061979780560563
+        0.3925684942889397,
+        0.09694852182779748,
+        0.5104829838832629
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1514,42 +1632,42 @@
       "query_timestamp_ns": 1779321600000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 843,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4781,
-        0.0364,
-        0.4855
+        0.487,
+        0.0366,
+        0.4764
       ],
-      "baseline_direction": "DOWN",
+      "baseline_direction": "UP",
       "velocity_value": -0.012157332210860055,
-      "velocity_standardized_raw": -1.0534672032750796,
-      "velocity_standardized_bounded": -1.0534672032750796,
+      "velocity_standardized_raw": -0.7826717862988389,
+      "velocity_standardized_bounded": -0.7826717862988389,
       "corrected_probabilities": [
-        0.4725922522930564,
-        0.0,
-        0.5274077477069438
+        0.4139561108016045,
+        0.025167942367148595,
+        0.560875946831247
       ],
       "corrected_direction": "DOWN",
-      "decision_changed": false
+      "decision_changed": true
     },
     {
       "query_timestamp_ns": 1779408000000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 843,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4132,
-        0.0686,
-        0.5182
+        0.43,
+        0.0648,
+        0.5052
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.00024759167757652995,
-      "velocity_standardized_raw": 0.04061809448591514,
-      "velocity_standardized_bounded": 0.04061809448591514,
+      "velocity_standardized_raw": -0.0014602182100586934,
+      "velocity_standardized_bounded": -0.0014602182100586934,
       "corrected_probabilities": [
-        0.4128093810474395,
-        0.07127935624437122,
-        0.5159112627081892
+        0.42986372318638777,
+        0.06477867139326322,
+        0.505357605420349
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1558,42 +1676,42 @@
       "query_timestamp_ns": 1779494400000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 844,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4045,
-        0.1074,
-        0.4881
+        0.4101,
+        0.1072,
+        0.4827
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.008555002387071504,
-      "velocity_standardized_raw": 0.7733123053865667,
-      "velocity_standardized_bounded": 0.7733123053865667,
+      "velocity_standardized_raw": 0.5217066633837648,
+      "velocity_standardized_bounded": 0.5217066633837648,
       "corrected_probabilities": [
-        0.3970631557424001,
-        0.15841123478367727,
-        0.44452560947392267
+        0.45878897075551184,
+        0.11482028317316727,
+        0.426390746071321
       ],
-      "corrected_direction": "DOWN",
-      "decision_changed": false
+      "corrected_direction": "UP",
+      "decision_changed": true
     },
     {
       "query_timestamp_ns": 1779753600000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 845,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.2632,
-        0.0957,
-        0.6411
+        0.2297,
+        0.0816,
+        0.6887
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.004008523015164908,
-      "velocity_standardized_raw": -0.3347612752540015,
-      "velocity_standardized_bounded": -0.3347612752540015,
+      "velocity_standardized_raw": -0.26949298189203585,
+      "velocity_standardized_bounded": -0.26949298189203585,
       "corrected_probabilities": [
-        0.2664193558154943,
-        0.0736176072984785,
-        0.6599630368860272
+        0.2045492077347591,
+        0.07766366378018077,
+        0.7177871284850601
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1602,20 +1720,20 @@
       "query_timestamp_ns": 1779840000000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 845,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.2751,
-        0.2013,
-        0.5236
+        0.2546,
+        0.1565,
+        0.5889
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.001196157150813392,
-      "velocity_standardized_raw": 0.12427935251262186,
-      "velocity_standardized_bounded": 0.12427935251262186,
+      "velocity_standardized_raw": 0.058276570781690476,
+      "velocity_standardized_bounded": 0.058276570781690476,
       "corrected_probabilities": [
-        0.2739048215673877,
-        0.2094980374366546,
-        0.5165971409959577
+        0.2600387387581325,
+        0.15735121391556955,
+        0.5826100473262981
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1624,20 +1742,20 @@
       "query_timestamp_ns": 1779926400000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 845,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.2654,
-        0.0982,
-        0.6364
+        0.21,
+        0.0854,
+        0.7046
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.0011169859755732117,
-      "velocity_standardized_raw": -0.07973446562580154,
-      "velocity_standardized_bounded": -0.07973446562580154,
+      "velocity_standardized_raw": -0.08739575943411455,
+      "velocity_standardized_bounded": -0.08739575943411455,
       "corrected_probabilities": [
-        0.2661667960262518,
-        0.09294034808697942,
-        0.6408928558867687
+        0.20184367409140558,
+        0.08412345806223283,
+        0.7140328678463616
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1646,20 +1764,20 @@
       "query_timestamp_ns": 1780012800000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 847,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.2677,
-        0.1004,
-        0.6319
+        0.2145,
+        0.0899,
+        0.6956
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.0007435178926219286,
-      "velocity_standardized_raw": -0.046795453471049846,
-      "velocity_standardized_bounded": -0.046795453471049846,
+      "velocity_standardized_raw": -0.06387626110124302,
+      "velocity_standardized_bounded": -0.06387626110124302,
       "corrected_probabilities": [
-        0.2681500258136381,
-        0.09731315675802275,
-        0.6345368174283391
+        0.20853866266810145,
+        0.08896699447831935,
+        0.7024943428535791
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1668,20 +1786,20 @@
       "query_timestamp_ns": 1780099200000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 853,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.2442,
+        0.1718,
         0.0,
-        0.7558
+        0.8282
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.0007990536115048755,
-      "velocity_standardized_raw": -0.05169357409451121,
-      "velocity_standardized_bounded": -0.05169357409451121,
+      "velocity_standardized_raw": -0.06737367442063683,
+      "velocity_standardized_bounded": -0.06737367442063683,
       "corrected_probabilities": [
-        0.2438655620569315,
+        0.16534954301682145,
         0.0,
-        0.7561344379430686
+        0.8346504569831786
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1690,20 +1808,20 @@
       "query_timestamp_ns": 1780358400000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 853,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.2091,
+        0.2002,
         0.0,
-        0.7909
+        0.7998
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.017571103125097687,
-      "velocity_standardized_raw": 1.5685113206583745,
-      "velocity_standardized_bounded": 1.5685113206583745,
+      "velocity_standardized_raw": 1.089503955728744,
+      "velocity_standardized_bounded": 1.089503955728744,
       "corrected_probabilities": [
-        0.19401582983127666,
-        0.10346621757035594,
-        0.7025179525983675
+        0.3018794109824706,
+        0.01591378689145048,
+        0.682206802126079
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1712,20 +1830,20 @@
       "query_timestamp_ns": 1780444800000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 855,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.2022,
+        0.1605,
         0.0,
-        0.7978
+        0.8395
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.002390145341433402,
-      "velocity_standardized_raw": 0.229586320681553,
-      "velocity_standardized_bounded": 0.229586320681553,
+      "velocity_standardized_raw": 0.1334690826473397,
+      "velocity_standardized_bounded": 0.1334690826473397,
       "corrected_probabilities": [
-        0.19999209809711926,
-        0.015144569180950685,
-        0.7848633327219301
+        0.17295618029800988,
+        0.0019495097073112153,
+        0.8250943099946789
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1734,20 +1852,20 @@
       "query_timestamp_ns": 1780531200000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 857,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.196,
+        0.1453,
         0.0,
-        0.804
+        0.8547
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.005183093864180262,
-      "velocity_standardized_raw": 0.4759178535165962,
-      "velocity_standardized_bounded": 0.4759178535165962,
+      "velocity_standardized_raw": 0.30935760196991197,
+      "velocity_standardized_bounded": 0.30935760196991197,
       "corrected_probabilities": [
-        0.19142315965831563,
-        0.03139372953769699,
-        0.7771831108039874
+        0.17417121114692102,
+        0.004518616866981841,
+        0.8213101719860972
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1756,20 +1874,20 @@
       "query_timestamp_ns": 1780617600000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 858,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.1899,
+        0.152,
         0.0,
-        0.8101
+        0.848
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.006150151786055245,
-      "velocity_standardized_raw": -0.5236479280513832,
-      "velocity_standardized_bounded": -0.5236479280513832,
+      "velocity_standardized_raw": -0.4043640367584713,
+      "velocity_standardized_bounded": -0.4043640367584713,
       "corrected_probabilities": [
-        0.1884271609551565,
+        0.1135912796334138,
         0.0,
-        0.8115728390448433
+        0.8864087203665862
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1778,20 +1896,20 @@
       "query_timestamp_ns": 1780704000000000000,
       "actual_direction": "UP",
       "causal_library_size": 859,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.0917,
-        0.1478,
-        0.7605
+        0.073,
+        0.1515,
+        0.7755
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.013840021077534471,
-      "velocity_standardized_raw": -1.2018764290221804,
-      "velocity_standardized_bounded": -1.2018764290221804,
+      "velocity_standardized_raw": -0.8886406757464892,
+      "velocity_standardized_bounded": -0.8886406757464892,
       "corrected_probabilities": [
-        0.10325828991373709,
-        0.06851870539914587,
-        0.8282230046871171
+        0.0,
+        0.1371576468219877,
+        0.8628423531780124
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1800,20 +1918,20 @@
       "query_timestamp_ns": 1780963200000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 860,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.2956,
+        0.2354,
         0.0,
-        0.7044
+        0.7646
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.023651037349470716,
-      "velocity_standardized_raw": 2.1047473109848567,
-      "velocity_standardized_bounded": 2.1047473109848567,
+      "velocity_standardized_raw": 1.4723934431625691,
+      "velocity_standardized_bounded": 1.4723934431625691,
       "corrected_probabilities": [
-        0.2753589177821603,
-        0.13883880871039736,
-        0.5858022735074424
+        0.37281308349365555,
+        0.021506443690867957,
+        0.6056804728154765
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1822,20 +1940,20 @@
       "query_timestamp_ns": 1781049600000000000,
       "actual_direction": "UP",
       "causal_library_size": 861,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3023,
-        0.1064,
-        0.5913
+        0.3207,
+        0.0741,
+        0.6052
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.02782642527177017,
-      "velocity_standardized_raw": -2.4354445939764413,
-      "velocity_standardized_bounded": -2.4354445939764413,
+      "velocity_standardized_raw": -1.7694474304487489,
+      "velocity_standardized_bounded": -1.7694474304487489,
       "corrected_probabilities": [
-        0.3089593461107403,
-        0.0,
-        0.6910406538892596
+        0.15556395662314687,
+        0.04825465159559575,
+        0.7961813917812575
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1844,20 +1962,20 @@
       "query_timestamp_ns": 1781136000000000000,
       "actual_direction": "UP",
       "causal_library_size": 862,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3781,
-        0.0372,
-        0.5847
+        0.3931,
+        0.0375,
+        0.5694
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.007105637220696716,
-      "velocity_standardized_raw": 0.645481684749246,
-      "velocity_standardized_bounded": 0.645481684749246,
+      "velocity_standardized_raw": 0.4304315500062167,
+      "velocity_standardized_bounded": 0.4304315500062167,
       "corrected_probabilities": [
-        0.37189248626049765,
-        0.07977893937540248,
-        0.5483285743640999
+        0.43327059896182746,
+        0.04378707763945104,
+        0.5229423233987216
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1866,20 +1984,20 @@
       "query_timestamp_ns": 1781222400000000000,
       "actual_direction": "UP",
       "causal_library_size": 862,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3822,
-        0.0349,
-        0.5829
+        0.403,
+        0.033,
+        0.564
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.0006183633153014137,
-      "velocity_standardized_raw": -0.03575711222644874,
-      "velocity_standardized_bounded": -0.03575711222644874,
+      "velocity_standardized_raw": -0.05599453570886172,
+      "velocity_standardized_bounded": -0.05599453570886172,
       "corrected_probabilities": [
-        0.3825438715159158,
-        0.032541296492679145,
-        0.584914831991405
+        0.3977742352111923,
+        0.032182118519468325,
+        0.5700436462693393
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -1888,42 +2006,42 @@
       "query_timestamp_ns": 1781308800000000000,
       "actual_direction": "UP",
       "causal_library_size": 862,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4509,
-        0.0366,
-        0.5125
+        0.4744,
+        0.0365,
+        0.4891
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.006646706088854313,
-      "velocity_standardized_raw": 0.6050050314018092,
-      "velocity_standardized_bounded": 0.6050050314018092,
+      "velocity_standardized_raw": 0.4015299370357765,
+      "velocity_standardized_bounded": 0.4015299370357765,
       "corrected_probabilities": [
-        0.44508174499195324,
-        0.07650891323876745,
-        0.4784093417692793
+        0.5118733173523154,
+        0.042364927625940414,
+        0.44576175502174414
       ],
-      "corrected_direction": "DOWN",
-      "decision_changed": false
+      "corrected_direction": "UP",
+      "decision_changed": true
     },
     {
       "query_timestamp_ns": 1781568000000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 863,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.587,
-        0.0341,
-        0.3789
+        0.5672,
+        0.0319,
+        0.4009
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.007693537974877537,
-      "velocity_standardized_raw": -0.6597709831498422,
-      "velocity_standardized_bounded": -0.6597709831498422,
+      "velocity_standardized_raw": -0.5015602110824708,
+      "velocity_standardized_bounded": -0.5015602110824708,
       "corrected_probabilities": [
-        0.5878068934422439,
-        0.0,
-        0.4121931065577561
+        0.5203912237978084,
+        0.024573985009023143,
+        0.4550347911931684
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -1932,20 +2050,20 @@
       "query_timestamp_ns": 1781654400000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 866,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.741,
-        0.0337,
-        0.2253
+        0.7336,
+        0.031,
+        0.2354
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.0007094846142202526,
-      "velocity_standardized_raw": 0.0813559720953551,
-      "velocity_standardized_bounded": 0.0813559720953551,
+      "velocity_standardized_raw": 0.02762791716019798,
+      "velocity_standardized_bounded": 0.02762791716019798,
       "corrected_probabilities": [
-        0.7402176101560981,
-        0.039066613934244716,
-        0.22071577590965716
+        0.7361784122478403,
+        0.0314035458371952,
+        0.2324180419149645
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -1954,20 +2072,20 @@
       "query_timestamp_ns": 1781740800000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 866,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5354,
-        0.0664,
-        0.3982
+        0.5712,
+        0.0316,
+        0.3972
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.00023735209282962043,
-      "velocity_standardized_raw": 0.03971498704023267,
-      "velocity_standardized_bounded": 0.03971498704023267,
+      "velocity_standardized_raw": -0.0021050655407358113,
+      "velocity_standardized_bounded": -0.0021050655407358113,
       "corrected_probabilities": [
-        0.5350180661147462,
-        0.06901978312543118,
-        0.39596215075982255
+        0.571003541948484,
+        0.03156925246188262,
+        0.39742720558963346
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -1976,20 +2094,20 @@
       "query_timestamp_ns": 1781827200000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 866,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.6756,
-        0.034,
-        0.2904
+        0.7038,
+        0.0311,
+        0.2651
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.009613617182622606,
-      "velocity_standardized_raw": -0.8291174822193514,
-      "velocity_standardized_bounded": -0.8291174822193514,
+      "velocity_standardized_raw": -0.6224789770682438,
+      "velocity_standardized_bounded": -0.6224789770682438,
       "corrected_probabilities": [
-        0.6697154939908546,
-        0.0,
-        0.3302845060091454
+        0.6457063185549111,
+        0.02200779089567763,
+        0.3322858905494112
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -1998,20 +2116,20 @@
       "query_timestamp_ns": 1781913600000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 868,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.6026,
-        0.0767,
-        0.3207
+        0.603,
+        0.0808,
+        0.3162
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.018731013925506895,
-      "velocity_standardized_raw": 1.67081274264653,
-      "velocity_standardized_bounded": 1.67081274264653,
+      "velocity_standardized_raw": 1.1625504123922512,
+      "velocity_standardized_bounded": 1.1625504123922512,
       "corrected_probabilities": [
-        0.5865320103092575,
-        0.18691448967128055,
-        0.22655350001946195
+        0.7114965690559666,
+        0.09778073643156582,
+        0.1907226945124677
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -2020,20 +2138,20 @@
       "query_timestamp_ns": 1782172800000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 868,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4555,
-        0.101,
-        0.4435
+        0.4792,
+        0.0922,
+        0.4286
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.001644205324256482,
-      "velocity_standardized_raw": -0.12623398011513967,
-      "velocity_standardized_bounded": -0.12623398011513967,
+      "velocity_standardized_raw": -0.12059788609089582,
+      "velocity_standardized_bounded": -0.12059788609089582,
       "corrected_probabilities": [
-        0.45671397583304196,
-        0.09267302634074534,
-        0.4506129978262127
+        0.4679450413016157,
+        0.09043849280333613,
+        0.44161646589504816
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -2042,20 +2160,20 @@
       "query_timestamp_ns": 1782259200000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 868,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5261,
-        0.1526,
-        0.3213
+        0.5499,
+        0.1618,
+        0.2883
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.018435285222217802,
-      "velocity_standardized_raw": -1.607167987861396,
-      "velocity_standardized_bounded": -1.607167987861396,
+      "velocity_standardized_raw": -1.1780316901965304,
+      "velocity_standardized_bounded": -1.1780316901965304,
       "corrected_probabilities": [
-        0.5415559263292089,
-        0.04658381094605042,
-        0.41186026272474063
+        0.43995862002791136,
+        0.14459313703214285,
+        0.4154482429399457
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -2064,20 +2182,20 @@
       "query_timestamp_ns": 1782345600000000000,
       "actual_direction": "UP",
       "causal_library_size": 868,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5412,
-        0.1066,
-        0.3522
+        0.5811,
+        0.1027,
+        0.3162
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.025351217798763905,
-      "velocity_standardized_raw": 2.2546992534426673,
-      "velocity_standardized_bounded": 2.2546992534426673,
+      "velocity_standardized_raw": 1.5794638812217916,
+      "velocity_standardized_bounded": 1.5794638812217916,
       "corrected_probabilities": [
-        0.5195168493779522,
-        0.25533032820349544,
-        0.2251528224185524
+        0.7285055750474974,
+        0.12577036287141743,
+        0.14572406208108524
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -2086,20 +2204,20 @@
       "query_timestamp_ns": 1782432000000000000,
       "actual_direction": "UP",
       "causal_library_size": 873,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3449,
-        0.1503,
-        0.5048
+        0.3394,
+        0.1546,
+        0.506
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.023506337315618592,
-      "velocity_standardized_raw": -2.0544229319035527,
-      "velocity_standardized_bounded": -2.0544229319035527,
+      "velocity_standardized_raw": -1.4973858912681184,
+      "velocity_standardized_bounded": -1.4973858912681184,
       "corrected_probabilities": [
-        0.3646571191837832,
-        0.01478081868823286,
-        0.6205620621279839
+        0.19965446292596034,
+        0.13272850532335448,
+        0.6676170317506852
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -2108,20 +2226,20 @@
       "query_timestamp_ns": 1782518400000000000,
       "actual_direction": "UP",
       "causal_library_size": 873,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5406,
-        0.1353,
-        0.3241
+        0.5811,
+        0.124,
+        0.2949
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.018426807958220773,
-      "velocity_standardized_raw": 1.6439824872340678,
-      "velocity_standardized_bounded": 1.6439824872340678,
+      "velocity_standardized_raw": 1.1433927599259526,
+      "velocity_standardized_bounded": 1.1433927599259526,
       "corrected_probabilities": [
-        0.5247900333996754,
-        0.24374464267852258,
-        0.2314653239218019
+        0.6878086555671374,
+        0.14070091110639274,
+        0.17149043332646993
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -2130,42 +2248,42 @@
       "query_timestamp_ns": 1782777600000000000,
       "actual_direction": "UP",
       "causal_library_size": 873,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4633,
-        0.144,
-        0.3927
+        0.4701,
+        0.1418,
+        0.3881
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.012355654653797956,
-      "velocity_standardized_raw": -1.0709587792803674,
-      "velocity_standardized_bounded": -1.0709587792803674,
+      "velocity_standardized_raw": -0.7951613257775242,
+      "velocity_standardized_bounded": -0.7951613257775242,
       "corrected_probabilities": [
-        0.473599271836669,
-        0.07335463543903896,
-        0.453046092724292
+        0.3958905078582121,
+        0.1301855145121683,
+        0.47392397762961963
       ],
-      "corrected_direction": "UP",
-      "decision_changed": false
+      "corrected_direction": "DOWN",
+      "decision_changed": true
     },
     {
       "query_timestamp_ns": 1782864000000000000,
       "actual_direction": "UP",
       "causal_library_size": 873,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4943,
-        0.182,
-        0.3237
+        0.5228,
+        0.1832,
+        0.294
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.0014756342746402003,
-      "velocity_standardized_raw": -0.1113664074744697,
-      "velocity_standardized_bounded": -0.1113664074744697,
+      "velocity_standardized_raw": -0.10998196815464284,
+      "velocity_standardized_bounded": -0.10998196815464284,
       "corrected_probabilities": [
-        0.495370996313064,
-        0.17465375978227188,
-        0.3299752439046641
+        0.5125357860135745,
+        0.18159355369577837,
+        0.30587066029064713
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -2174,42 +2292,42 @@
       "query_timestamp_ns": 1782950400000000000,
       "actual_direction": "UP",
       "causal_library_size": 873,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3854,
-        0.1782,
-        0.4364
+        0.4138,
+        0.147,
+        0.4392
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.005228325554196768,
-      "velocity_standardized_raw": 0.47990718287363265,
-      "velocity_standardized_bounded": 0.47990718287363265,
+      "velocity_standardized_raw": 0.31220610953052985,
+      "velocity_standardized_bounded": 0.31220610953052985,
       "corrected_probabilities": [
-        0.3807847947947102,
-        0.20985688404208508,
-        0.40935832116320475
+        0.44293705191731914,
+        0.15156022345504422,
+        0.40550272462763665
       ],
-      "corrected_direction": "DOWN",
-      "decision_changed": false
+      "corrected_direction": "UP",
+      "decision_changed": true
     },
     {
       "query_timestamp_ns": 1783036800000000000,
       "actual_direction": "UP",
       "causal_library_size": 873,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5496,
-        0.1906,
-        0.2598
+        0.5597,
+        0.2013,
+        0.239
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.0038696748015633244,
-      "velocity_standardized_raw": -0.322515187290215,
-      "velocity_standardized_bounded": -0.322515187290215,
+      "velocity_standardized_raw": -0.2607488870753695,
+      "velocity_standardized_bounded": -0.2607488870753695,
       "corrected_probabilities": [
-        0.5527015867740384,
-        0.1693254155590622,
-        0.2779729976668996
+        0.5353652620554971,
+        0.19749138397866137,
+        0.26714335396584155
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -2218,20 +2336,20 @@
       "query_timestamp_ns": 1783123200000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 874,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5092,
-        0.2103,
-        0.2805
+        0.5593,
+        0.2016,
+        0.2391
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.014096401812468184,
-      "velocity_standardized_raw": 1.2620507849510578,
-      "velocity_standardized_bounded": 1.2620507849510578,
+      "velocity_standardized_raw": 0.8706814232011747,
+      "velocity_standardized_bounded": 0.8706814232011747,
       "corrected_probabilities": [
-        0.4970630211009367,
-        0.29355067175528865,
-        0.2093863071437747
+        0.6405575060411403,
+        0.21431756614219946,
+        0.14512492781666025
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -2240,35 +2358,51 @@
       "query_timestamp_ns": 1783382400000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 874,
-      "selected_neighbor_count": 9,
-      "baseline_probabilities": null,
-      "baseline_direction": "UNRESOLVED",
-      "velocity_value": null,
-      "velocity_standardized_raw": null,
-      "velocity_standardized_bounded": null,
-      "corrected_probabilities": null,
-      "corrected_direction": "UNRESOLVED",
+      "selected_neighbor_count": 14,
+      "baseline_probabilities": [
+        0.7145,
+        0.0833,
+        0.2022
+      ],
+      "baseline_direction": "UP",
+      "velocity_value": 0.012242453709430723,
+      "velocity_standardized_raw": 0.7539273247677944,
+      "velocity_standardized_bounded": 0.7539273247677944,
+      "corrected_probabilities": [
+        0.7848612739567373,
+        0.09431220304424776,
+        0.12082652299901497
+      ],
+      "corrected_direction": "UP",
       "decision_changed": false
     },
     {
       "query_timestamp_ns": 1783468800000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 879,
-      "selected_neighbor_count": 7,
-      "baseline_probabilities": null,
-      "baseline_direction": "UNRESOLVED",
-      "velocity_value": null,
-      "velocity_standardized_raw": null,
-      "velocity_standardized_bounded": null,
-      "corrected_probabilities": null,
-      "corrected_direction": "UNRESOLVED",
+      "selected_neighbor_count": 14,
+      "baseline_probabilities": [
+        0.7114,
+        0.1459,
+        0.1427
+      ],
+      "baseline_direction": "UP",
+      "velocity_value": -0.010547768936100797,
+      "velocity_standardized_raw": -0.6813080487119518,
+      "velocity_standardized_bounded": -0.6813080487119518,
+      "corrected_probabilities": [
+        0.6478160169163304,
+        0.1359485069029604,
+        0.21623547618070926
+      ],
+      "corrected_direction": "UP",
       "decision_changed": false
     },
     {
       "query_timestamp_ns": 1783555200000000000,
       "actual_direction": "UP",
       "causal_library_size": 879,
-      "selected_neighbor_count": 5,
+      "selected_neighbor_count": 9,
       "baseline_probabilities": null,
       "baseline_direction": "UNRESOLVED",
       "velocity_value": null,
@@ -2282,34 +2416,42 @@
       "query_timestamp_ns": 1783641600000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 879,
-      "selected_neighbor_count": 7,
-      "baseline_probabilities": null,
-      "baseline_direction": "UNRESOLVED",
-      "velocity_value": null,
-      "velocity_standardized_raw": null,
-      "velocity_standardized_bounded": null,
-      "corrected_probabilities": null,
-      "corrected_direction": "UNRESOLVED",
+      "selected_neighbor_count": 15,
+      "baseline_probabilities": [
+        0.553,
+        0.2562,
+        0.1908
+      ],
+      "baseline_direction": "UP",
+      "velocity_value": 0.0002028198936265711,
+      "velocity_standardized_raw": -0.004279762760290316,
+      "velocity_standardized_bounded": -0.004279762760290316,
+      "corrected_probabilities": [
+        0.5526005854275949,
+        0.25613748785201274,
+        0.19126192672039233
+      ],
+      "corrected_direction": "UP",
       "decision_changed": false
     },
     {
       "query_timestamp_ns": 1783728000000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 879,
-      "selected_neighbor_count": 11,
+      "selected_neighbor_count": 19,
       "baseline_probabilities": [
-        0.6289,
-        0.1867,
-        0.1844
+        0.5323,
+        0.2117,
+        0.256
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.006108055606051417,
-      "velocity_standardized_raw": -0.5199351433500581,
-      "velocity_standardized_bounded": -0.5199351433500581,
+      "velocity_standardized_raw": -0.40171299084419587,
+      "velocity_standardized_bounded": -0.40171299084419587,
       "corrected_probabilities": [
-        0.6339001489155334,
-        0.15240268766581117,
-        0.21369716341865547
+        0.49480959890666615,
+        0.2058323986074509,
+        0.2993580024858829
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -2318,20 +2460,20 @@
       "query_timestamp_ns": 1783987200000000000,
       "actual_direction": "UP",
       "causal_library_size": 879,
-      "selected_neighbor_count": 24,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.2973,
-        0.2496,
-        0.4531
+        0.2862,
+        0.264,
+        0.4498
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.012394317881348637,
-      "velocity_standardized_raw": 1.1119309598444296,
-      "velocity_standardized_bounded": 1.1119309598444296,
+      "velocity_standardized_raw": 0.7634911116114274,
+      "velocity_standardized_bounded": 0.7634911116114274,
       "corrected_probabilities": [
-        0.2866067040108292,
-        0.3229480779508738,
-        0.39044521803829707
+        0.3574538271300501,
+        0.2751518960347179,
+        0.36739427683523196
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -2340,20 +2482,20 @@
       "query_timestamp_ns": 1784073600000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 879,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3704,
-        0.2426,
-        0.387
+        0.3835,
+        0.1994,
+        0.4171
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.004942376829222319,
-      "velocity_standardized_raw": -0.417124999320914,
-      "velocity_standardized_bounded": -0.417124999320914,
+      "velocity_standardized_raw": -0.32830329052484625,
+      "velocity_standardized_bounded": -0.32830329052484625,
       "corrected_probabilities": [
-        0.3744114370795515,
-        0.2150845174112886,
-        0.4105040455091599
+        0.352860657179216,
+        0.19460465384847567,
+        0.45253468897230836
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -2362,20 +2504,20 @@
       "query_timestamp_ns": 1784160000000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 879,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.2422,
-        0.3865,
-        0.3713
+        0.1997,
+        0.4156,
+        0.3847
       ],
       "baseline_direction": "RANGE",
       "velocity_value": 0.022859341016107454,
-      "velocity_standardized_raw": 2.0349215445058335,
-      "velocity_standardized_bounded": 2.0349215445058335,
+      "velocity_standardized_raw": 1.422535633505762,
+      "velocity_standardized_bounded": 1.422535633505762,
       "corrected_probabilities": [
-        0.22263042313239842,
-        0.5207327801459984,
-        0.2566367967216031
+        0.3324600368552067,
+        0.436378198002928,
+        0.2311617651418653
       ],
       "corrected_direction": "RANGE",
       "decision_changed": false
@@ -2384,20 +2526,20 @@
       "query_timestamp_ns": 1784246400000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 880,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3023,
-        0.1053,
-        0.5924
+        0.3166,
+        0.102,
+        0.5814
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.02991161768569743,
-      "velocity_standardized_raw": -2.619353691976405,
-      "velocity_standardized_bounded": -2.619353691976405,
+      "velocity_standardized_raw": -1.9007643534787577,
+      "velocity_standardized_bounded": -1.9007643534787577,
       "corrected_probabilities": [
-        0.30678660996548873,
-        0.0,
-        0.6932133900345113
+        0.1392086294942144,
+        0.0742365773037564,
+        0.7865547932020293
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -2406,42 +2548,42 @@
       "query_timestamp_ns": 1784332800000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 880,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.3832,
-        0.1791,
-        0.4377
+        0.4056,
+        0.1803,
+        0.4141
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.010791009192172045,
-      "velocity_standardized_raw": 0.9705228802482523,
-      "velocity_standardized_bounded": 0.9705228802482523,
+      "velocity_standardized_raw": 0.6625212623429793,
+      "velocity_standardized_bounded": 0.6625212623429793,
       "corrected_probabilities": [
-        0.3738666071927621,
-        0.24312015093051734,
-        0.38301324187672064
+        0.4674306811684206,
+        0.18997708480959924,
+        0.34259223402198025
       ],
-      "corrected_direction": "DOWN",
-      "decision_changed": false
+      "corrected_direction": "UP",
+      "decision_changed": true
     },
     {
       "query_timestamp_ns": 1784592000000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 881,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5592,
-        0.0341,
-        0.4067
+        0.5792,
+        0.0328,
+        0.388
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.008970524335886784,
-      "velocity_standardized_raw": -0.7723981959877934,
-      "velocity_standardized_bounded": -0.7723981959877934,
+      "velocity_standardized_raw": -0.5819796095797033,
+      "velocity_standardized_bounded": -0.5819796095797033,
       "corrected_probabilities": [
-        0.557238070367025,
-        0.0,
-        0.44276192963297495
+        0.5248859760859782,
+        0.024299342950227155,
+        0.4508146809637947
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -2450,20 +2592,20 @@
       "query_timestamp_ns": 1784678400000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 883,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4857,
+        0.4712,
         0.0,
-        0.5143
+        0.5288
       ],
       "baseline_direction": "DOWN",
       "velocity_value": 0.00046569419789925645,
-      "velocity_standardized_raw": 0.05985422709227067,
-      "velocity_standardized_bounded": 0.05985422709227067,
+      "velocity_standardized_raw": 0.012274989957099683,
+      "velocity_standardized_bounded": 0.012274989957099683,
       "corrected_probabilities": [
-        0.48512438965222243,
-        0.003948259984655346,
-        0.5109273503631222
+        0.472345579822901,
+        0.00017929404775893608,
+        0.5274751261293401
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -2472,20 +2614,20 @@
       "query_timestamp_ns": 1784764800000000000,
       "actual_direction": "DOWN",
       "causal_library_size": 885,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.6003,
-        0.0679,
-        0.3318
+        0.6258,
+        0.0645,
+        0.3097
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.007385397027265378,
-      "velocity_standardized_raw": 0.6701558459149224,
-      "velocity_standardized_bounded": 0.6701558459149224,
+      "velocity_standardized_raw": 0.4480496828656568,
+      "velocity_standardized_bounded": 0.4480496828656568,
       "corrected_probabilities": [
-        0.593855198049127,
-        0.1121065604795092,
-        0.29403824147136376
+        0.6676148347283333,
+        0.07104441604586634,
+        0.2613407492258004
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -2494,20 +2636,20 @@
       "query_timestamp_ns": 1784851200000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 885,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4415,
-        0.0368,
-        0.5217
+        0.4508,
+        0.0374,
+        0.5118
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.003677540185339072,
-      "velocity_standardized_raw": -0.30556936314067246,
-      "velocity_standardized_bounded": -0.30556936314067246,
+      "velocity_standardized_raw": -0.2486490317135321,
+      "velocity_standardized_bounded": -0.2486490317135321,
       "corrected_probabilities": [
-        0.4444386209785388,
-        0.016643240024383613,
-        0.5389181389970776
+        0.4275944972085184,
+        0.03376811993141599,
+        0.5386373828600656
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -2516,20 +2658,20 @@
       "query_timestamp_ns": 1784937600000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 886,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5816,
-        0.036,
-        0.3824
+        0.5568,
+        0.0359,
+        0.4073
       ],
       "baseline_direction": "UP",
       "velocity_value": 7.958404467101922e-6,
-      "velocity_standardized_raw": 0.01948299979921866,
-      "velocity_standardized_bounded": 0.01948299979921866,
+      "velocity_standardized_raw": -0.01655134547014355,
+      "velocity_standardized_bounded": -0.01655134547014355,
       "corrected_probabilities": [
-        0.581412634514971,
-        0.03728518823523889,
-        0.3813021772497901
+        0.5552553235905914,
+        0.03565824357204609,
+        0.40908643283736257
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -2538,20 +2680,20 @@
       "query_timestamp_ns": 1785196800000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 887,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5707,
-        0.0333,
-        0.396
+        0.5928,
+        0.0284,
+        0.3788
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.004618316747298251,
-      "velocity_standardized_raw": 0.4261058316412788,
-      "velocity_standardized_bounded": 0.4261058316412788,
+      "velocity_standardized_raw": 0.27379024008457736,
+      "velocity_standardized_bounded": 0.27379024008457736,
       "corrected_probabilities": [
-        0.5666021954194984,
-        0.06140789957581466,
-        0.3719899050046869
+        0.6183518396222144,
+        0.03239910391399241,
+        0.34924905646379323
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -2560,20 +2702,20 @@
       "query_timestamp_ns": 1785283200000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 887,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5549,
-        0.0363,
-        0.4088
+        0.5797,
+        0.0339,
+        0.3864
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.00048326168671443057,
-      "velocity_standardized_raw": 0.06140363855211681,
-      "velocity_standardized_bounded": 0.06140363855211681,
+      "velocity_standardized_raw": 0.01338131883167482,
+      "velocity_standardized_bounded": 0.01338131883167482,
       "corrected_probabilities": [
-        0.5543094891629408,
-        0.04035046628759944,
-        0.4053400445494599
+        0.5809488294418934,
+        0.03409545358701464,
+        0.38495571697109204
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -2582,20 +2724,20 @@
       "query_timestamp_ns": 1785369600000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 888,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.6712,
+        0.6649,
         0.0,
-        0.3288
+        0.3351
       ],
       "baseline_direction": "UP",
       "velocity_value": -0.002719184197098228,
-      "velocity_standardized_raw": -0.22104460457017358,
-      "velocity_standardized_bounded": -0.22104460457017358,
+      "velocity_standardized_raw": -0.18829567597397825,
+      "velocity_standardized_bounded": -0.18829567597397825,
       "corrected_probabilities": [
-        0.6636490125521601,
+        0.6455515737417343,
         0.0,
-        0.33635098744783976
+        0.3544484262582657
       ],
       "corrected_direction": "UP",
       "decision_changed": false
@@ -2604,20 +2746,20 @@
       "query_timestamp_ns": 1785456000000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 889,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.4636,
-        0.0451,
-        0.4913
+        0.4306,
+        0.055,
+        0.5144
       ],
       "baseline_direction": "DOWN",
       "velocity_value": -0.00763700066891111,
-      "velocity_standardized_raw": -0.6547845248862374,
-      "velocity_standardized_bounded": -0.6547845248862374,
+      "velocity_standardized_raw": -0.4979997218890854,
+      "velocity_standardized_bounded": -0.4979997218890854,
       "corrected_probabilities": [
-        0.4698969779479085,
-        0.0019074025215548504,
-        0.5281956195305366
+        0.38412351120446653,
+        0.04772599112240614,
+        0.5681504976731274
       ],
       "corrected_direction": "DOWN",
       "decision_changed": false
@@ -2626,20 +2768,20 @@
       "query_timestamp_ns": 1785542400000000000,
       "actual_direction": "RANGE",
       "causal_library_size": 890,
-      "selected_neighbor_count": 27,
+      "selected_neighbor_count": 26,
       "baseline_probabilities": [
-        0.5736,
-        0.1158,
-        0.3106
+        0.6089,
+        0.1254,
+        0.2657
       ],
       "baseline_direction": "UP",
       "velocity_value": 0.019011797630654772,
-      "velocity_standardized_raw": 1.6955772092741337,
-      "velocity_standardized_bounded": 1.6955772092741337,
+      "velocity_standardized_raw": 1.180233026212786,
+      "velocity_standardized_bounded": 1.180233026212786,
       "corrected_probabilities": [
-        0.5572938536419587,
-        0.227648067738814,
-        0.21505807861922727
+        0.7190468225942382,
+        0.14263901667602402,
+        0.13831416072973768
       ],
       "corrected_direction": "UP",
       "decision_changed": false

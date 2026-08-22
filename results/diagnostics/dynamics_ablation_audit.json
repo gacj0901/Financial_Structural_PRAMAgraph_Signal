@@ -5,8 +5,8 @@
   "timeframe": "D1",
   "base_structural_vector_version": "financial_structural_vector_v2",
   "calibration_profile_id": "crypto:binance:BTCUSDT:D1:financial_first_passage_weighted_neighbors_v2",
-  "calibration_profile_sha256": "sha256:bdc99d9e17d1b393d07cf87d12f7f62247883684a8ffb214cf05f01cd7c9d5fe",
-  "diagnostic_generation_timestamp_unix_seconds": 1786943856,
+  "calibration_profile_sha256": "sha256:e985d84b5583f7a17970955a764424c915d9279e17d79811b5ee82709d3e2f1f",
+  "diagnostic_generation_timestamp_unix_seconds": 1787366417,
   "evidence_status": "DEVELOPMENT_AUDIT_CONSUMED_NOT_A_PRODUCTION_CLAIM",
   "legacy_artifact_sources": [
     "PRAMA Protokol Sentinel Market/src/signals/engine.rs",
@@ -34,10 +34,10 @@
   "temporal_method": "FROZEN_TRAIN_NORMALIZATION; CAUSAL_VALIDATION; WALK_FORWARD_EVALUATION; LABEL_ENTERS_LIBRARY_ONLY_AFTER_MATURITY_TIMESTAMP_LT_QUERY",
   "normalization_rule": "VARIANT_SPECIFIC_TRAIN_ONLY_MEDIAN_MAD; DYNAMIC_Z_SCORES_USE_STRICTLY_PRIOR_FEATURE_HISTORY",
   "weekly_alignment_rule": "LATEST_W1_STRUCTURAL_FRAME_FROM_STRICTLY_EARLIER_ISO_WEEK",
-  "common_eligible_timestamps": 785,
-  "common_training_observations": 730,
-  "common_validation_observations": 28,
-  "common_evaluation_observations": 27,
+  "common_eligible_timestamps": 780,
+  "common_training_observations": 725,
+  "common_validation_observations": 33,
+  "common_evaluation_observations": 22,
   "variant_ranking": [
     "A_SNAPSHOT",
     "C_STATISTICAL_DYNAMICS",
@@ -94,67 +94,127 @@
       ],
       "total_dimensions": 14,
       "effective_dimensions": 12,
-      "normalization_fitted_samples": 730,
+      "normalization_fitted_samples": 725,
       "estimator": {
-        "neighbor_count": 27,
+        "neighbor_count": 26,
         "minimum_support": 10,
-        "maximum_distance": 1.337884916163909,
-        "distance_power": 1.0,
+        "maximum_distance": 1.440129607043761,
+        "distance_power": 2.0,
         "selected_on": "CAUSAL_TEMPORAL_VALIDATION"
       },
       "validation": {
-        "observations": 28,
-        "resolved": 28,
+        "observations": 33,
+        "resolved": 33,
         "unresolved": 0,
         "coverage": 1.0,
-        "correct": 10,
-        "accuracy": 0.35714285714285715,
-        "balanced_accuracy": 0.2863,
-        "multiclass_brier_score": 0.745251782142857,
-        "causal_climatology_brier_score": 0.712975523016646,
-        "brier_skill_score": -0.04526979971156386,
-        "classwise_calibration_error": 0.12327857142857142,
+        "correct": 13,
+        "accuracy": 0.3939393939393939,
+        "balanced_accuracy": 0.3381,
+        "multiclass_brier_score": 0.7252052151515151,
+        "causal_climatology_brier_score": 0.693134183097585,
+        "brier_skill_score": -0.04626958651874036,
+        "classwise_calibration_error": 0.08850101010101008,
         "actual_direction_counts": {
-          "DOWN": 6,
+          "DOWN": 10,
           "RANGE": 9,
           "UNRESOLVED": 0,
-          "UP": 13
+          "UP": 14
         },
         "predicted_direction_counts": {
-          "DOWN": 5,
+          "DOWN": 8,
           "RANGE": 0,
           "UNRESOLVED": 0,
-          "UP": 23
+          "UP": 25
         },
         "confusion_matrix": {
           "DOWN": {
-            "DOWN": 1,
+            "DOWN": 3,
             "RANGE": 0,
-            "UP": 5
+            "UP": 7
           },
           "RANGE": {
-            "DOWN": 0,
+            "DOWN": 1,
             "RANGE": 0,
-            "UP": 9
+            "UP": 8
           },
           "UP": {
             "DOWN": 4,
             "RANGE": 0,
-            "UP": 9
+            "UP": 10
           }
         }
       },
       "validation_predictions": [
         {
+          "query_timestamp_ns": 1764288000000000000,
+          "actual_direction": "DOWN",
+          "predicted_direction": "DOWN",
+          "probabilities_bp": {
+            "up": 1995,
+            "range": 1585,
+            "down": 6420
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 721
+        },
+        {
+          "query_timestamp_ns": 1764374400000000000,
+          "actual_direction": "DOWN",
+          "predicted_direction": "UP",
+          "probabilities_bp": {
+            "up": 4824,
+            "range": 1640,
+            "down": 3536
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 722
+        },
+        {
+          "query_timestamp_ns": 1764633600000000000,
+          "actual_direction": "UP",
+          "predicted_direction": "DOWN",
+          "probabilities_bp": {
+            "up": 2954,
+            "range": 2865,
+            "down": 4181
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 722
+        },
+        {
+          "query_timestamp_ns": 1764720000000000000,
+          "actual_direction": "DOWN",
+          "predicted_direction": "UP",
+          "probabilities_bp": {
+            "up": 4795,
+            "range": 1183,
+            "down": 4022
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 724
+        },
+        {
+          "query_timestamp_ns": 1764806400000000000,
+          "actual_direction": "DOWN",
+          "predicted_direction": "DOWN",
+          "probabilities_bp": {
+            "up": 2533,
+            "range": 2135,
+            "down": 5332
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 724
+        },
+        {
           "query_timestamp_ns": 1764892800000000000,
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5865,
-            "range": 1407,
-            "down": 2728
+            "up": 5513,
+            "range": 1320,
+            "down": 3167
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 726
         },
         {
@@ -162,11 +222,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5247,
-            "range": 1819,
-            "down": 2934
+            "up": 5484,
+            "range": 1783,
+            "down": 2733
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 726
         },
         {
@@ -174,11 +234,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4658,
-            "range": 1514,
-            "down": 3828
+            "up": 5090,
+            "range": 1552,
+            "down": 3358
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 726
         },
         {
@@ -186,11 +246,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5079,
-            "range": 1549,
-            "down": 3372
+            "up": 4815,
+            "range": 1664,
+            "down": 3521
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 727
         },
         {
@@ -198,11 +258,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5284,
-            "range": 1502,
-            "down": 3214
+            "up": 5530,
+            "range": 1558,
+            "down": 2912
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 727
         },
         {
@@ -210,11 +270,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6878,
-            "range": 1460,
-            "down": 1662
+            "up": 7335,
+            "range": 1435,
+            "down": 1230
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 728
         },
         {
@@ -222,11 +282,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 7263,
-            "range": 1340,
-            "down": 1397
+            "up": 7443,
+            "range": 953,
+            "down": 1604
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 728
         },
         {
@@ -234,11 +294,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6168,
-            "range": 2088,
-            "down": 1744
+            "up": 6599,
+            "range": 1732,
+            "down": 1669
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 728
         },
         {
@@ -246,11 +306,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5993,
-            "range": 1423,
-            "down": 2584
+            "up": 6237,
+            "range": 1096,
+            "down": 2667
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 734
         },
         {
@@ -258,11 +318,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4871,
-            "range": 1410,
-            "down": 3719
+            "up": 4787,
+            "range": 1375,
+            "down": 3838
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 734
         },
         {
@@ -270,11 +330,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5539,
-            "range": 1502,
-            "down": 2959
+            "up": 5403,
+            "range": 1566,
+            "down": 3031
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 734
         },
         {
@@ -282,23 +342,23 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4747,
-            "range": 1402,
-            "down": 3851
+            "up": 4826,
+            "range": 1062,
+            "down": 4112
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 734
         },
         {
           "query_timestamp_ns": 1766448000000000000,
           "actual_direction": "RANGE",
-          "predicted_direction": "UP",
+          "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 4313,
-            "range": 1470,
-            "down": 4217
+            "up": 4010,
+            "range": 1502,
+            "down": 4488
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 735
         },
         {
@@ -306,11 +366,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4605,
-            "range": 1525,
-            "down": 3870
+            "up": 4214,
+            "range": 1610,
+            "down": 4176
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 736
         },
         {
@@ -318,11 +378,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5084,
-            "range": 1863,
-            "down": 3053
+            "up": 5108,
+            "range": 1917,
+            "down": 2975
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 736
         },
         {
@@ -330,11 +390,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4733,
-            "range": 1506,
-            "down": 3761
+            "up": 4472,
+            "range": 1577,
+            "down": 3951
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 736
         },
         {
@@ -342,11 +402,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5264,
-            "range": 745,
-            "down": 3991
+            "up": 5201,
+            "range": 769,
+            "down": 4030
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 736
         },
         {
@@ -354,11 +414,11 @@
           "actual_direction": "UP",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 4143,
-            "range": 1479,
-            "down": 4378
+            "up": 4343,
+            "range": 1227,
+            "down": 4430
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 737
         },
         {
@@ -366,11 +426,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5438,
-            "range": 1199,
-            "down": 3363
+            "up": 5159,
+            "range": 1327,
+            "down": 3514
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 738
         },
         {
@@ -378,11 +438,11 @@
           "actual_direction": "UP",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3305,
-            "range": 2223,
-            "down": 4472
+            "up": 3387,
+            "range": 2298,
+            "down": 4315
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 739
         },
         {
@@ -390,11 +450,11 @@
           "actual_direction": "UP",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3671,
-            "range": 1856,
-            "down": 4473
+            "up": 3430,
+            "range": 1932,
+            "down": 4638
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 740
         },
         {
@@ -402,11 +462,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4701,
-            "range": 1177,
-            "down": 4122
+            "up": 5011,
+            "range": 1290,
+            "down": 3699
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 741
         },
         {
@@ -414,11 +474,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5473,
-            "range": 970,
-            "down": 3557
+            "up": 6629,
+            "range": 773,
+            "down": 2598
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 750
         },
         {
@@ -426,11 +486,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5154,
-            "range": 961,
-            "down": 3885
+            "up": 6179,
+            "range": 755,
+            "down": 3066
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         },
         {
@@ -438,23 +498,23 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5592,
-            "range": 1027,
-            "down": 3381
+            "up": 6114,
+            "range": 921,
+            "down": 2965
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         },
         {
           "query_timestamp_ns": 1768003200000000000,
           "actual_direction": "UP",
-          "predicted_direction": "DOWN",
+          "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4408,
-            "range": 718,
-            "down": 4874
+            "up": 4702,
+            "range": 703,
+            "down": 4595
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         },
         {
@@ -462,11 +522,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4968,
-            "range": 721,
-            "down": 4311
+            "up": 5028,
+            "range": 717,
+            "down": 4255
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         },
         {
@@ -474,43 +534,43 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 4441,
-            "range": 367,
-            "down": 5192
+            "up": 4568,
+            "range": 370,
+            "down": 5062
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         }
       ],
       "walk_forward_evaluation": {
-        "observations": 27,
-        "resolved": 25,
+        "observations": 22,
+        "resolved": 20,
         "unresolved": 2,
-        "coverage": 0.9259259259259259,
-        "correct": 11,
-        "accuracy": 0.44,
-        "balanced_accuracy": 0.6956,
-        "multiclass_brier_score": 0.542370388,
-        "causal_climatology_brier_score": 0.6021719995391055,
-        "brier_skill_score": 0.0993098509809105,
-        "classwise_calibration_error": 0.3168666666666667,
+        "coverage": 0.9090909090909091,
+        "correct": 10,
+        "accuracy": 0.5,
+        "balanced_accuracy": 0.7368,
+        "multiclass_brier_score": 0.4935595950000001,
+        "causal_climatology_brier_score": 0.6101515457579321,
+        "brier_skill_score": 0.1910868727097973,
+        "classwise_calibration_error": 0.32082666666666665,
         "actual_direction_counts": {
-          "DOWN": 24,
+          "DOWN": 20,
           "RANGE": 1,
           "UNRESOLVED": 0,
-          "UP": 2
+          "UP": 1
         },
         "predicted_direction_counts": {
           "DOWN": 9,
           "RANGE": 0,
           "UNRESOLVED": 2,
-          "UP": 16
+          "UP": 11
         },
         "confusion_matrix": {
           "DOWN": {
             "DOWN": 9,
             "RANGE": 0,
-            "UP": 14
+            "UP": 10
           },
           "RANGE": {
             "DOWN": 0,
@@ -520,7 +580,7 @@
           "UP": {
             "DOWN": 0,
             "RANGE": 0,
-            "UP": 2
+            "UP": 1
           }
         }
       },
@@ -530,11 +590,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4844,
-            "range": 383,
-            "down": 4773
+            "up": 5035,
+            "range": 411,
+            "down": 4554
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 755
         },
         {
@@ -542,11 +602,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6267,
-            "range": 1070,
-            "down": 2663
+            "up": 6404,
+            "range": 1061,
+            "down": 2535
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 755
         },
         {
@@ -554,11 +614,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5122,
-            "range": 843,
-            "down": 4035
+            "up": 5202,
+            "range": 966,
+            "down": 3832
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 755
         },
         {
@@ -566,11 +626,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3846,
-            "range": 714,
-            "down": 5440
+            "up": 3395,
+            "range": 691,
+            "down": 5914
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 755
         },
         {
@@ -578,11 +638,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3215,
-            "range": 1186,
-            "down": 5599
+            "up": 3185,
+            "range": 1284,
+            "down": 5531
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 756
         },
         {
@@ -590,11 +650,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 2818,
-            "range": 1170,
-            "down": 6012
+            "up": 2741,
+            "range": 1259,
+            "down": 6000
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -602,11 +662,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 2809,
-            "range": 1153,
-            "down": 6038
+            "up": 2435,
+            "range": 1226,
+            "down": 6339
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -614,11 +674,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3290,
-            "range": 1095,
-            "down": 5615
+            "up": 3071,
+            "range": 1093,
+            "down": 5836
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -626,11 +686,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 4377,
-            "range": 759,
-            "down": 4864
+            "up": 4179,
+            "range": 796,
+            "down": 5025
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -638,11 +698,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3924,
-            "range": 1509,
-            "down": 4567
+            "up": 3192,
+            "range": 1534,
+            "down": 5274
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -650,11 +710,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3738,
-            "range": 1522,
-            "down": 4740
+            "up": 3226,
+            "range": 1596,
+            "down": 5178
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -662,11 +722,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3572,
-            "range": 0,
-            "down": 6428
+            "up": 4047,
+            "range": 259,
+            "down": 5694
           },
-          "selected_neighbor_count": 19,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -674,11 +734,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5137,
-            "range": 707,
-            "down": 4156
+            "up": 5217,
+            "range": 679,
+            "down": 4104
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 769
         },
         {
@@ -686,11 +746,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5582,
-            "range": 1190,
-            "down": 3228
+            "up": 5506,
+            "range": 1301,
+            "down": 3193
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 769
         },
         {
@@ -698,11 +758,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5681,
-            "range": 652,
-            "down": 3667
+            "up": 5936,
+            "range": 301,
+            "down": 3763
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 771
         },
         {
@@ -710,11 +770,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5063,
-            "range": 634,
-            "down": 4303
+            "up": 5052,
+            "range": 289,
+            "down": 4659
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 772
         },
         {
@@ -722,7 +782,7 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UNRESOLVED",
           "probabilities_bp": null,
-          "selected_neighbor_count": 7,
+          "selected_neighbor_count": 9,
           "causal_library_size": 773
         },
         {
@@ -730,11 +790,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5772,
-            "range": 348,
-            "down": 3880
+            "up": 4883,
+            "range": 310,
+            "down": 4807
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 774
         },
         {
@@ -750,11 +810,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5466,
+            "up": 5251,
             "range": 0,
-            "down": 4534
+            "down": 4749
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 775
         },
         {
@@ -762,11 +822,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5978,
-            "range": 323,
-            "down": 3699
+            "up": 6196,
+            "range": 281,
+            "down": 3523
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 775
         },
         {
@@ -774,72 +834,12 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5716,
-            "range": 1030,
-            "down": 3254
+            "up": 5793,
+            "range": 965,
+            "down": 3242
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 777
-        },
-        {
-          "query_timestamp_ns": 1771027200000000000,
-          "actual_direction": "DOWN",
-          "predicted_direction": "UP",
-          "probabilities_bp": {
-            "up": 5369,
-            "range": 0,
-            "down": 4631
-          },
-          "selected_neighbor_count": 27,
-          "causal_library_size": 777
-        },
-        {
-          "query_timestamp_ns": 1771286400000000000,
-          "actual_direction": "DOWN",
-          "predicted_direction": "UP",
-          "probabilities_bp": {
-            "up": 5556,
-            "range": 669,
-            "down": 3775
-          },
-          "selected_neighbor_count": 27,
-          "causal_library_size": 777
-        },
-        {
-          "query_timestamp_ns": 1771372800000000000,
-          "actual_direction": "DOWN",
-          "predicted_direction": "UP",
-          "probabilities_bp": {
-            "up": 6111,
-            "range": 634,
-            "down": 3255
-          },
-          "selected_neighbor_count": 27,
-          "causal_library_size": 778
-        },
-        {
-          "query_timestamp_ns": 1771459200000000000,
-          "actual_direction": "UP",
-          "predicted_direction": "UP",
-          "probabilities_bp": {
-            "up": 5533,
-            "range": 0,
-            "down": 4467
-          },
-          "selected_neighbor_count": 27,
-          "causal_library_size": 778
-        },
-        {
-          "query_timestamp_ns": 1771545600000000000,
-          "actual_direction": "DOWN",
-          "predicted_direction": "UP",
-          "probabilities_bp": {
-            "up": 6109,
-            "range": 339,
-            "down": 3552
-          },
-          "selected_neighbor_count": 27,
-          "causal_library_size": 778
         }
       ]
     },
@@ -891,43 +891,43 @@
       ],
       "total_dimensions": 17,
       "effective_dimensions": 15,
-      "normalization_fitted_samples": 730,
+      "normalization_fitted_samples": 725,
       "estimator": {
-        "neighbor_count": 27,
+        "neighbor_count": 26,
         "minimum_support": 10,
-        "maximum_distance": 2.1353051062946955,
-        "distance_power": 1.0,
+        "maximum_distance": 3.4649258048216143,
+        "distance_power": 2.0,
         "selected_on": "CAUSAL_TEMPORAL_VALIDATION"
       },
       "validation": {
-        "observations": 28,
-        "resolved": 28,
+        "observations": 33,
+        "resolved": 33,
         "unresolved": 0,
         "coverage": 1.0,
-        "correct": 12,
-        "accuracy": 0.42857142857142855,
-        "balanced_accuracy": 0.3376,
-        "multiclass_brier_score": 0.7446886092857142,
-        "causal_climatology_brier_score": 0.712975523016646,
-        "brier_skill_score": -0.044479908840191484,
-        "classwise_calibration_error": 0.14977619047619048,
+        "correct": 15,
+        "accuracy": 0.45454545454545453,
+        "balanced_accuracy": 0.3857,
+        "multiclass_brier_score": 0.7208401145454548,
+        "causal_climatology_brier_score": 0.693134183097585,
+        "brier_skill_score": -0.03997195943223186,
+        "classwise_calibration_error": 0.1128121212121212,
         "actual_direction_counts": {
-          "DOWN": 6,
+          "DOWN": 10,
           "RANGE": 9,
           "UNRESOLVED": 0,
-          "UP": 13
+          "UP": 14
         },
         "predicted_direction_counts": {
-          "DOWN": 5,
+          "DOWN": 7,
           "RANGE": 0,
           "UNRESOLVED": 0,
-          "UP": 23
+          "UP": 26
         },
         "confusion_matrix": {
           "DOWN": {
-            "DOWN": 1,
+            "DOWN": 3,
             "RANGE": 0,
-            "UP": 5
+            "UP": 7
           },
           "RANGE": {
             "DOWN": 2,
@@ -937,21 +937,81 @@
           "UP": {
             "DOWN": 2,
             "RANGE": 0,
-            "UP": 11
+            "UP": 12
           }
         }
       },
       "validation_predictions": [
         {
+          "query_timestamp_ns": 1764288000000000000,
+          "actual_direction": "DOWN",
+          "predicted_direction": "DOWN",
+          "probabilities_bp": {
+            "up": 4411,
+            "range": 557,
+            "down": 5032
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 721
+        },
+        {
+          "query_timestamp_ns": 1764374400000000000,
+          "actual_direction": "DOWN",
+          "predicted_direction": "DOWN",
+          "probabilities_bp": {
+            "up": 3380,
+            "range": 1454,
+            "down": 5166
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 722
+        },
+        {
+          "query_timestamp_ns": 1764633600000000000,
+          "actual_direction": "UP",
+          "predicted_direction": "UP",
+          "probabilities_bp": {
+            "up": 5018,
+            "range": 1918,
+            "down": 3064
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 722
+        },
+        {
+          "query_timestamp_ns": 1764720000000000000,
+          "actual_direction": "DOWN",
+          "predicted_direction": "UP",
+          "probabilities_bp": {
+            "up": 6037,
+            "range": 1122,
+            "down": 2841
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 724
+        },
+        {
+          "query_timestamp_ns": 1764806400000000000,
+          "actual_direction": "DOWN",
+          "predicted_direction": "UP",
+          "probabilities_bp": {
+            "up": 4596,
+            "range": 2151,
+            "down": 3253
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 724
+        },
+        {
           "query_timestamp_ns": 1764892800000000000,
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6864,
-            "range": 339,
-            "down": 2797
+            "up": 7227,
+            "range": 303,
+            "down": 2470
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 726
         },
         {
@@ -959,11 +1019,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 2962,
-            "range": 2608,
-            "down": 4430
+            "up": 2608,
+            "range": 3113,
+            "down": 4279
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 726
         },
         {
@@ -971,11 +1031,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5199,
-            "range": 356,
-            "down": 4445
+            "up": 5372,
+            "range": 349,
+            "down": 4279
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 726
         },
         {
@@ -983,11 +1043,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6279,
-            "range": 322,
-            "down": 3399
+            "up": 6125,
+            "range": 280,
+            "down": 3595
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 727
         },
         {
@@ -995,11 +1055,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6676,
-            "range": 350,
-            "down": 2974
+            "up": 6600,
+            "range": 335,
+            "down": 3065
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 727
         },
         {
@@ -1007,11 +1067,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6037,
-            "range": 799,
-            "down": 3164
+            "up": 6328,
+            "range": 888,
+            "down": 2784
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 728
         },
         {
@@ -1019,11 +1079,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 7102,
-            "range": 1524,
-            "down": 1374
+            "up": 7401,
+            "range": 1588,
+            "down": 1011
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 728
         },
         {
@@ -1031,11 +1091,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 7194,
-            "range": 1363,
-            "down": 1443
+            "up": 7565,
+            "range": 994,
+            "down": 1441
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 728
         },
         {
@@ -1043,23 +1103,23 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5238,
-            "range": 1117,
-            "down": 3645
+            "up": 5444,
+            "range": 1142,
+            "down": 3414
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 734
         },
         {
           "query_timestamp_ns": 1766016000000000000,
           "actual_direction": "RANGE",
-          "predicted_direction": "DOWN",
+          "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4218,
-            "range": 1393,
-            "down": 4389
+            "up": 4521,
+            "range": 1047,
+            "down": 4432
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 734
         },
         {
@@ -1067,11 +1127,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4845,
-            "range": 1112,
-            "down": 4043
+            "up": 5038,
+            "range": 1132,
+            "down": 3830
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 734
         },
         {
@@ -1079,11 +1139,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5888,
-            "range": 744,
-            "down": 3368
+            "up": 5718,
+            "range": 775,
+            "down": 3507
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 734
         },
         {
@@ -1091,11 +1151,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5370,
-            "range": 1081,
-            "down": 3549
+            "up": 5043,
+            "range": 1078,
+            "down": 3879
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 735
         },
         {
@@ -1103,11 +1163,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5109,
-            "range": 1599,
-            "down": 3292
+            "up": 4877,
+            "range": 1765,
+            "down": 3358
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 736
         },
         {
@@ -1115,11 +1175,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5606,
-            "range": 1412,
-            "down": 2982
+            "up": 5518,
+            "range": 1379,
+            "down": 3103
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 736
         },
         {
@@ -1127,11 +1187,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4876,
-            "range": 1383,
-            "down": 3741
+            "up": 5105,
+            "range": 1310,
+            "down": 3585
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 736
         },
         {
@@ -1139,11 +1199,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4785,
-            "range": 773,
-            "down": 4442
+            "up": 4904,
+            "range": 841,
+            "down": 4255
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 736
         },
         {
@@ -1151,11 +1211,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4471,
-            "range": 1576,
-            "down": 3953
+            "up": 4631,
+            "range": 1746,
+            "down": 3623
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 737
         },
         {
@@ -1163,11 +1223,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5568,
-            "range": 1142,
-            "down": 3290
+            "up": 5466,
+            "range": 1206,
+            "down": 3328
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 738
         },
         {
@@ -1175,11 +1235,11 @@
           "actual_direction": "UP",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 4055,
-            "range": 1421,
-            "down": 4524
+            "up": 4184,
+            "range": 1080,
+            "down": 4736
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 739
         },
         {
@@ -1187,23 +1247,23 @@
           "actual_direction": "UP",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 4025,
-            "range": 1112,
-            "down": 4863
+            "up": 3785,
+            "range": 1162,
+            "down": 5053
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 740
         },
         {
           "query_timestamp_ns": 1767657600000000000,
           "actual_direction": "RANGE",
-          "predicted_direction": "UP",
+          "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 5004,
-            "range": 423,
-            "down": 4573
+            "up": 4657,
+            "range": 498,
+            "down": 4845
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 741
         },
         {
@@ -1211,11 +1271,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5486,
-            "range": 359,
-            "down": 4155
+            "up": 5954,
+            "range": 335,
+            "down": 3711
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 750
         },
         {
@@ -1223,11 +1283,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4714,
-            "range": 1025,
-            "down": 4261
+            "up": 5370,
+            "range": 924,
+            "down": 3706
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         },
         {
@@ -1235,11 +1295,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6550,
-            "range": 702,
-            "down": 2748
+            "up": 7115,
+            "range": 653,
+            "down": 2232
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         },
         {
@@ -1247,11 +1307,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5839,
-            "range": 339,
-            "down": 3822
+            "up": 6073,
+            "range": 314,
+            "down": 3613
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         },
         {
@@ -1259,11 +1319,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4837,
-            "range": 387,
-            "down": 4776
+            "up": 5039,
+            "range": 415,
+            "down": 4546
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         },
         {
@@ -1271,53 +1331,53 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 4481,
-            "range": 333,
-            "down": 5186
+            "up": 4649,
+            "range": 304,
+            "down": 5047
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         }
       ],
       "walk_forward_evaluation": {
-        "observations": 27,
-        "resolved": 23,
-        "unresolved": 4,
-        "coverage": 0.8518518518518519,
-        "correct": 9,
-        "accuracy": 0.391304347826087,
-        "balanced_accuracy": 0.6666,
-        "multiclass_brier_score": 0.5989314973913045,
-        "causal_climatology_brier_score": 0.6021172458910734,
-        "brier_skill_score": 0.00529091056851283,
-        "classwise_calibration_error": 0.3298405797101449,
+        "observations": 22,
+        "resolved": 19,
+        "unresolved": 3,
+        "coverage": 0.8636363636363636,
+        "correct": 10,
+        "accuracy": 0.5263157894736842,
+        "balanced_accuracy": 0.5098,
+        "multiclass_brier_score": 0.6201204884210526,
+        "causal_climatology_brier_score": 0.639890008927984,
+        "brier_skill_score": 0.030895185471096043,
+        "classwise_calibration_error": 0.31364561403508767,
         "actual_direction_counts": {
-          "DOWN": 24,
+          "DOWN": 20,
           "RANGE": 1,
           "UNRESOLVED": 0,
-          "UP": 2
+          "UP": 1
         },
         "predicted_direction_counts": {
-          "DOWN": 7,
+          "DOWN": 9,
           "RANGE": 0,
-          "UNRESOLVED": 4,
-          "UP": 16
+          "UNRESOLVED": 3,
+          "UP": 10
         },
         "confusion_matrix": {
           "DOWN": {
-            "DOWN": 7,
+            "DOWN": 9,
             "RANGE": 0,
-            "UP": 14
+            "UP": 8
           },
           "RANGE": {
             "DOWN": 0,
             "RANGE": 0,
-            "UP": 0
+            "UP": 1
           },
           "UP": {
             "DOWN": 0,
             "RANGE": 0,
-            "UP": 2
+            "UP": 1
           }
         }
       },
@@ -1327,11 +1387,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6705,
-            "range": 703,
-            "down": 2592
+            "up": 6960,
+            "range": 685,
+            "down": 2355
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 755
         },
         {
@@ -1339,11 +1399,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5142,
-            "range": 1140,
-            "down": 3718
+            "up": 5241,
+            "range": 1199,
+            "down": 3560
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 755
         },
         {
@@ -1351,23 +1411,23 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5407,
-            "range": 450,
-            "down": 4143
+            "up": 5131,
+            "range": 553,
+            "down": 4316
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 755
         },
         {
           "query_timestamp_ns": 1768867200000000000,
           "actual_direction": "DOWN",
-          "predicted_direction": "UP",
+          "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 4896,
-            "range": 349,
-            "down": 4755
+            "up": 4445,
+            "range": 325,
+            "down": 5230
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 755
         },
         {
@@ -1375,11 +1435,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6276,
-            "range": 746,
-            "down": 2978
+            "up": 6483,
+            "range": 479,
+            "down": 3038
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 756
         },
         {
@@ -1387,11 +1447,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3126,
-            "range": 1164,
-            "down": 5710
+            "up": 2706,
+            "range": 1258,
+            "down": 6036
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -1399,11 +1459,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3128,
-            "range": 1150,
-            "down": 5722
+            "up": 2715,
+            "range": 1219,
+            "down": 6066
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -1411,11 +1471,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 2870,
-            "range": 1183,
-            "down": 5947
+            "up": 2841,
+            "range": 1000,
+            "down": 6159
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -1423,23 +1483,23 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3578,
-            "range": 1196,
-            "down": 5226
+            "up": 2927,
+            "range": 1343,
+            "down": 5730
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
           "query_timestamp_ns": 1769558400000000000,
           "actual_direction": "DOWN",
-          "predicted_direction": "UP",
+          "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 4606,
-            "range": 1146,
-            "down": 4248
+            "up": 4229,
+            "range": 946,
+            "down": 4825
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -1447,11 +1507,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3443,
-            "range": 1168,
-            "down": 5389
+            "up": 3236,
+            "range": 1257,
+            "down": 5507
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -1459,11 +1519,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 4766,
-            "range": 338,
-            "down": 4896
+            "up": 4561,
+            "range": 297,
+            "down": 5142
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -1471,11 +1531,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5582,
-            "range": 1354,
-            "down": 3064
+            "up": 5457,
+            "range": 1240,
+            "down": 3303
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 769
         },
         {
@@ -1483,11 +1543,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 4196,
-            "range": 784,
-            "down": 5020
+            "up": 4439,
+            "range": 870,
+            "down": 4691
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 769
         },
         {
@@ -1495,11 +1555,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5759,
-            "range": 659,
-            "down": 3582
+            "up": 6165,
+            "range": 325,
+            "down": 3510
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 771
         },
         {
@@ -1507,19 +1567,23 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6856,
-            "range": 1395,
-            "down": 1749
+            "up": 7003,
+            "range": 1330,
+            "down": 1667
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 772
         },
         {
           "query_timestamp_ns": 1770336000000000000,
           "actual_direction": "RANGE",
-          "predicted_direction": "UNRESOLVED",
-          "probabilities_bp": null,
-          "selected_neighbor_count": 6,
+          "predicted_direction": "UP",
+          "probabilities_bp": {
+            "up": 6441,
+            "range": 296,
+            "down": 3263
+          },
+          "selected_neighbor_count": 26,
           "causal_library_size": 773
         },
         {
@@ -1527,7 +1591,7 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UNRESOLVED",
           "probabilities_bp": null,
-          "selected_neighbor_count": 0,
+          "selected_neighbor_count": 7,
           "causal_library_size": 774
         },
         {
@@ -1535,7 +1599,7 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UNRESOLVED",
           "probabilities_bp": null,
-          "selected_neighbor_count": 1,
+          "selected_neighbor_count": 3,
           "causal_library_size": 775
         },
         {
@@ -1551,11 +1615,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5609,
-            "range": 1070,
-            "down": 3321
+            "up": 5852,
+            "range": 1063,
+            "down": 3085
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 775
         },
         {
@@ -1563,72 +1627,12 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5308,
-            "range": 1147,
-            "down": 3545
+            "up": 5691,
+            "range": 1181,
+            "down": 3128
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 777
-        },
-        {
-          "query_timestamp_ns": 1771027200000000000,
-          "actual_direction": "DOWN",
-          "predicted_direction": "UP",
-          "probabilities_bp": {
-            "up": 5541,
-            "range": 349,
-            "down": 4110
-          },
-          "selected_neighbor_count": 27,
-          "causal_library_size": 777
-        },
-        {
-          "query_timestamp_ns": 1771286400000000000,
-          "actual_direction": "DOWN",
-          "predicted_direction": "UP",
-          "probabilities_bp": {
-            "up": 5169,
-            "range": 1046,
-            "down": 3785
-          },
-          "selected_neighbor_count": 27,
-          "causal_library_size": 777
-        },
-        {
-          "query_timestamp_ns": 1771372800000000000,
-          "actual_direction": "DOWN",
-          "predicted_direction": "UP",
-          "probabilities_bp": {
-            "up": 5125,
-            "range": 711,
-            "down": 4164
-          },
-          "selected_neighbor_count": 27,
-          "causal_library_size": 778
-        },
-        {
-          "query_timestamp_ns": 1771459200000000000,
-          "actual_direction": "UP",
-          "predicted_direction": "UP",
-          "probabilities_bp": {
-            "up": 4871,
-            "range": 336,
-            "down": 4793
-          },
-          "selected_neighbor_count": 27,
-          "causal_library_size": 778
-        },
-        {
-          "query_timestamp_ns": 1771545600000000000,
-          "actual_direction": "DOWN",
-          "predicted_direction": "UP",
-          "probabilities_bp": {
-            "up": 5823,
-            "range": 429,
-            "down": 3748
-          },
-          "selected_neighbor_count": 27,
-          "causal_library_size": 778
         }
       ]
     },
@@ -1693,67 +1697,127 @@
       ],
       "total_dimensions": 23,
       "effective_dimensions": 19,
-      "normalization_fitted_samples": 730,
+      "normalization_fitted_samples": 725,
       "estimator": {
-        "neighbor_count": 27,
+        "neighbor_count": 26,
         "minimum_support": 10,
-        "maximum_distance": 2.1338207983770086,
+        "maximum_distance": 3.195822686297167,
         "distance_power": 2.0,
         "selected_on": "CAUSAL_TEMPORAL_VALIDATION"
       },
       "validation": {
-        "observations": 28,
-        "resolved": 28,
+        "observations": 33,
+        "resolved": 33,
         "unresolved": 0,
         "coverage": 1.0,
-        "correct": 12,
-        "accuracy": 0.42857142857142855,
-        "balanced_accuracy": 0.3077,
-        "multiclass_brier_score": 0.7244471621428571,
-        "causal_climatology_brier_score": 0.712975523016646,
-        "brier_skill_score": -0.01608980779266278,
-        "classwise_calibration_error": 0.1526809523809524,
+        "correct": 14,
+        "accuracy": 0.42424242424242425,
+        "balanced_accuracy": 0.3428,
+        "multiclass_brier_score": 0.6968648490909093,
+        "causal_climatology_brier_score": 0.693134183097585,
+        "brier_skill_score": -0.0053823142535722734,
+        "classwise_calibration_error": 0.11673939393939392,
         "actual_direction_counts": {
-          "DOWN": 6,
+          "DOWN": 10,
           "RANGE": 9,
           "UNRESOLVED": 0,
-          "UP": 13
+          "UP": 14
         },
         "predicted_direction_counts": {
-          "DOWN": 4,
+          "DOWN": 6,
           "RANGE": 0,
           "UNRESOLVED": 0,
-          "UP": 24
+          "UP": 27
         },
         "confusion_matrix": {
           "DOWN": {
-            "DOWN": 0,
+            "DOWN": 1,
             "RANGE": 0,
-            "UP": 6
+            "UP": 9
           },
           "RANGE": {
-            "DOWN": 3,
+            "DOWN": 4,
             "RANGE": 0,
-            "UP": 6
+            "UP": 5
           },
           "UP": {
             "DOWN": 1,
             "RANGE": 0,
-            "UP": 12
+            "UP": 13
           }
         }
       },
       "validation_predictions": [
         {
+          "query_timestamp_ns": 1764288000000000000,
+          "actual_direction": "DOWN",
+          "predicted_direction": "UP",
+          "probabilities_bp": {
+            "up": 4996,
+            "range": 355,
+            "down": 4649
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 721
+        },
+        {
+          "query_timestamp_ns": 1764374400000000000,
+          "actual_direction": "DOWN",
+          "predicted_direction": "DOWN",
+          "probabilities_bp": {
+            "up": 3430,
+            "range": 1346,
+            "down": 5224
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 722
+        },
+        {
+          "query_timestamp_ns": 1764633600000000000,
+          "actual_direction": "UP",
+          "predicted_direction": "UP",
+          "probabilities_bp": {
+            "up": 4490,
+            "range": 1645,
+            "down": 3865
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 722
+        },
+        {
+          "query_timestamp_ns": 1764720000000000000,
+          "actual_direction": "DOWN",
+          "predicted_direction": "UP",
+          "probabilities_bp": {
+            "up": 5766,
+            "range": 1167,
+            "down": 3067
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 724
+        },
+        {
+          "query_timestamp_ns": 1764806400000000000,
+          "actual_direction": "DOWN",
+          "predicted_direction": "UP",
+          "probabilities_bp": {
+            "up": 4329,
+            "range": 2219,
+            "down": 3452
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 724
+        },
+        {
           "query_timestamp_ns": 1764892800000000000,
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6386,
-            "range": 566,
-            "down": 3048
+            "up": 6298,
+            "range": 579,
+            "down": 3123
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 726
         },
         {
@@ -1761,11 +1825,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 2459,
-            "range": 2961,
-            "down": 4580
+            "up": 2526,
+            "range": 3030,
+            "down": 4444
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 726
         },
         {
@@ -1773,11 +1837,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5204,
-            "range": 599,
-            "down": 4197
+            "up": 5072,
+            "range": 615,
+            "down": 4313
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 726
         },
         {
@@ -1785,11 +1849,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6363,
+            "up": 6540,
             "range": 0,
-            "down": 3637
+            "down": 3460
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 727
         },
         {
@@ -1797,11 +1861,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5259,
-            "range": 567,
-            "down": 4174
+            "up": 5421,
+            "range": 295,
+            "down": 4284
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 727
         },
         {
@@ -1809,11 +1873,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6023,
-            "range": 1160,
-            "down": 2817
+            "up": 5902,
+            "range": 1195,
+            "down": 2903
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 728
         },
         {
@@ -1821,11 +1885,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 7027,
-            "range": 1551,
-            "down": 1422
+            "up": 6944,
+            "range": 1595,
+            "down": 1461
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 728
         },
         {
@@ -1833,11 +1897,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6584,
-            "range": 639,
-            "down": 2777
+            "up": 6480,
+            "range": 662,
+            "down": 2858
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 728
         },
         {
@@ -1845,11 +1909,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 4069,
-            "range": 705,
-            "down": 5226
+            "up": 3905,
+            "range": 726,
+            "down": 5369
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 734
         },
         {
@@ -1857,11 +1921,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3975,
-            "range": 667,
-            "down": 5358
+            "up": 4105,
+            "range": 688,
+            "down": 5207
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 734
         },
         {
@@ -1869,11 +1933,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4678,
-            "range": 1075,
-            "down": 4247
+            "up": 4528,
+            "range": 1103,
+            "down": 4369
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 734
         },
         {
@@ -1881,11 +1945,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6634,
-            "range": 761,
-            "down": 2605
+            "up": 6537,
+            "range": 787,
+            "down": 2676
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 734
         },
         {
@@ -1893,11 +1957,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6498,
-            "range": 745,
-            "down": 2757
+            "up": 6703,
+            "range": 765,
+            "down": 2532
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 735
         },
         {
@@ -1905,11 +1969,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5275,
-            "range": 1813,
-            "down": 2912
+            "up": 5149,
+            "range": 1861,
+            "down": 2990
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 736
         },
         {
@@ -1917,11 +1981,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5810,
-            "range": 999,
-            "down": 3191
+            "up": 5991,
+            "range": 1029,
+            "down": 2980
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 736
         },
         {
@@ -1929,11 +1993,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5277,
-            "range": 1166,
-            "down": 3557
+            "up": 5428,
+            "range": 904,
+            "down": 3668
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 736
         },
         {
@@ -1941,11 +2005,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5156,
-            "range": 1040,
-            "down": 3804
+            "up": 5316,
+            "range": 1074,
+            "down": 3610
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 736
         },
         {
@@ -1953,11 +2017,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4734,
-            "range": 1459,
-            "down": 3807
+            "up": 4582,
+            "range": 1504,
+            "down": 3914
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 737
         },
         {
@@ -1965,11 +2029,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5395,
-            "range": 888,
-            "down": 3717
+            "up": 5559,
+            "range": 916,
+            "down": 3525
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 738
         },
         {
@@ -1977,11 +2041,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4915,
-            "range": 1274,
-            "down": 3811
+            "up": 5080,
+            "range": 994,
+            "down": 3926
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 739
         },
         {
@@ -1989,23 +2053,23 @@
           "actual_direction": "UP",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 4325,
-            "range": 895,
-            "down": 4780
+            "up": 4453,
+            "range": 926,
+            "down": 4621
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 740
         },
         {
           "query_timestamp_ns": 1767657600000000000,
           "actual_direction": "RANGE",
-          "predicted_direction": "UP",
+          "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 4633,
-            "range": 847,
-            "down": 4520
+            "up": 4472,
+            "range": 878,
+            "down": 4650
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 741
         },
         {
@@ -2013,11 +2077,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6257,
-            "range": 634,
-            "down": 3109
+            "up": 6166,
+            "range": 653,
+            "down": 3181
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 750
         },
         {
@@ -2025,11 +2089,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5733,
-            "range": 723,
-            "down": 3544
+            "up": 5868,
+            "range": 496,
+            "down": 3636
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         },
         {
@@ -2037,11 +2101,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6530,
-            "range": 694,
-            "down": 2776
+            "up": 6439,
+            "range": 714,
+            "down": 2847
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         },
         {
@@ -2049,11 +2113,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5962,
-            "range": 314,
-            "down": 3724
+            "up": 5844,
+            "range": 324,
+            "down": 3832
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         },
         {
@@ -2061,11 +2125,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5426,
-            "range": 768,
-            "down": 3806
+            "up": 5286,
+            "range": 796,
+            "down": 3918
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         },
         {
@@ -2073,51 +2137,51 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4979,
-            "range": 364,
-            "down": 4657
+            "up": 4838,
+            "range": 373,
+            "down": 4789
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         }
       ],
       "walk_forward_evaluation": {
-        "observations": 27,
-        "resolved": 23,
-        "unresolved": 4,
-        "coverage": 0.8518518518518519,
-        "correct": 9,
-        "accuracy": 0.391304347826087,
-        "balanced_accuracy": 0.4405,
-        "multiclass_brier_score": 0.5546877182608696,
-        "causal_climatology_brier_score": 0.6021172458910734,
-        "brier_skill_score": 0.07877124921079592,
-        "classwise_calibration_error": 0.31781449275362317,
+        "observations": 22,
+        "resolved": 19,
+        "unresolved": 3,
+        "coverage": 0.8636363636363636,
+        "correct": 7,
+        "accuracy": 0.3684210526315789,
+        "balanced_accuracy": 0.4509,
+        "multiclass_brier_score": 0.6044404978947368,
+        "causal_climatology_brier_score": 0.639890008927984,
+        "brier_skill_score": 0.0553993819854075,
+        "classwise_calibration_error": 0.3107438596491228,
         "actual_direction_counts": {
-          "DOWN": 24,
+          "DOWN": 20,
           "RANGE": 1,
           "UNRESOLVED": 0,
-          "UP": 2
+          "UP": 1
         },
         "predicted_direction_counts": {
-          "DOWN": 9,
+          "DOWN": 6,
           "RANGE": 0,
-          "UNRESOLVED": 4,
-          "UP": 14
+          "UNRESOLVED": 3,
+          "UP": 13
         },
         "confusion_matrix": {
           "DOWN": {
-            "DOWN": 8,
+            "DOWN": 6,
             "RANGE": 0,
-            "UP": 13
+            "UP": 11
           },
           "RANGE": {
             "DOWN": 0,
             "RANGE": 0,
-            "UP": 0
+            "UP": 1
           },
           "UP": {
-            "DOWN": 1,
+            "DOWN": 0,
             "RANGE": 0,
             "UP": 1
           }
@@ -2129,11 +2193,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6288,
-            "range": 668,
-            "down": 3044
+            "up": 6183,
+            "range": 689,
+            "down": 3128
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 755
         },
         {
@@ -2141,11 +2205,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5467,
-            "range": 1232,
-            "down": 3301
+            "up": 5609,
+            "range": 1271,
+            "down": 3120
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 755
         },
         {
@@ -2153,11 +2217,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5173,
-            "range": 311,
-            "down": 4516
+            "up": 5326,
+            "range": 325,
+            "down": 4349
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 755
         },
         {
@@ -2165,11 +2229,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4977,
-            "range": 904,
-            "down": 4119
+            "up": 4847,
+            "range": 927,
+            "down": 4226
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 755
         },
         {
@@ -2177,11 +2241,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6121,
-            "range": 1112,
-            "down": 2767
+            "up": 6311,
+            "range": 1142,
+            "down": 2547
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 756
         },
         {
@@ -2189,11 +2253,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 2785,
-            "range": 1256,
-            "down": 5959
+            "up": 2575,
+            "range": 1288,
+            "down": 6137
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -2201,11 +2265,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 2744,
-            "range": 1190,
-            "down": 6066
+            "up": 2535,
+            "range": 1222,
+            "down": 6243
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -2213,11 +2277,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3430,
-            "range": 1151,
-            "down": 5419
+            "up": 3212,
+            "range": 1185,
+            "down": 5603
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -2225,11 +2289,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3266,
-            "range": 1077,
-            "down": 5657
+            "up": 3044,
+            "range": 1109,
+            "down": 5847
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -2237,11 +2301,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5579,
-            "range": 905,
-            "down": 3516
+            "up": 5453,
+            "range": 930,
+            "down": 3617
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -2249,11 +2313,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 2966,
-            "range": 1319,
-            "down": 5715
+            "up": 2775,
+            "range": 1354,
+            "down": 5871
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -2261,11 +2325,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 4365,
-            "range": 518,
-            "down": 5117
+            "up": 4461,
+            "range": 527,
+            "down": 5012
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -2273,11 +2337,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4725,
-            "range": 1300,
-            "down": 3975
+            "up": 4863,
+            "range": 1326,
+            "down": 3811
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 769
         },
         {
@@ -2285,11 +2349,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4698,
-            "range": 860,
-            "down": 4442
+            "up": 4840,
+            "range": 889,
+            "down": 4271
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 769
         },
         {
@@ -2297,11 +2361,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6303,
-            "range": 341,
-            "down": 3356
+            "up": 6209,
+            "range": 349,
+            "down": 3442
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 771
         },
         {
@@ -2309,19 +2373,23 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5142,
-            "range": 1594,
-            "down": 3264
+            "up": 4997,
+            "range": 1645,
+            "down": 3358
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 772
         },
         {
           "query_timestamp_ns": 1770336000000000000,
           "actual_direction": "RANGE",
-          "predicted_direction": "UNRESOLVED",
-          "probabilities_bp": null,
-          "selected_neighbor_count": 6,
+          "predicted_direction": "UP",
+          "probabilities_bp": {
+            "up": 5941,
+            "range": 315,
+            "down": 3744
+          },
+          "selected_neighbor_count": 26,
           "causal_library_size": 773
         },
         {
@@ -2329,7 +2397,7 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UNRESOLVED",
           "probabilities_bp": null,
-          "selected_neighbor_count": 0,
+          "selected_neighbor_count": 6,
           "causal_library_size": 774
         },
         {
@@ -2337,7 +2405,7 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UNRESOLVED",
           "probabilities_bp": null,
-          "selected_neighbor_count": 1,
+          "selected_neighbor_count": 3,
           "causal_library_size": 775
         },
         {
@@ -2353,11 +2421,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5590,
-            "range": 708,
-            "down": 3702
+            "up": 5438,
+            "range": 731,
+            "down": 3831
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 775
         },
         {
@@ -2365,72 +2433,12 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5441,
-            "range": 1373,
-            "down": 3186
+            "up": 5306,
+            "range": 1413,
+            "down": 3281
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 777
-        },
-        {
-          "query_timestamp_ns": 1771027200000000000,
-          "actual_direction": "DOWN",
-          "predicted_direction": "DOWN",
-          "probabilities_bp": {
-            "up": 3471,
-            "range": 1210,
-            "down": 5319
-          },
-          "selected_neighbor_count": 27,
-          "causal_library_size": 777
-        },
-        {
-          "query_timestamp_ns": 1771286400000000000,
-          "actual_direction": "DOWN",
-          "predicted_direction": "DOWN",
-          "probabilities_bp": {
-            "up": 3218,
-            "range": 1791,
-            "down": 4991
-          },
-          "selected_neighbor_count": 27,
-          "causal_library_size": 777
-        },
-        {
-          "query_timestamp_ns": 1771372800000000000,
-          "actual_direction": "DOWN",
-          "predicted_direction": "UP",
-          "probabilities_bp": {
-            "up": 5662,
-            "range": 364,
-            "down": 3974
-          },
-          "selected_neighbor_count": 27,
-          "causal_library_size": 778
-        },
-        {
-          "query_timestamp_ns": 1771459200000000000,
-          "actual_direction": "UP",
-          "predicted_direction": "DOWN",
-          "probabilities_bp": {
-            "up": 4072,
-            "range": 964,
-            "down": 4964
-          },
-          "selected_neighbor_count": 27,
-          "causal_library_size": 778
-        },
-        {
-          "query_timestamp_ns": 1771545600000000000,
-          "actual_direction": "DOWN",
-          "predicted_direction": "UP",
-          "probabilities_bp": {
-            "up": 5001,
-            "range": 1014,
-            "down": 3985
-          },
-          "selected_neighbor_count": 27,
-          "causal_library_size": 778
         }
       ]
     },
@@ -2502,43 +2510,43 @@
       ],
       "total_dimensions": 26,
       "effective_dimensions": 22,
-      "normalization_fitted_samples": 730,
+      "normalization_fitted_samples": 725,
       "estimator": {
-        "neighbor_count": 27,
+        "neighbor_count": 26,
         "minimum_support": 10,
-        "maximum_distance": 2.8252913322983737,
+        "maximum_distance": 3.658481521160321,
         "distance_power": 2.0,
         "selected_on": "CAUSAL_TEMPORAL_VALIDATION"
       },
       "validation": {
-        "observations": 28,
-        "resolved": 28,
+        "observations": 33,
+        "resolved": 33,
         "unresolved": 0,
         "coverage": 1.0,
-        "correct": 12,
-        "accuracy": 0.42857142857142855,
-        "balanced_accuracy": 0.3376,
-        "multiclass_brier_score": 0.6896502264285714,
-        "causal_climatology_brier_score": 0.712975523016646,
-        "brier_skill_score": 0.03271542407147965,
-        "classwise_calibration_error": 0.12983333333333336,
+        "correct": 15,
+        "accuracy": 0.45454545454545453,
+        "balanced_accuracy": 0.3857,
+        "multiclass_brier_score": 0.6730442242424244,
+        "causal_climatology_brier_score": 0.693134183097585,
+        "brier_skill_score": 0.02898422750610785,
+        "classwise_calibration_error": 0.09671111111111112,
         "actual_direction_counts": {
-          "DOWN": 6,
+          "DOWN": 10,
           "RANGE": 9,
           "UNRESOLVED": 0,
-          "UP": 13
+          "UP": 14
         },
         "predicted_direction_counts": {
-          "DOWN": 7,
+          "DOWN": 9,
           "RANGE": 0,
           "UNRESOLVED": 0,
-          "UP": 21
+          "UP": 24
         },
         "confusion_matrix": {
           "DOWN": {
-            "DOWN": 1,
+            "DOWN": 3,
             "RANGE": 0,
-            "UP": 5
+            "UP": 7
           },
           "RANGE": {
             "DOWN": 4,
@@ -2548,21 +2556,81 @@
           "UP": {
             "DOWN": 2,
             "RANGE": 0,
-            "UP": 11
+            "UP": 12
           }
         }
       },
       "validation_predictions": [
         {
+          "query_timestamp_ns": 1764288000000000000,
+          "actual_direction": "DOWN",
+          "predicted_direction": "DOWN",
+          "probabilities_bp": {
+            "up": 4312,
+            "range": 333,
+            "down": 5355
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 721
+        },
+        {
+          "query_timestamp_ns": 1764374400000000000,
+          "actual_direction": "DOWN",
+          "predicted_direction": "DOWN",
+          "probabilities_bp": {
+            "up": 3387,
+            "range": 1723,
+            "down": 4890
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 722
+        },
+        {
+          "query_timestamp_ns": 1764633600000000000,
+          "actual_direction": "UP",
+          "predicted_direction": "UP",
+          "probabilities_bp": {
+            "up": 4163,
+            "range": 2029,
+            "down": 3808
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 722
+        },
+        {
+          "query_timestamp_ns": 1764720000000000000,
+          "actual_direction": "DOWN",
+          "predicted_direction": "UP",
+          "probabilities_bp": {
+            "up": 6903,
+            "range": 593,
+            "down": 2504
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 724
+        },
+        {
+          "query_timestamp_ns": 1764806400000000000,
+          "actual_direction": "DOWN",
+          "predicted_direction": "UP",
+          "probabilities_bp": {
+            "up": 4026,
+            "range": 2308,
+            "down": 3666
+          },
+          "selected_neighbor_count": 26,
+          "causal_library_size": 724
+        },
+        {
           "query_timestamp_ns": 1764892800000000000,
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 7254,
-            "range": 632,
-            "down": 2114
+            "up": 7171,
+            "range": 652,
+            "down": 2177
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 726
         },
         {
@@ -2570,11 +2638,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 2545,
-            "range": 3286,
-            "down": 4169
+            "up": 2334,
+            "range": 3372,
+            "down": 4294
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 726
         },
         {
@@ -2582,11 +2650,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3747,
-            "range": 643,
-            "down": 5610
+            "up": 3865,
+            "range": 664,
+            "down": 5471
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 726
         },
         {
@@ -2594,11 +2662,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 4771,
-            "range": 319,
-            "down": 4910
+            "up": 4610,
+            "range": 327,
+            "down": 5063
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 727
         },
         {
@@ -2606,11 +2674,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4569,
-            "range": 1628,
-            "down": 3803
+            "up": 4711,
+            "range": 1363,
+            "down": 3926
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 727
         },
         {
@@ -2618,11 +2686,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5288,
-            "range": 2030,
-            "down": 2682
+            "up": 5148,
+            "range": 2091,
+            "down": 2761
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 728
         },
         {
@@ -2630,11 +2698,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4555,
-            "range": 1822,
-            "down": 3623
+            "up": 4383,
+            "range": 1879,
+            "down": 3738
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 728
         },
         {
@@ -2642,11 +2710,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4516,
-            "range": 1770,
-            "down": 3714
+            "up": 4674,
+            "range": 1831,
+            "down": 3495
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 728
         },
         {
@@ -2654,11 +2722,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 2772,
-            "range": 1830,
-            "down": 5398
+            "up": 2872,
+            "range": 1890,
+            "down": 5238
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 734
         },
         {
@@ -2666,11 +2734,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3660,
-            "range": 1403,
-            "down": 4937
+            "up": 3785,
+            "range": 1133,
+            "down": 5082
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 734
         },
         {
@@ -2678,11 +2746,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5285,
-            "range": 2157,
-            "down": 2558
+            "up": 5143,
+            "range": 2221,
+            "down": 2636
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 734
         },
         {
@@ -2690,11 +2758,11 @@
           "actual_direction": "UP",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3437,
-            "range": 2004,
-            "down": 4559
+            "up": 3547,
+            "range": 2073,
+            "down": 4380
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 734
         },
         {
@@ -2702,11 +2770,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5786,
-            "range": 712,
-            "down": 3502
+            "up": 5970,
+            "range": 731,
+            "down": 3299
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 735
         },
         {
@@ -2714,11 +2782,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4988,
-            "range": 1579,
-            "down": 3433
+            "up": 5115,
+            "range": 1621,
+            "down": 3264
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 736
         },
         {
@@ -2726,11 +2794,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4889,
-            "range": 1563,
-            "down": 3548
+            "up": 5027,
+            "range": 1319,
+            "down": 3654
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 736
         },
         {
@@ -2738,11 +2806,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5684,
-            "range": 1227,
-            "down": 3089
+            "up": 5555,
+            "range": 1260,
+            "down": 3185
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 736
         },
         {
@@ -2750,11 +2818,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5188,
-            "range": 705,
-            "down": 4107
+            "up": 5043,
+            "range": 727,
+            "down": 4230
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 736
         },
         {
@@ -2762,11 +2830,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5398,
-            "range": 938,
-            "down": 3664
+            "up": 5260,
+            "range": 969,
+            "down": 3771
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 737
         },
         {
@@ -2774,11 +2842,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5170,
-            "range": 1151,
-            "down": 3679
+            "up": 5326,
+            "range": 1186,
+            "down": 3488
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 738
         },
         {
@@ -2786,11 +2854,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5178,
-            "range": 746,
-            "down": 4076
+            "up": 5347,
+            "range": 769,
+            "down": 3884
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 739
         },
         {
@@ -2798,11 +2866,11 @@
           "actual_direction": "UP",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3893,
-            "range": 1622,
-            "down": 4485
+            "up": 4012,
+            "range": 1681,
+            "down": 4307
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 740
         },
         {
@@ -2810,11 +2878,11 @@
           "actual_direction": "RANGE",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5473,
-            "range": 1244,
-            "down": 3283
+            "up": 5627,
+            "range": 1000,
+            "down": 3373
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 741
         },
         {
@@ -2822,11 +2890,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 7102,
-            "range": 884,
-            "down": 2014
+            "up": 7247,
+            "range": 695,
+            "down": 2058
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 750
         },
         {
@@ -2834,11 +2902,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5821,
-            "range": 843,
-            "down": 3336
+            "up": 5697,
+            "range": 874,
+            "down": 3429
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         },
         {
@@ -2846,11 +2914,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6921,
-            "range": 640,
-            "down": 2439
+            "up": 6842,
+            "range": 657,
+            "down": 2501
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         },
         {
@@ -2858,11 +2926,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6670,
-            "range": 343,
-            "down": 2987
+            "up": 6847,
+            "range": 354,
+            "down": 2799
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         },
         {
@@ -2870,11 +2938,11 @@
           "actual_direction": "UP",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6500,
-            "range": 822,
-            "down": 2678
+            "up": 6668,
+            "range": 851,
+            "down": 2481
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         },
         {
@@ -2882,53 +2950,53 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5002,
-            "range": 927,
-            "down": 4071
+            "up": 5140,
+            "range": 952,
+            "down": 3908
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 751
         }
       ],
       "walk_forward_evaluation": {
-        "observations": 27,
-        "resolved": 23,
-        "unresolved": 4,
-        "coverage": 0.8518518518518519,
-        "correct": 9,
-        "accuracy": 0.391304347826087,
-        "balanced_accuracy": 0.4405,
-        "multiclass_brier_score": 0.6577525417391304,
-        "causal_climatology_brier_score": 0.6021172458910734,
-        "brier_skill_score": -0.0923994391918177,
-        "classwise_calibration_error": 0.33400869565217395,
+        "observations": 22,
+        "resolved": 19,
+        "unresolved": 3,
+        "coverage": 0.8636363636363636,
+        "correct": 7,
+        "accuracy": 0.3684210526315789,
+        "balanced_accuracy": 0.1372,
+        "multiclass_brier_score": 0.6779677863157895,
+        "causal_climatology_brier_score": 0.639890008927984,
+        "brier_skill_score": -0.05950675406168271,
+        "classwise_calibration_error": 0.3263122807017544,
         "actual_direction_counts": {
-          "DOWN": 24,
+          "DOWN": 20,
           "RANGE": 1,
           "UNRESOLVED": 0,
-          "UP": 2
+          "UP": 1
         },
         "predicted_direction_counts": {
-          "DOWN": 9,
+          "DOWN": 8,
           "RANGE": 0,
-          "UNRESOLVED": 4,
-          "UP": 14
+          "UNRESOLVED": 3,
+          "UP": 11
         },
         "confusion_matrix": {
           "DOWN": {
-            "DOWN": 8,
+            "DOWN": 7,
             "RANGE": 0,
-            "UP": 13
+            "UP": 10
           },
           "RANGE": {
             "DOWN": 0,
             "RANGE": 0,
-            "UP": 0
+            "UP": 1
           },
           "UP": {
             "DOWN": 1,
             "RANGE": 0,
-            "UP": 1
+            "UP": 0
           }
         }
       },
@@ -2938,11 +3006,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 7091,
-            "range": 345,
-            "down": 2564
+            "up": 7004,
+            "range": 358,
+            "down": 2638
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 755
         },
         {
@@ -2950,11 +3018,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 7039,
-            "range": 1007,
-            "down": 1954
+            "up": 7227,
+            "range": 1040,
+            "down": 1733
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 755
         },
         {
@@ -2962,11 +3030,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5984,
-            "range": 684,
-            "down": 3332
+            "up": 5854,
+            "range": 709,
+            "down": 3437
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 755
         },
         {
@@ -2974,11 +3042,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5043,
-            "range": 1588,
-            "down": 3369
+            "up": 4908,
+            "range": 1634,
+            "down": 3458
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 755
         },
         {
@@ -2986,11 +3054,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6786,
-            "range": 861,
-            "down": 2353
+            "up": 6693,
+            "range": 883,
+            "down": 2424
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 756
         },
         {
@@ -2998,11 +3066,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 2326,
-            "range": 1911,
-            "down": 5763
+            "up": 2388,
+            "range": 1965,
+            "down": 5647
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -3010,11 +3078,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 2529,
-            "range": 1524,
-            "down": 5947
+            "up": 2600,
+            "range": 1564,
+            "down": 5836
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -3022,11 +3090,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 2864,
-            "range": 1488,
-            "down": 5648
+            "up": 2942,
+            "range": 1532,
+            "down": 5526
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -3034,11 +3102,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 2511,
-            "range": 1399,
-            "down": 6090
+            "up": 2583,
+            "range": 1440,
+            "down": 5977
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -3046,11 +3114,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5598,
-            "range": 571,
-            "down": 3831
+            "up": 5477,
+            "range": 587,
+            "down": 3936
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -3058,11 +3126,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3001,
-            "range": 1622,
-            "down": 5377
+            "up": 3083,
+            "range": 1667,
+            "down": 5250
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -3070,11 +3138,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 4410,
-            "range": 628,
-            "down": 4962
+            "up": 4517,
+            "range": 653,
+            "down": 4830
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 762
         },
         {
@@ -3082,11 +3150,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 3767,
-            "range": 1687,
-            "down": 4546
+            "up": 3597,
+            "range": 1730,
+            "down": 4673
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 769
         },
         {
@@ -3094,11 +3162,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4835,
-            "range": 764,
-            "down": 4401
+            "up": 4978,
+            "range": 789,
+            "down": 4233
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 769
         },
         {
@@ -3106,11 +3174,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 6710,
-            "range": 614,
-            "down": 2676
+            "up": 6906,
+            "range": 630,
+            "down": 2464
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 771
         },
         {
@@ -3118,19 +3186,23 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 4684,
-            "range": 1699,
-            "down": 3617
+            "up": 4834,
+            "range": 1427,
+            "down": 3739
           },
-          "selected_neighbor_count": 27,
+          "selected_neighbor_count": 26,
           "causal_library_size": 772
         },
         {
           "query_timestamp_ns": 1770336000000000000,
           "actual_direction": "RANGE",
-          "predicted_direction": "UNRESOLVED",
-          "probabilities_bp": null,
-          "selected_neighbor_count": 7,
+          "predicted_direction": "UP",
+          "probabilities_bp": {
+            "up": 5424,
+            "range": 622,
+            "down": 3954
+          },
+          "selected_neighbor_count": 26,
           "causal_library_size": 773
         },
         {
@@ -3138,7 +3210,7 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UNRESOLVED",
           "probabilities_bp": null,
-          "selected_neighbor_count": 3,
+          "selected_neighbor_count": 8,
           "causal_library_size": 774
         },
         {
@@ -3146,7 +3218,7 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UNRESOLVED",
           "probabilities_bp": null,
-          "selected_neighbor_count": 3,
+          "selected_neighbor_count": 4,
           "causal_library_size": 775
         },
         {
@@ -3162,11 +3234,11 @@
           "actual_direction": "DOWN",
           "predicted_direction": "UP",
           "probabilities_bp": {
-            "up": 5747,
-            "range": 340,
-            "down": 3913
+            "up": 6393,
+            "range": 292,
+            "down": 3315
           },
-          "selected_neighbor_count": 20,
+          "selected_neighbor_count": 26,
           "causal_library_size": 775
         },
         {
@@ -3174,72 +3246,12 @@
           "actual_direction": "UP",
           "predicted_direction": "DOWN",
           "probabilities_bp": {
-            "up": 1803,
-            "range": 3005,
-            "down": 5192
+            "up": 3680,
+            "range": 2389,
+            "down": 3931
           },
-          "selected_neighbor_count": 11,
+          "selected_neighbor_count": 25,
           "causal_library_size": 777
-        },
-        {
-          "query_timestamp_ns": 1771027200000000000,
-          "actual_direction": "DOWN",
-          "predicted_direction": "DOWN",
-          "probabilities_bp": {
-            "up": 1656,
-            "range": 2541,
-            "down": 5803
-          },
-          "selected_neighbor_count": 10,
-          "causal_library_size": 777
-        },
-        {
-          "query_timestamp_ns": 1771286400000000000,
-          "actual_direction": "DOWN",
-          "predicted_direction": "UP",
-          "probabilities_bp": {
-            "up": 7166,
-            "range": 0,
-            "down": 2834
-          },
-          "selected_neighbor_count": 27,
-          "causal_library_size": 777
-        },
-        {
-          "query_timestamp_ns": 1771372800000000000,
-          "actual_direction": "DOWN",
-          "predicted_direction": "UP",
-          "probabilities_bp": {
-            "up": 5425,
-            "range": 897,
-            "down": 3678
-          },
-          "selected_neighbor_count": 24,
-          "causal_library_size": 778
-        },
-        {
-          "query_timestamp_ns": 1771459200000000000,
-          "actual_direction": "UP",
-          "predicted_direction": "UP",
-          "probabilities_bp": {
-            "up": 4617,
-            "range": 1570,
-            "down": 3813
-          },
-          "selected_neighbor_count": 19,
-          "causal_library_size": 778
-        },
-        {
-          "query_timestamp_ns": 1771545600000000000,
-          "actual_direction": "DOWN",
-          "predicted_direction": "UP",
-          "probabilities_bp": {
-            "up": 6896,
-            "range": 0,
-            "down": 3104
-          },
-          "selected_neighbor_count": 27,
-          "causal_library_size": 778
         }
       ]
     }

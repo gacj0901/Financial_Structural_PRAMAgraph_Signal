@@ -7,6 +7,21 @@
       "type": "integer",
       "format": "int64"
     },
+    "counter_reading": {
+      "type": "object",
+      "properties": {
+        "direction": {
+          "$ref": "#/$defs/CounterReading"
+        },
+        "evidence": {
+          "$ref": "#/$defs/CounterReadingEvidence"
+        }
+      },
+      "required": [
+        "direction",
+        "evidence"
+      ]
+    },
     "directional": {
       "anyOf": [
         {
@@ -36,10 +51,7 @@
       "type": "string"
     },
     "response_sha256": {
-      "type": [
-        "string",
-        "null"
-      ]
+      "type": "string"
     },
     "schema": {
       "type": "string"
@@ -49,6 +61,62 @@
     },
     "structural": {
       "$ref": "#/$defs/StructuralSnapshot"
+    },
+    "structural_contrast": {
+      "type": "object",
+      "properties": {
+        "counter_reading": {
+          "$ref": "#/$defs/TechnicalCounterReading"
+        },
+        "structural": {
+          "$ref": "#/$defs/StructuralSnapshot"
+        },
+        "structural_contrast": {
+          "$ref": "#/$defs/StructuralContrast"
+        },
+        "technical": {
+          "$ref": "#/$defs/TechnicalDirectionHead"
+        },
+        "timeframe": {
+          "$ref": "#/$defs/Timeframe"
+        }
+      },
+      "required": [
+        "timeframe",
+        "structural",
+        "technical",
+        "counter_reading",
+        "structural_contrast"
+      ]
+    },
+    "technical": {
+      "type": "object",
+      "properties": {
+        "bars_used": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "direction": {
+          "$ref": "#/$defs/TechnicalDirection"
+        },
+        "indicators": {
+          "$ref": "#/$defs/IndicatorValues"
+        },
+        "range_detection": {
+          "$ref": "#/$defs/RangeDetection"
+        },
+        "votes": {
+          "$ref": "#/$defs/VoteBreakdown"
+        }
+      },
+      "required": [
+        "direction",
+        "votes",
+        "range_detection",
+        "indicators",
+        "bars_used"
+      ]
     },
     "timeframe": {
       "$ref": "#/$defs/Timeframe"
@@ -65,7 +133,11 @@
     "as_of_ns",
     "market",
     "structural",
-    "provenance"
+    "technical",
+    "counter_reading",
+    "structural_contrast",
+    "provenance",
+    "response_sha256"
   ],
   "$defs": {
     "AssetClass": {
@@ -131,6 +203,78 @@
       },
       "required": [
         "availability"
+      ]
+    },
+    "ContrastEvidenceItem": {
+      "type": "object",
+      "properties": {
+        "reasoning": {
+          "type": "string"
+        },
+        "structural_field": {
+          "type": "string"
+        },
+        "structural_value": {
+          "type": "string"
+        },
+        "technical_direction": {
+          "$ref": "#/$defs/TechnicalDirection"
+        }
+      },
+      "required": [
+        "structural_field",
+        "structural_value",
+        "technical_direction",
+        "reasoning"
+      ]
+    },
+    "ContrastState": {
+      "type": "string",
+      "enum": [
+        "CONFIRMING",
+        "CONFLICTING",
+        "MIXED",
+        "NEUTRAL",
+        "UNAVAILABLE"
+      ]
+    },
+    "CounterReading": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "UP",
+        "DOWN"
+      ]
+    },
+    "CounterReadingEvidence": {
+      "type": "object",
+      "properties": {
+        "bollinger_position": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CounterReading"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ema_extension": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "rsi_extreme": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CounterReading"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "ema_extension"
       ]
     },
     "Direction": {
@@ -252,6 +396,53 @@
           "minimum": 0
         }
       }
+    },
+    "IndicatorValues": {
+      "type": "object",
+      "properties": {
+        "adx14": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "atr14": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "bollinger_lower": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "bollinger_middle": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "bollinger_upper": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "ema20": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "ema20_slope": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "ema50": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "macd_histogram": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "rsi14": {
+          "$ref": "#/$defs/AvailableValue"
+        }
+      },
+      "required": [
+        "ema20",
+        "ema50",
+        "ema20_slope",
+        "macd_histogram",
+        "rsi14",
+        "adx14",
+        "atr14",
+        "bollinger_upper",
+        "bollinger_lower",
+        "bollinger_middle"
+      ]
     },
     "Instrument": {
       "type": "object",
@@ -391,6 +582,25 @@
         "down"
       ]
     },
+    "RangeDetection": {
+      "type": "object",
+      "properties": {
+        "adx14": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "ema_separation_atr": {
+          "$ref": "#/$defs/AvailableValue"
+        },
+        "is_range": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "adx14",
+        "ema_separation_atr",
+        "is_range"
+      ]
+    },
     "RuntimeStatus": {
       "type": "string",
       "enum": [
@@ -446,6 +656,24 @@
       "enum": [
         "CONTINUOUS_UTC",
         "EXCHANGE_SESSION"
+      ]
+    },
+    "StructuralContrast": {
+      "type": "object",
+      "properties": {
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ContrastEvidenceItem"
+          }
+        },
+        "state": {
+          "$ref": "#/$defs/ContrastState"
+        }
+      },
+      "required": [
+        "state",
+        "evidence"
       ]
     },
     "StructuralSnapshot": {
@@ -509,6 +737,59 @@
         "source_watermark"
       ]
     },
+    "TechnicalCounterReading": {
+      "type": "object",
+      "properties": {
+        "direction": {
+          "$ref": "#/$defs/CounterReading"
+        },
+        "evidence": {
+          "$ref": "#/$defs/CounterReadingEvidence"
+        }
+      },
+      "required": [
+        "direction",
+        "evidence"
+      ]
+    },
+    "TechnicalDirection": {
+      "type": "string",
+      "enum": [
+        "UP",
+        "DOWN",
+        "RANGE",
+        "UNAVAILABLE"
+      ]
+    },
+    "TechnicalDirectionHead": {
+      "type": "object",
+      "properties": {
+        "bars_used": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0
+        },
+        "direction": {
+          "$ref": "#/$defs/TechnicalDirection"
+        },
+        "indicators": {
+          "$ref": "#/$defs/IndicatorValues"
+        },
+        "range_detection": {
+          "$ref": "#/$defs/RangeDetection"
+        },
+        "votes": {
+          "$ref": "#/$defs/VoteBreakdown"
+        }
+      },
+      "required": [
+        "direction",
+        "votes",
+        "range_detection",
+        "indicators",
+        "bars_used"
+      ]
+    },
     "Timeframe": {
       "type": "string",
       "enum": [
@@ -518,6 +799,29 @@
         "H4",
         "D1",
         "W1"
+      ]
+    },
+    "VoteBreakdown": {
+      "type": "object",
+      "properties": {
+        "ema_slope": {
+          "$ref": "#/$defs/TechnicalDirection"
+        },
+        "ema_trend": {
+          "$ref": "#/$defs/TechnicalDirection"
+        },
+        "macd": {
+          "$ref": "#/$defs/TechnicalDirection"
+        },
+        "rsi_centerline": {
+          "$ref": "#/$defs/TechnicalDirection"
+        }
+      },
+      "required": [
+        "ema_trend",
+        "ema_slope",
+        "macd",
+        "rsi_centerline"
       ]
     }
   }

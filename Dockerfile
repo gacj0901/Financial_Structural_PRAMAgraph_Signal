@@ -1,8 +1,9 @@
 # Production Dockerfile for Railway Deployment
 # True Linux multi-stage build
 
-# STAGE 1: Rust builder (nightly required for edition2024 dependencies)
-FROM rustlang/rust:nightly-bookworm AS builder
+# STAGE 1: reproducible Rust builder. The crate targets edition 2021 and does
+# not require a floating nightly toolchain.
+FROM rust:1.97.1-bookworm AS builder
 
 WORKDIR /build
 
@@ -55,5 +56,5 @@ EXPOSE 8080
 ENV RUST_LOG=info
 ENV PORT=8080
 
-# Run the server
-CMD ["/app/pramagraph-financial", "serve", "--bind", "0.0.0.0:8080", "--corpus", "data/corpus", "--calibration", "calibration/profiles"]
+# Run the server on Railway's assigned port while preserving 8080 locally.
+CMD ["sh", "-c", "exec /app/pramagraph-financial serve --bind \"0.0.0.0:${PORT:-8080}\" --corpus data/corpus --calibration calibration/profiles"]

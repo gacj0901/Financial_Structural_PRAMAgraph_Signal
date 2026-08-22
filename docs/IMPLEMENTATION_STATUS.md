@@ -10,7 +10,8 @@
 - Rust HTTP service plus Binance closed-bar bootstrap for live BTC/XRP D1/W1 responses.
 - Massive REST adapter for closed D1/W1 stock, index and FX observations.
 - Auditable COMEX gold contract selection and closed futures-session ingestion.
-- Telegraph `FINANCIAL_DATA` local YAML template and generated request/response schemas.
+- Telegraph miner 111 registered for `FINANCIAL_DATA`, with a stable D1/W1 contract and
+  generated request/response schemas.
 - Causal Rust D_O v9 port with prior-only ridge transport, recurrence geometry,
   variation contraction and the v9 hysteresis state machine.
 - ODCE v0.1 causal cost/benefit differentials and cumulative conversion-deficit exposure,
@@ -35,12 +36,16 @@ financial evidence or calibrated thresholds and has not been ported.
 
 ## Next acceptance gate
 
-The next gate is a preregistered D1/W1 profile battery over every supported instrument,
-followed by cross-scale untouched-test evaluation. The current BTC D1 artifact exercises
-the entire path and rejects its last state because test Brier skill versus climatology is
-negative; no directional performance claim is emitted.
-The inspected BTC tail is marked consumed for development. A future publicable profile
-requires a protocol hash frozen before a new sealed test period is opened.
+Nine profiles exercise the D1/W1 path and all remain development evidence. Seven currently
+have positive resolved-only Brier Skill and two do not, but none is publicable and none
+predicted RANGE in its resolved audit tail. The detailed BTC diagnostics were regenerated
+against the current BTC D1 profile hash `sha256:e985d84b...`; they remain development evidence
+and are not a prospective claim.
+
+A future publicable profile requires the exact registered protocol hash, parameter-selection
+labels matured before the conservative boundary, an untouched segment strictly after
+2026-08-23T00:00:00Z, adequate coverage and
+class-specific reliability. Resolved-only aggregate metrics are not sufficient by themselves.
 
 ## Observation Interface v1
 

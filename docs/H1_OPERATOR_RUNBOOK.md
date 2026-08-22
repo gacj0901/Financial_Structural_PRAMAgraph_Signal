@@ -76,7 +76,8 @@ Key fields to verify:
 - `technical.direction` = UP/DOWN/RANGE/UNAVAILABLE
 - `technical.votes` = {ema_trend, ema_slope, macd, rsi_centerline}
 - `counter_reading.direction` = UP/DOWN/NONE
-- `structural_contrast.state` = CONFIRMING/CONFLICTING/MIXED/NEUTRAL/UNAVAILABLE
+- `structural_contrast.state` = NEUTRAL when both channels are available, otherwise UNAVAILABLE
+  (`CONFIRMING`/`CONFLICTING`/`MIXED` are reserved and not emitted currently)
 - `response_sha256` = present and deterministic
 
 ---

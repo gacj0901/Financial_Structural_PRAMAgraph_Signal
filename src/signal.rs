@@ -10,11 +10,11 @@ use crate::{
 };
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 
 /// Native request for a multi-timeframe financial structural signal
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
 pub struct FinancialSignalRequest {
     /// Canonical asset symbol or alias (e.g., "BTC", "SP500", "GOLD")
     pub asset: String,
@@ -132,13 +132,26 @@ impl FinancialSignalResponse {
     pub fn verify_hash(&self) -> bool {
         let mut clone = self.clone();
         clone.provenance.response_sha256 = None;
-        let canonical = serde_json::to_string(&clone).expect("response serializes");
-        let expected = format!(
-            "sha256:{}",
-            hex::encode(Sha256::digest(canonical.as_bytes()))
-        );
-        self.provenance.response_sha256.as_ref() == Some(&expected)
+        crate::canonical::sha256(&clone)
+            .is_ok_and(|expected| self.provenance.response_sha256.as_ref() == Some(&expected))
     }
+}
+
+fn direction_label(direction: Direction) -> &'static str {
+    match direction {
+        Direction::Up => "UP",
+        Direction::Down => "DOWN",
+        Direction::Range => "RANGE",
+        Direction::Unresolved => "UNRESOLVED",
+    }
+}
+
+fn finalize_response_hash(response: &mut FinancialSignalResponse) {
+    response.provenance.response_sha256 = None;
+    response.provenance.response_sha256 = Some(
+        crate::canonical::sha256(response)
+            .expect("FinancialSignalResponse contains only canonically serializable values"),
+    );
 }
 
 impl ScaleSignal {
@@ -286,22 +299,24 @@ pub fn build_financial_signal_response(
     mode: SignalMode,
     primary_provider: String,
     secondary_provider: Option<String>,
-    _data_watermark_ns: i64,
+    data_watermark_ns: i64,
+    input_window_sha256: String,
     engine_version: String,
     engine_config_sha256: String,
     structural_vector_version: String,
     resolution_calibration_version: Option<String>,
     resolution_profile_sha256: Option<String>,
     runtime_config_sha256: String,
-    _request_sha256: String,
+    request_sha256: String,
 ) -> FinancialSignalResponse {
+    let source_watermark = data_watermark_ns.to_string();
     if scales.is_empty() {
         let mut resp = FinancialSignalResponse {
             schema: "pramagraph.financial_signal.v1".into(),
             status: RuntimeStatus::InsufficientData,
             instrument,
             as_of_ns: 0,
-            data_watermark_ns: 0,
+            data_watermark_ns,
             mode,
             direction: Direction::Unresolved,
             label: "UNAVAILABLE".into(),
@@ -310,26 +325,19 @@ pub fn build_financial_signal_response(
             provenance: crate::Provenance {
                 primary_provider,
                 secondary_provider,
-                source_watermark: "".into(),
-                input_window_sha256: "".into(),
+                source_watermark,
+                input_window_sha256,
                 engine_version,
                 engine_config_sha256,
                 structural_vector_version,
                 resolution_calibration_version,
                 resolution_profile_sha256,
                 runtime_config_sha256,
+                request_sha256,
                 response_sha256: None,
             },
         };
-        // Compute hash
-        let mut clone = resp.clone();
-        clone.provenance.response_sha256 = None;
-        let canonical = serde_json::to_string(&clone).expect("response serializes");
-        let hash = format!(
-            "sha256:{}",
-            hex::encode(Sha256::digest(canonical.as_bytes()))
-        );
-        resp.provenance.response_sha256 = Some(hash);
+        finalize_response_hash(&mut resp);
         return resp;
     }
 
@@ -369,39 +377,36 @@ pub fn build_financial_signal_response(
 
     let mut resp = FinancialSignalResponse {
         schema: "pramagraph.financial_signal.v1".into(),
-        status: RuntimeStatus::Ok,
+        status: if primary_provider == "supplied_corpus" {
+            RuntimeStatus::StaleData
+        } else {
+            RuntimeStatus::Ok
+        },
         instrument,
         as_of_ns,
-        data_watermark_ns: 0, // Will be set by caller
+        data_watermark_ns,
         mode,
         direction,
-        label: format!("{:?}", direction),
+        label: direction_label(direction).into(),
         probabilities_bp: None,
         scales: per_scales,
         provenance: crate::Provenance {
             primary_provider,
             secondary_provider,
-            source_watermark: "".into(),
-            input_window_sha256: "".into(),
+            source_watermark,
+            input_window_sha256,
             engine_version,
             engine_config_sha256,
             structural_vector_version,
             resolution_calibration_version,
             resolution_profile_sha256,
             runtime_config_sha256,
+            request_sha256,
             response_sha256: None,
         },
     };
 
-    // Compute canonical hash
-    let mut clone = resp.clone();
-    clone.provenance.response_sha256 = None;
-    let canonical = serde_json::to_string(&clone).expect("response serializes");
-    let hash = format!(
-        "sha256:{}",
-        hex::encode(Sha256::digest(canonical.as_bytes()))
-    );
-    resp.provenance.response_sha256 = Some(hash);
+    finalize_response_hash(&mut resp);
 
     resp
 }
@@ -522,6 +527,7 @@ mod tests {
             "binance_spot".into(),
             None,
             1_700_000_000_000_000_000,
+            "sha256:input-window".into(),
             "test-engine".into(),
             "config-hash".into(),
             "vector-v1".into(),
@@ -534,6 +540,12 @@ mod tests {
         // Verify hash matches
         assert!(resp.verify_hash());
         assert!(resp.provenance.response_sha256.is_some());
+        assert_eq!(resp.data_watermark_ns, 1_700_000_000_000_000_000);
+        assert_eq!(resp.provenance.source_watermark, "1700000000000000000");
+        assert_eq!(resp.provenance.input_window_sha256, "sha256:input-window");
+        assert_eq!(resp.provenance.request_sha256, "request-hash");
+        assert_eq!(resp.label, "UP");
+        assert_eq!(resp.status, RuntimeStatus::Ok);
         assert!(resp
             .provenance
             .response_sha256
@@ -561,6 +573,7 @@ mod tests {
             "binance_spot".into(),
             None,
             1_700_000_000_000_000_000,
+            "sha256:input-window".into(),
             "test-engine".into(),
             "config-hash".into(),
             "vector-v1".into(),
@@ -577,6 +590,7 @@ mod tests {
             "binance_spot".into(),
             None,
             1_700_000_000_000_000_000,
+            "sha256:input-window".into(),
             "test-engine".into(),
             "config-hash".into(),
             "vector-v1".into(),
@@ -591,6 +605,53 @@ mod tests {
             resp1.provenance.response_sha256,
             resp2.provenance.response_sha256
         );
+    }
+
+    #[test]
+    fn supplied_corpus_is_explicitly_stale_and_request_hash_is_committed() {
+        let scale = ScaleSignal {
+            timeframe: Timeframe::D1,
+            structural: make_test_structural(Timeframe::D1, "VIABLE"),
+            technical: make_test_technical(TechnicalDirection::Down),
+            counter_reading: make_test_counter(),
+            structural_contrast: make_test_contrast(),
+            directional: None,
+        };
+
+        let build = |request_hash: &str| {
+            build_financial_signal_response(
+                make_test_instrument(),
+                vec![scale.clone()],
+                SignalMode::Confirmed,
+                "supplied_corpus".into(),
+                None,
+                1_700_000_000_000_000_000,
+                "sha256:input-window".into(),
+                "test-engine".into(),
+                "config-hash".into(),
+                "vector-v1".into(),
+                None,
+                None,
+                "runtime-config".into(),
+                request_hash.into(),
+            )
+        };
+
+        let first = build("sha256:first-request");
+        let second = build("sha256:second-request");
+        assert_eq!(first.status, RuntimeStatus::StaleData);
+        assert_eq!(first.label, "DOWN");
+        assert!(first.verify_hash());
+        assert_ne!(
+            first.provenance.response_sha256,
+            second.provenance.response_sha256
+        );
+    }
+
+    #[test]
+    fn native_request_rejects_unknown_fields_before_hashing() {
+        let json = r#"{"asset":"BTC","extra":"not-part-of-the-contract"}"#;
+        assert!(serde_json::from_str::<FinancialSignalRequest>(json).is_err());
     }
 
     #[test]

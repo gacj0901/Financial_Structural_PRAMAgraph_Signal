@@ -85,53 +85,37 @@ Independent causal/invariant characterization from PRAMAgraph Protokol. **Not a 
 | `k_mem` | K-MEM K1 (τ=32) | Strictly-prior state, state_sha256 |
 | `availability` | Map | Per-component AVAILABLE/UNAVAILABLE/NOT_APPLICABLE/STALE |
 
-### D_O `structural_state` values (with explicit semantics):
+### D_O `structural_state`
 
-| Value | Structural Meaning | Maps to Technical Direction |
-|-------|-------------------|----------------------------|
-| `CRYSTALLIZED` | Fully organized, stable regime | → UP |
-| `RECURRENT` | Recurring organized regime | → UP |
-| `VIABLE` | Viable organized regime | → UP |
-| `CRYSTALLIZING` | Organizing toward crystallization | → UP |
-| `PROVISIONAL` | Inherits from `mobility_status` | → inherits |
-| `STAGNANT` | Inactive, no transport | → RANGE |
-| `INACTIVE` | No structural activity | → RANGE |
-| `DISRUPTED` | Structural disruption | → DOWN |
-| `TRANSPORT_DISRUPTED` | Transport disruption | → DOWN |
-| `TRANSPORT_UNRESOLVED` | Transport inconclusive | → DOWN |
-| `UNRESOLVED` | No structural resolution | → DOWN |
-
-**PROVISIONAL** inherits from D_O `mobility_status`:
-- `VIABLE`/`RECURRENT`/`CRYSTALLIZING`/`CRYSTALLIZED` → UP
-- `STAGNANT` → RANGE
-- Other → DOWN
+D_O regime labels retain their structural meaning exactly as emitted by the structural
+stack. They are not translated into `UP`, `DOWN` or `RANGE`. In particular, a viable,
+recurrent, stagnant or disrupted transport state does not by itself assert a future price
+direction.
 
 ---
 
 ## Structural Contrast
 
-**Agreement/conflict relation** between Technical Direction and structural evidence.
+Descriptive co-presentation of Technical Direction and structural evidence. The current
+runtime deliberately performs no structural-to-price-direction mapping.
 
 | State | Meaning |
 |-------|---------|
-| `CONFIRMING` | All available structural evidence aligns with technical direction |
-| `CONFLICTING` | All available structural evidence opposes technical direction |
-| `MIXED` | Some evidence aligns, some opposes |
-| `NEUTRAL` | Evidence available but neither clearly confirming nor conflicting |
+| `CONFIRMING` | Reserved; not emitted without a validated directional mapping |
+| `CONFLICTING` | Reserved; not emitted without a validated directional mapping |
+| `MIXED` | Reserved; not emitted without a validated directional mapping |
+| `NEUTRAL` | Technical and structural evidence are both available and kept independent |
 | `UNAVAILABLE` | No structural evidence with explicit directional semantics |
 
 ### Evidence sources (only explicitly available fields used):
 
-| Structural Field | Direction Mapping | Agreement Logic |
-|------------------|-------------------|-----------------|
-| D_O `structural_state` | See table above | Technical dir matches mapped dir → aligned |
-| D_O `transport_coherence` ≥ 0.5 | "coherent" → supports trending | Technical trending + coherent → aligned |
-| D_O `recurrence_persistence` ≥ 0.3 | "recurrent" → supports trending | Technical trending + recurrent → aligned |
-| K-MEM `strictly_prior_state` > 0 | UP | Technical UP + positive → aligned |
-| K-MEM `strictly_prior_state` < 0 | DOWN | Technical DOWN + negative → aligned |
-| K-MEM `strictly_prior_state` = 0 | RANGE | Technical RANGE + zero → aligned |
+| Structural Field | Exported interpretation |
+|------------------|-------------------------|
+| D_O `transport_coherence` | Descriptive coherent/incoherent transport evidence |
+| D_O `recurrence_persistence` | Descriptive recurrent/non-recurrent evidence |
+| K-MEM `strictly_prior_state` | Prior structural-memory coordinate, without price sign mapping |
 
-**No semantic invention** — only fields with explicit semantics in contracts/structural.rs are used.
+No structural observable votes for or against the technical `label`.
 
 ---
 
