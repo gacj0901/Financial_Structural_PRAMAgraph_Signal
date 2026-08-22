@@ -34,6 +34,10 @@ pub struct FinancialSignalRequest {
     /// Signal mode (default: CONFIRMED - closed bars only)
     #[serde(default = "default_mode")]
     pub mode: SignalMode,
+
+    /// Optional reference asset for cross-asset structural analysis
+    #[serde(default)]
+    pub reference_asset: Option<String>,
 }
 
 fn default_venue() -> String {
@@ -651,6 +655,7 @@ mod tests {
             quote: "auto".into(),
             timeframes: vec![Timeframe::D1],
             mode: SignalMode::Confirmed,
+            reference_asset: None,
         };
 
         let supported = vec![Timeframe::D1, Timeframe::W1];
@@ -663,6 +668,7 @@ mod tests {
             quote: "auto".into(),
             timeframes: vec![],
             mode: SignalMode::Confirmed,
+            reference_asset: None,
         };
         let resolved = req_empty.resolve_timeframes(&supported);
         assert_eq!(resolved, supported);

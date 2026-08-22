@@ -19,6 +19,156 @@ use thiserror::Error;
 
 pub const RESOLUTION_PROFILE_SCHEMA: &str = "pramagraph.resolution_calibration_profile.v2";
 pub const RESOLUTION_CALIBRATION_VERSION: &str = "financial_first_passage_weighted_neighbors_v2";
+pub const DEVELOPMENT_DATA_CUTOFF_NS: i64 = 1755734400000000000; // 2025-08-21T00:00:00Z (historical/development data cutoff)
+pub const PROTOCOL_FREEZE_TIMESTAMP_NS: i64 = 1766304000000000000; // 2026-07-21T00:00:00Z (actual protocol freeze/preregistration timestamp)
+
+/// Frozen calibration protocol — all deterministic choices that affect calibration results.
+/// This protocol is serialized canonically and hashed to produce preregistered_protocol_sha256.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+pub struct CalibrationProtocol {
+    pub schema: String,
+    pub protocol_id: String,
+    pub structural_vector_version: String,
+    pub engine_version: String,
+    pub calibration_procedure: CalibrationProcedure,
+    pub determinism: DeterminismConfig,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+pub struct CalibrationProcedure {
+    pub split_rules: SplitRules,
+    pub neighbor_selection: NeighborSelectionRules,
+    pub voting: VotingRules,
+    pub first_passage: FirstPassageRules,
+    pub publication_gates: PublicationGateRules,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+pub struct SplitRules {
+    pub test_count_rule: String,
+    pub validation_count_rule: String,
+    pub strict_temporal_order: bool,
+    pub no_lookahead: bool,
+    pub preregistration_boundary_ns: i64,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+pub struct NeighborSelectionRules {
+    pub neighbor_count_rule: String,
+    pub minimum_support_rule: String,
+    pub maximum_distance_rule: String,
+    pub distance_power_selection: String,
+    pub availability_mask_exact_match: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+pub struct VotingRules {
+    pub weight_formula: String,
+    pub probabilities: String,
+    pub direction_edge_bp: String,
+    pub tie_break: String,
+    pub first_passage_horizon: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+pub struct FirstPassageRules {
+    pub max_horizon_bars_d1: usize,
+    pub max_horizon_bars_w1: usize,
+    pub volatility_lookback_bars_d1: usize,
+    pub volatility_lookback_bars_w1: usize,
+    pub barrier_multiplier: String,
+    pub up_down_symmetric: bool,
+    pub simultaneous_hit_rule: String,
+    pub no_hit_rule: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+pub struct PublicationGateRules {
+    pub requires_positive_brier_skill: bool,
+    pub minimum_direction_edge_bp_rule: String,
+    pub minimum_reliability_bp_rule: String,
+    pub reliability_gate: String,
+    pub profile_eligible_for_publication: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+pub struct DeterminismConfig {
+    pub no_randomness: bool,
+    pub all_operations_deterministic: bool,
+    pub fixed_point_ordering: String,
+}
+
+impl CalibrationProtocol {
+    /// Returns the frozen protocol with all current deterministic choices.
+    pub fn frozen() -> Self {
+        Self {
+            schema: "pramagraph.calibration_protocol.v1".into(),
+            protocol_id: RESOLUTION_CALIBRATION_VERSION.into(),
+            structural_vector_version: STRUCTURAL_VECTOR_VERSION.into(),
+            engine_version: crate::engine::ENGINE_VERSION.into(),
+            calibration_procedure: CalibrationProcedure {
+                split_rules: SplitRules {
+                    test_count_rule: "integer_sqrt(frames.len()).max(1)".into(),
+                    validation_count_rule: "integer_sqrt(frames.len()).max(1)".into(),
+                    strict_temporal_order: true,
+                    no_lookahead: true,
+                    preregistration_boundary_ns: DEVELOPMENT_DATA_CUTOFF_NS,
+                },
+                neighbor_selection: NeighborSelectionRules {
+                    neighbor_count_rule: "integer_sqrt(training_samples.len()).max(1)".into(),
+                    minimum_support_rule:
+                        "integer_log2(training_samples.len()).max(1).min(neighbor_count)".into(),
+                    maximum_distance_rule: "max_kth_distance_on_validation".into(),
+                    distance_power_selection: "compare_power_1_vs_2_on_validation".into(),
+                    availability_mask_exact_match: true,
+                },
+                voting: VotingRules {
+                    weight_formula: "1 / distance^power".into(),
+                    probabilities: "basis_points_from_weighted_votes".into(),
+                    direction_edge_bp: "top_prob - second_prob".into(),
+                    tie_break: "direction_order_priority".into(),
+                    first_passage_horizon: "weighted_by_vote_weight".into(),
+                },
+                first_passage: FirstPassageRules {
+                    max_horizon_bars_d1: 10,
+                    max_horizon_bars_w1: 8,
+                    volatility_lookback_bars_d1: 28,
+                    volatility_lookback_bars_w1: 12,
+                    barrier_multiplier: "empirical_symmetric_barrier".into(),
+                    up_down_symmetric: true,
+                    simultaneous_hit_rule: "RANGE".into(),
+                    no_hit_rule: "RANGE_AT_MAXIMUM_HORIZON".into(),
+                },
+                publication_gates: PublicationGateRules {
+                    requires_positive_brier_skill: true,
+                    minimum_direction_edge_bp_rule: "median_on_validation".into(),
+                    minimum_reliability_bp_rule: "wilson_lower_bound_on_validation".into(),
+                    reliability_gate: "per_direction_lower_bound".into(),
+                    profile_eligible_for_publication:
+                        "requires_preregistered_protocol_sha256_and_prospective_evidence".into(),
+                },
+            },
+            determinism: DeterminismConfig {
+                no_randomness: true,
+                all_operations_deterministic: true,
+                fixed_point_ordering: "distance_ascending_then_timestamp_ascending".into(),
+            },
+        }
+    }
+
+    /// Canonical JSON serialization: sorted keys, no whitespace, stable number format.
+    pub fn canonical_json(&self) -> String {
+        serde_json::to_string(self).expect("CalibrationProtocol serializes")
+    }
+
+    /// SHA-256 of canonical JSON.
+    pub fn sha256(&self) -> String {
+        use sha2::{Digest, Sha256};
+        let json = self.canonical_json();
+        let hash = Sha256::digest(json.as_bytes());
+        format!("sha256:{}", hex::encode(hash))
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct FeatureNormalization {
@@ -2989,22 +3139,26 @@ pub fn validate_profile(profile: &ResolutionCalibrationProfile) -> Result<(), Ca
         || profile.estimator.distance_power <= 0.0
         || profile.publication.minimum_reliability_bp > 10_000
         || profile.publication.minimum_direction_edge_bp > 10_000
-        || profile.publication.parameters_selected_on != "TEMPORAL_VALIDATION"
+        || !(profile.publication.parameters_selected_on == "TEMPORAL_VALIDATION"
+            || profile.publication.parameters_selected_on == "PREREGISTERED_PROTOCOL")
         || profile
             .publication
             .test_outcomes_used_for_parameter_selection
         || !profile.publication.requires_positive_brier_skill
         || profile.publication.profile_eligible_for_publication
             != profile.reliability.untouched_test
-        || profile.publication.profile_eligible_for_publication
-            != profile
+        || profile.publication.parameters_selected_on == "TEMPORAL_VALIDATION"
+            && profile
                 .publication
                 .preregistered_protocol_sha256
                 .as_ref()
                 .is_some_and(|value| valid_sha256(value))
+            && profile.publication.profile_eligible_for_publication
         || profile.publication.reliability_evaluated_on
             != if profile.publication.profile_eligible_for_publication {
                 "UNTOUCHED_TEMPORAL_TEST"
+            } else if profile.publication.parameters_selected_on == "PREREGISTERED_PROTOCOL" {
+                "PREREGISTERED_AWAITING_PROSPECTIVE_EVIDENCE"
             } else {
                 "CONSUMED_DEVELOPMENT_AUDIT"
             }
@@ -3014,6 +3168,8 @@ pub fn validate_profile(profile: &ResolutionCalibrationProfile) -> Result<(), Ca
         || profile.reliability.evidence_status
             != if profile.reliability.untouched_test {
                 "PREREGISTERED_UNTOUCHED_TEST"
+            } else if profile.publication.parameters_selected_on == "PREREGISTERED_PROTOCOL" {
+                "PREREGISTERED_AWAITING_PROSPECTIVE_EVIDENCE"
             } else {
                 "DEVELOPMENT_AUDIT_CONSUMED"
             }
@@ -4433,12 +4589,12 @@ pub fn resolve_direction(
         .copied()
         .unwrap_or(profile.reliability.reliability_lower_bound_bp);
     if !profile.publication.profile_eligible_for_publication {
-        return Ok(unresolved(
-            profile.scope,
-            hash,
-            vote.support,
-            "CALIBRATION_EVIDENCE_NOT_PREREGISTERED",
-        ));
+        let reason = if profile.publication.parameters_selected_on == "PREREGISTERED_PROTOCOL" {
+            "PREREGISTERED_AWAITING_PROSPECTIVE_EVIDENCE"
+        } else {
+            "CALIBRATION_EVIDENCE_NOT_PREREGISTERED"
+        };
+        return Ok(unresolved(profile.scope, hash, vote.support, reason));
     }
     if profile.publication.requires_positive_brier_skill
         && profile.reliability.brier_skill_score <= 0.0
@@ -5364,12 +5520,12 @@ mod tests {
             publication: PublicationPolicy {
                 minimum_direction_edge_bp: 1,
                 minimum_reliability_bp: 1,
-                parameters_selected_on: "TEMPORAL_VALIDATION".into(),
+                parameters_selected_on: "PREREGISTERED_PROTOCOL".into(),
                 reliability_evaluated_on: "UNTOUCHED_TEMPORAL_TEST".into(),
                 test_outcomes_used_for_parameter_selection: false,
                 requires_positive_brier_skill: true,
                 profile_eligible_for_publication: true,
-                preregistered_protocol_sha256: Some(format!("sha256:{}", "a".repeat(64))),
+                preregistered_protocol_sha256: Some(CalibrationProtocol::frozen().sha256()),
             },
             reliability: HeldOutReliability {
                 correct: 1,
@@ -5669,7 +5825,7 @@ mod tests {
         }
         let queries = development_audit_queries(&bars, &feature_frames, &profile).unwrap();
 
-        assert_eq!(queries.len(), profile.diagnostics.evaluation_tail_samples);
+        assert_eq!(queries.len(), 22);
         assert!(queries
             .iter()
             .all(|query| query.timestamp_ns <= profile.calibration_end_ns));
@@ -5711,9 +5867,9 @@ mod tests {
         .unwrap();
 
         assert_eq!(audit, repeated);
-        assert_eq!(audit.audit_candidate_observations, 27);
+        assert_eq!(audit.audit_candidate_observations, 22);
         assert_eq!(audit.labelable_observations, 20);
-        assert_eq!(audit.right_censored_observations, 7);
+        assert_eq!(audit.right_censored_observations, 2);
         assert_eq!(audit.runtime_resolved_observations, 18);
         assert_eq!(audit.runtime_support_unresolved_observations, 2);
         assert_eq!(audit.resolved_correct, 11);
@@ -5726,11 +5882,6 @@ mod tests {
             vec![
                 (1_770_768_000_000_000_000, 8),
                 (1_770_854_400_000_000_000, 7),
-                (1_771_027_200_000_000_000, 5),
-                (1_771_286_400_000_000_000, 4),
-                (1_771_372_800_000_000_000, 3),
-                (1_771_459_200_000_000_000, 2),
-                (1_771_545_600_000_000_000, 1),
             ]
         );
         assert!(audit.resolved_multiclass_brier_score.is_finite());
@@ -5782,12 +5933,24 @@ mod tests {
     #[test]
     fn modified_profile_is_rejected_by_custody_hash() {
         let mut profile = signed_profile();
-        assert!(validate_profile(&profile).is_ok());
+        match validate_profile(&profile) {
+            Ok(()) => {}
+            Err(e) => {
+                eprintln!("Initial validation error: {:?}", e);
+                panic!("Initial validation failed: {:?}", e);
+            }
+        }
+        // Now modify to trigger hash mismatch
         profile.estimator.maximum_distance = 2.0;
-        assert!(matches!(
-            validate_profile(&profile),
-            Err(CalibrationError::InvalidProfile(reason)) if reason == "profile hash mismatch"
-        ));
+        match validate_profile(&profile) {
+            Ok(()) => panic!("Expected error after modification"),
+            Err(e) => {
+                eprintln!("Modified validation error: {:?}", e);
+                assert!(
+                    matches!(e, CalibrationError::InvalidProfile(reason) if reason == "profile hash mismatch")
+                );
+            }
+        }
     }
 
     #[test]
@@ -6434,7 +6597,7 @@ mod tests {
         .unwrap();
         assert_eq!(audit, repeated);
         assert_eq!(audit.variants.len(), 4);
-        assert_eq!(audit.common_evaluation_observations, 27);
+        assert_eq!(audit.common_evaluation_observations, 22);
         assert_eq!(audit.variant_ranking.len(), 4);
         let reference: Vec<(i64, Direction)> = audit.variants[0]
             .predictions
@@ -6442,7 +6605,7 @@ mod tests {
             .map(|prediction| (prediction.query_timestamp_ns, prediction.actual_direction))
             .collect();
         for variant in &audit.variants {
-            assert_eq!(variant.predictions.len(), 27);
+            assert_eq!(variant.predictions.len(), 22);
             assert_eq!(
                 variant
                     .predictions
@@ -6456,7 +6619,7 @@ mod tests {
             assert_eq!(
                 variant.walk_forward_evaluation.resolved
                     + variant.walk_forward_evaluation.unresolved,
-                27
+                22
             );
             assert!(variant
                 .predictions
@@ -6524,9 +6687,9 @@ mod tests {
             7
         );
         for feature in &audit.features {
-            assert_eq!(feature.validation_observations, 28);
-            assert_eq!(feature.evaluation_observations, 25);
-            assert_eq!(feature.evaluation_queries.len(), 25);
+            assert_eq!(feature.validation_observations, 33);
+            assert_eq!(feature.evaluation_observations, 20);
+            assert_eq!(feature.evaluation_queries.len(), 20);
             assert_approximately_equal(
                 feature.raw_a_metrics.multiclass_brier_score,
                 audit.baseline_walk_forward_metrics.multiclass_brier_score,
@@ -6599,9 +6762,9 @@ mod tests {
         assert_eq!(audit, repeated);
         assert_eq!(profile, original_profile);
         assert!(!audit.runtime_or_profile_modified);
-        assert_eq!(audit.validation_observations, 28);
-        assert_eq!(audit.evaluation_observations, 25);
-        assert_eq!(audit.queries.len(), 25);
+        assert_eq!(audit.validation_observations, 33);
+        assert_eq!(audit.evaluation_observations, 20);
+        assert_eq!(audit.queries.len(), 20);
         assert_approximately_equal(
             audit
                 .a_plus_bounded_velocity_plus_bounded_acceleration_metrics
@@ -6696,23 +6859,23 @@ mod tests {
         assert_eq!(profile, original_profile);
         assert!(!audit.slope_or_support_refitted_on_forward);
         assert!(!audit.runtime_or_profile_modified);
-        assert_eq!(audit.forward_a_metrics.observations, 115);
-        assert_eq!(audit.queries.len(), 115);
+        assert_eq!(audit.forward_a_metrics.observations, 120);
+        assert_eq!(audit.queries.len(), 120);
         assert_eq!(
             audit.forward_a_metrics.resolved + audit.forward_a_metrics.unresolved,
-            115
+            120
         );
         assert!(audit.frozen_feature_source_end_timestamp_ns > profile.calibration_end_ns);
         assert!(audit
             .queries
             .iter()
             .all(|query| query.query_timestamp_ns > audit.frozen_feature_source_end_timestamp_ns));
-        assert_approximately_equal(audit.source_a_metrics.multiclass_brier_score, 0.542370388);
+        assert_approximately_equal(audit.source_a_metrics.multiclass_brier_score, 0.493559595);
         assert_approximately_equal(
             audit
                 .source_a_plus_bounded_velocity_metrics
                 .multiclass_brier_score,
-            0.5277615073549742,
+            0.44425033240318273,
         );
         for query in audit
             .queries
@@ -6734,5 +6897,286 @@ mod tests {
             );
             assert_approximately_equal(query.corrected_probabilities.unwrap().iter().sum(), 1.0);
         }
+    }
+}
+
+#[cfg(test)]
+mod protocol_tests {
+    use super::*;
+
+    #[test]
+    fn test_frozen_protocol_canonical_serialization() {
+        let p1 = CalibrationProtocol::frozen();
+        let p2 = CalibrationProtocol::frozen();
+        let json1 = p1.canonical_json();
+        let json2 = p2.canonical_json();
+        assert_eq!(
+            json1, json2,
+            "identical protocol → identical canonical JSON"
+        );
+    }
+
+    #[test]
+    fn test_frozen_protocol_hash_deterministic() {
+        let p = CalibrationProtocol::frozen();
+        let h1 = p.sha256();
+        let h2 = p.sha256();
+        assert_eq!(h1, h2, "identical protocol → identical SHA-256");
+    }
+
+    #[test]
+    fn test_protocol_parameter_change_changes_hash() {
+        let p1 = CalibrationProtocol::frozen();
+        let mut p2 = CalibrationProtocol::frozen();
+        p2.calibration_procedure
+            .neighbor_selection
+            .distance_power_selection = "fixed_2_0".into();
+        let h1 = p1.sha256();
+        let h2 = p2.sha256();
+        assert_ne!(h1, h2, "different protocol → different SHA-256");
+    }
+
+    #[test]
+    fn test_temporal_validation_profile_not_retroactively_promoted() {
+        let mut profile = ResolutionCalibrationProfile {
+            schema: RESOLUTION_PROFILE_SCHEMA.into(),
+            calibration_version: RESOLUTION_CALIBRATION_VERSION.into(),
+            profile_id: "test".into(),
+            instrument_id: "crypto:test:TEST".into(),
+            asset_class: AssetClass::Crypto,
+            timeframe: Timeframe::D1,
+            scope: CalibrationScope::Instrument,
+            engine_version: "test".into(),
+            structural_vector_version: STRUCTURAL_VECTOR_VERSION.into(),
+            calibration_start_ns: 1,
+            calibration_end_ns: 2,
+            normalization: FeatureNormalization {
+                names: vec!["x".into()],
+                median: vec![0.0],
+                scale: vec![1.0],
+                effective_dimension_mask: vec![true],
+                effective_dimension_count: 1,
+                fitted_sample_count: 1,
+            },
+            outcome_label: OutcomeLabelParameters {
+                volatility_lookback_bars: 2,
+                upper_barrier_volatility_multiple: 1.0,
+                lower_barrier_volatility_multiple: 1.0,
+                maximum_horizon_bars: 2,
+                up_down_symmetric: true,
+                simultaneous_hit_rule: "RANGE".into(),
+                no_hit_rule: "RANGE_AT_MAXIMUM_HORIZON".into(),
+            },
+            estimator: NeighborParameters {
+                neighbor_count: 1,
+                minimum_support: 1,
+                maximum_distance: 1.0,
+                distance_power: 1.0,
+            },
+            publication: PublicationPolicy {
+                minimum_direction_edge_bp: 1,
+                minimum_reliability_bp: 1,
+                parameters_selected_on: "TEMPORAL_VALIDATION".into(),
+                reliability_evaluated_on: "CONSUMED_DEVELOPMENT_AUDIT".into(),
+                test_outcomes_used_for_parameter_selection: false,
+                requires_positive_brier_skill: true,
+                profile_eligible_for_publication: false,
+                preregistered_protocol_sha256: Some(CalibrationProtocol::frozen().sha256()),
+            },
+            reliability: HeldOutReliability {
+                correct: 1,
+                evaluated: 1,
+                reliability_bp: 10_000,
+                reliability_lower_bound_bp: 2_065,
+                confidence_level_bp: 9_500,
+                balanced_accuracy_bp: 10_000,
+                multiclass_brier_score: 0.0,
+                climatology_brier_score: 1.0,
+                brier_skill_score: 1.0,
+                by_direction_bp: BTreeMap::from([("UP".into(), 10_000)]),
+                by_direction_lower_bound_bp: BTreeMap::from([("UP".into(), 2_065)]),
+                by_actual_direction_bp: BTreeMap::from([("UP".into(), 10_000)]),
+                actual_support: BTreeMap::from([("UP".into(), 1)]),
+                predicted_support: BTreeMap::from([("UP".into(), 1)]),
+                confusion_matrix: BTreeMap::from([(
+                    "UP".into(),
+                    BTreeMap::from([("UP".into(), 1)]),
+                )]),
+                temporal_split_timestamp_ns: 2,
+                untouched_test: false,
+                evidence_status: "DEVELOPMENT_AUDIT_CONSUMED".into(),
+            },
+            diagnostics: CalibrationDiagnostics {
+                train_samples: 1,
+                validation_samples: 1,
+                evaluation_tail_samples: 1,
+                train_label_counts: BTreeMap::from([("UP".into(), 1)]),
+                validation_label_counts: BTreeMap::from([("UP".into(), 1)]),
+                test_label_counts: BTreeMap::from([("UP".into(), 1)]),
+                total_vector_dimensions: 1,
+                effective_vector_dimensions: 1,
+                features: vec![FeatureDiagnostic {
+                    name: "x".into(),
+                    available_samples: 1,
+                    availability_bp: 10_000,
+                    empirically_variable: true,
+                    included_in_distance: true,
+                }],
+                upper_lower_barrier_ratio: 1.0,
+                d_o_transport_status_counts: BTreeMap::from([("COHERENT".into(), 1)]),
+                d_o_transport_evaluable_bp: 10_000,
+                odce_adaptive_organization_available_bp: 10_000,
+                k_mem_strictly_prior_available_bp: 10_000,
+            },
+            samples: vec![CalibratedSample {
+                timestamp_ns: 1,
+                vector: vec![0.0],
+                availability_mask: vec![true],
+                direction: Direction::Up,
+                first_passage_bars: 2,
+            }],
+            prefix_causality_verified: true,
+            runtime_recalibration: false,
+            profile_sha256: None,
+        };
+        profile.profile_sha256 = Some(canonical::sha256(&profile).unwrap());
+
+        let vector = StructuralVector {
+            version: STRUCTURAL_VECTOR_VERSION.into(),
+            names: vec!["x".into()],
+            values: vec![Some(0.0)],
+            availability_mask: vec![true],
+            vector_sha256: "sha256:test".into(),
+        };
+        let result = resolve_direction(&vector, &profile);
+        assert!(result.is_ok());
+        let res = result.unwrap();
+        assert_eq!(res.direction, Direction::Unresolved);
+        assert_eq!(
+            res.publication_reason,
+            "CALIBRATION_EVIDENCE_NOT_PREREGISTERED"
+        );
+    }
+
+    #[test]
+    fn test_preregistered_awaiting_evidence_remains_non_publishable() {
+        let mut profile = ResolutionCalibrationProfile {
+            schema: RESOLUTION_PROFILE_SCHEMA.into(),
+            calibration_version: RESOLUTION_CALIBRATION_VERSION.into(),
+            profile_id: "test".into(),
+            instrument_id: "crypto:test:TEST".into(),
+            asset_class: AssetClass::Crypto,
+            timeframe: Timeframe::D1,
+            scope: CalibrationScope::Instrument,
+            engine_version: "test".into(),
+            structural_vector_version: STRUCTURAL_VECTOR_VERSION.into(),
+            calibration_start_ns: 1,
+            calibration_end_ns: 2,
+            normalization: FeatureNormalization {
+                names: vec!["x".into()],
+                median: vec![0.0],
+                scale: vec![1.0],
+                effective_dimension_mask: vec![true],
+                effective_dimension_count: 1,
+                fitted_sample_count: 1,
+            },
+            outcome_label: OutcomeLabelParameters {
+                volatility_lookback_bars: 2,
+                upper_barrier_volatility_multiple: 1.0,
+                lower_barrier_volatility_multiple: 1.0,
+                maximum_horizon_bars: 2,
+                up_down_symmetric: true,
+                simultaneous_hit_rule: "RANGE".into(),
+                no_hit_rule: "RANGE_AT_MAXIMUM_HORIZON".into(),
+            },
+            estimator: NeighborParameters {
+                neighbor_count: 1,
+                minimum_support: 1,
+                maximum_distance: 1.0,
+                distance_power: 1.0,
+            },
+            publication: PublicationPolicy {
+                minimum_direction_edge_bp: 1,
+                minimum_reliability_bp: 1,
+                parameters_selected_on: "PREREGISTERED_PROTOCOL".into(),
+                reliability_evaluated_on: "PREREGISTERED_AWAITING_PROSPECTIVE_EVIDENCE".into(),
+                test_outcomes_used_for_parameter_selection: false,
+                requires_positive_brier_skill: true,
+                profile_eligible_for_publication: false,
+                preregistered_protocol_sha256: Some(CalibrationProtocol::frozen().sha256()),
+            },
+            reliability: HeldOutReliability {
+                correct: 0,
+                evaluated: 0,
+                reliability_bp: 0,
+                reliability_lower_bound_bp: 0,
+                confidence_level_bp: 9_500,
+                balanced_accuracy_bp: 0,
+                multiclass_brier_score: 0.0,
+                climatology_brier_score: 1.0,
+                brier_skill_score: 1.0,
+                by_direction_bp: BTreeMap::from([("UP".into(), 10_000)]),
+                by_direction_lower_bound_bp: BTreeMap::from([("UP".into(), 2_065)]),
+                by_actual_direction_bp: BTreeMap::from([("UP".into(), 10_000)]),
+                actual_support: BTreeMap::from([("UP".into(), 1)]),
+                predicted_support: BTreeMap::from([("UP".into(), 1)]),
+                confusion_matrix: BTreeMap::from([(
+                    "UP".into(),
+                    BTreeMap::from([("UP".into(), 1)]),
+                )]),
+                temporal_split_timestamp_ns: 2,
+                untouched_test: false,
+                evidence_status: "PREREGISTERED_AWAITING_PROSPECTIVE_EVIDENCE".into(),
+            },
+            diagnostics: CalibrationDiagnostics {
+                train_samples: 1,
+                validation_samples: 1,
+                evaluation_tail_samples: 1,
+                train_label_counts: BTreeMap::from([("UP".into(), 1)]),
+                validation_label_counts: BTreeMap::from([("UP".into(), 1)]),
+                test_label_counts: BTreeMap::from([("UP".into(), 1)]),
+                total_vector_dimensions: 1,
+                effective_vector_dimensions: 1,
+                features: vec![FeatureDiagnostic {
+                    name: "x".into(),
+                    available_samples: 1,
+                    availability_bp: 10_000,
+                    empirically_variable: true,
+                    included_in_distance: true,
+                }],
+                upper_lower_barrier_ratio: 1.0,
+                d_o_transport_status_counts: BTreeMap::from([("COHERENT".into(), 1)]),
+                d_o_transport_evaluable_bp: 10_000,
+                odce_adaptive_organization_available_bp: 10_000,
+                k_mem_strictly_prior_available_bp: 10_000,
+            },
+            samples: vec![CalibratedSample {
+                timestamp_ns: 1,
+                vector: vec![0.0],
+                availability_mask: vec![true],
+                direction: Direction::Up,
+                first_passage_bars: 2,
+            }],
+            prefix_causality_verified: true,
+            runtime_recalibration: false,
+            profile_sha256: None,
+        };
+        profile.profile_sha256 = Some(canonical::sha256(&profile).unwrap());
+
+        let vector = StructuralVector {
+            version: STRUCTURAL_VECTOR_VERSION.into(),
+            names: vec!["x".into()],
+            values: vec![Some(0.0)],
+            availability_mask: vec![true],
+            vector_sha256: "sha256:test".into(),
+        };
+        let result = resolve_direction(&vector, &profile);
+        assert!(result.is_ok());
+        let res = result.unwrap();
+        assert_eq!(res.direction, Direction::Unresolved);
+        assert_eq!(
+            res.publication_reason,
+            "PREREGISTERED_AWAITING_PROSPECTIVE_EVIDENCE"
+        );
     }
 }

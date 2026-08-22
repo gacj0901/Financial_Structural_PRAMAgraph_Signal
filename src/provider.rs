@@ -365,13 +365,106 @@ pub async fn binance_closed_daily(
         .error_for_status()?
         .json()
         .await?;
-    parse_binance_klines(instrument, &payload, now_ms())
+    parse_binance_klines(instrument, &payload, now_ms(), Timeframe::D1)
+}
+
+pub async fn binance_closed_m1(
+    instrument: &Instrument,
+    limit: u16,
+) -> Result<Vec<MarketObservation>, ProviderError> {
+    if instrument.venue != "binance" || limit == 0 || limit > 1_000 {
+        return Err(ProviderError::Unsupported(instrument.instrument_id.clone()));
+    }
+    let limit_string = limit.to_string();
+    let payload: Value = reqwest::Client::new()
+        .get(BINANCE_KLINES_URL)
+        .query(&[
+            ("symbol", instrument.symbol.as_str()),
+            ("interval", "1m"),
+            ("limit", limit_string.as_str()),
+        ])
+        .send()
+        .await?
+        .error_for_status()?
+        .json()
+        .await?;
+    parse_binance_klines(instrument, &payload, now_ms(), Timeframe::M1)
+}
+
+pub async fn binance_closed_m5(
+    instrument: &Instrument,
+    limit: u16,
+) -> Result<Vec<MarketObservation>, ProviderError> {
+    if instrument.venue != "binance" || limit == 0 || limit > 1_000 {
+        return Err(ProviderError::Unsupported(instrument.instrument_id.clone()));
+    }
+    let limit_string = limit.to_string();
+    let payload: Value = reqwest::Client::new()
+        .get(BINANCE_KLINES_URL)
+        .query(&[
+            ("symbol", instrument.symbol.as_str()),
+            ("interval", "5m"),
+            ("limit", limit_string.as_str()),
+        ])
+        .send()
+        .await?
+        .error_for_status()?
+        .json()
+        .await?;
+    parse_binance_klines(instrument, &payload, now_ms(), Timeframe::M5)
+}
+
+pub async fn binance_closed_h1(
+    instrument: &Instrument,
+    limit: u16,
+) -> Result<Vec<MarketObservation>, ProviderError> {
+    if instrument.venue != "binance" || limit == 0 || limit > 1_000 {
+        return Err(ProviderError::Unsupported(instrument.instrument_id.clone()));
+    }
+    let limit_string = limit.to_string();
+    let payload: Value = reqwest::Client::new()
+        .get(BINANCE_KLINES_URL)
+        .query(&[
+            ("symbol", instrument.symbol.as_str()),
+            ("interval", "1h"),
+            ("limit", limit_string.as_str()),
+        ])
+        .send()
+        .await?
+        .error_for_status()?
+        .json()
+        .await?;
+    parse_binance_klines(instrument, &payload, now_ms(), Timeframe::H1)
+}
+
+pub async fn binance_closed_h4(
+    instrument: &Instrument,
+    limit: u16,
+) -> Result<Vec<MarketObservation>, ProviderError> {
+    if instrument.venue != "binance" || limit == 0 || limit > 1_000 {
+        return Err(ProviderError::Unsupported(instrument.instrument_id.clone()));
+    }
+    let limit_string = limit.to_string();
+    let payload: Value = reqwest::Client::new()
+        .get(BINANCE_KLINES_URL)
+        .query(&[
+            ("symbol", instrument.symbol.as_str()),
+            ("interval", "4h"),
+            ("limit", limit_string.as_str()),
+        ])
+        .send()
+        .await?
+        .error_for_status()?
+        .json()
+        .await?;
+    parse_binance_klines(instrument, &payload, now_ms(), Timeframe::H4)
 }
 
 fn parse_binance_klines(
     instrument: &Instrument,
     payload: &Value,
     current_time_ms: i64,
+    timeframe: Timeframe,
 ) -> Result<Vec<MarketObservation>, ProviderError> {
     let rows = payload
         .as_array()
@@ -393,7 +486,7 @@ fn parse_binance_klines(
         }
         let observation = MarketObservation {
             instrument_id: instrument.instrument_id.clone(),
-            timeframe: Timeframe::D1,
+            timeframe,
             open_time_ns: open_time_ms
                 .checked_mul(1_000_000)
                 .ok_or_else(|| ProviderError::Payload("open timestamp overflow".into()))?,
@@ -483,7 +576,7 @@ mod tests {
             [1000, "10", "12", "9", "11", "5", 1999, "55", 7],
             [2000, "11", "13", "10", "12", "6", 2999, "68", 8]
         ]);
-        let bars = parse_binance_klines(&btc(), &payload, 2500).unwrap();
+        let bars = parse_binance_klines(&btc(), &payload, 2500, Timeframe::D1).unwrap();
         assert_eq!(bars.len(), 1);
         assert_eq!(bars[0].close, 11.0);
     }

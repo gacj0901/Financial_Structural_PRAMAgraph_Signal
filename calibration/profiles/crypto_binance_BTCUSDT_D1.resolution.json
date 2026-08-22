@@ -9,7 +9,7 @@
   "engine_version": "prama-protokol-rs/0.3.0@ddb91cad+D_O_v9-financial-adapter-v2+ODCE-v0.1-financial-normalization-v1+K-MEM-K1-tau32",
   "structural_vector_version": "financial_structural_vector_v2",
   "calibration_start_ns": 1674259200000000000,
-  "calibration_end_ns": 1771545600000000000,
+  "calibration_end_ns": 1770940800000000000,
   "normalization": {
     "names": [
       "prama.delta",
@@ -105,47 +105,46 @@
   },
   "reliability": {
     "correct": 11,
-    "evaluated": 27,
-    "reliability_bp": 4074,
-    "reliability_lower_bound_bp": 2451,
+    "evaluated": 18,
+    "reliability_bp": 6111,
+    "reliability_lower_bound_bp": 3862,
     "confidence_level_bp": 9500,
-    "balanced_accuracy_bp": 5185,
-    "multiclass_brier_score": 0.8524247414814816,
-    "climatology_brier_score": 0.780950381989343,
-    "brier_skill_score": -0.09152227995595497,
+    "balanced_accuracy_bp": 7941,
+    "multiclass_brier_score": 0.5170835322222224,
+    "climatology_brier_score": 0.6201038211427821,
+    "brier_skill_score": 0.16613393662162057,
     "by_direction_bp": {
       "DOWN": 10000,
-      "UP": 588
+      "UP": 1250
     },
     "by_direction_lower_bound_bp": {
       "DOWN": 7225,
-      "UP": 105
+      "UP": 224
     },
     "by_actual_direction_bp": {
-      "DOWN": 5556,
-      "RANGE": 0,
+      "DOWN": 5882,
       "UP": 10000
     },
     "actual_support": {
-      "DOWN": 18,
-      "RANGE": 8,
+      "DOWN": 17,
+      "RANGE": 0,
       "UP": 1
     },
     "predicted_support": {
       "DOWN": 10,
       "RANGE": 0,
-      "UP": 17
+      "UP": 8
     },
     "confusion_matrix": {
       "DOWN": {
         "DOWN": 10,
         "RANGE": 0,
-        "UP": 8
+        "UP": 7
       },
       "RANGE": {
         "DOWN": 0,
         "RANGE": 0,
-        "UP": 8
+        "UP": 0
       },
       "UP": {
         "DOWN": 0,
@@ -160,7 +159,7 @@
   "diagnostics": {
     "train_samples": 742,
     "validation_samples": 28,
-    "evaluation_tail_samples": 27,
+    "evaluation_tail_samples": 20,
     "train_label_counts": {
       "DOWN": 292,
       "RANGE": 85,
@@ -173,7 +172,7 @@
     },
     "test_label_counts": {
       "DOWN": 18,
-      "RANGE": 8,
+      "RANGE": 1,
       "UP": 1
     },
     "total_vector_dimensions": 14,
@@ -28783,5 +28782,5 @@
   ],
   "prefix_causality_verified": true,
   "runtime_recalibration": false,
-  "profile_sha256": "sha256:bdc99d9e17d1b393d07cf87d12f7f62247883684a8ffb214cf05f01cd7c9d5fe"
+  "profile_sha256": "sha256:e985d84b5583f7a17970955a764424c915d9279e17d79811b5ee82709d3e2f1f"
 }

@@ -232,6 +232,285 @@ fn aggregate_week(bars: Vec<&MarketObservation>) -> Result<MarketObservation, Hi
     })
 }
 
+/// Aggregate M1 bars into M5 bars (5 M1 bars = 1 M5 bar)
+pub fn aggregate_m5_from_m1(
+    m1_bars: &[MarketObservation],
+) -> Result<Vec<MarketObservation>, HistoricalError> {
+    if m1_bars.is_empty() {
+        return Err(HistoricalError::EmptyAggregation);
+    }
+    if m1_bars
+        .iter()
+        .any(|bar| bar.timeframe != Timeframe::M1 || !bar.is_closed)
+    {
+        return Err(HistoricalError::InvalidObservation {
+            row: 0,
+            message: "all input bars must be closed M1 bars".into(),
+        });
+    }
+    let mut m5_bars = Vec::new();
+    let mut current_batch = Vec::new();
+
+    for bar in m1_bars {
+        current_batch.push(bar);
+        if current_batch.len() == 5 {
+            m5_bars.push(aggregate_m5_batch(&current_batch)?);
+            current_batch.clear();
+        }
+    }
+
+    // Partial batch at the end is dropped (incomplete bar not included)
+    Ok(m5_bars)
+}
+
+fn aggregate_m5_batch(bars: &[&MarketObservation]) -> Result<MarketObservation, HistoricalError> {
+    if bars.len() != 5 {
+        return Err(HistoricalError::InvalidObservation {
+            row: 0,
+            message: "M5 batch must have exactly 5 bars".into(),
+        });
+    }
+    let first = bars[0];
+    let last = bars[4];
+    let volume = if bars
+        .iter()
+        .all(|bar| bar.volume.availability == crate::AvailabilityStatus::Available)
+    {
+        AvailableValue::available(bars.iter().filter_map(|bar| bar.volume.value).sum())
+    } else {
+        AvailableValue::unavailable()
+    };
+    let quote_volume = if bars
+        .iter()
+        .all(|bar| bar.quote_volume.availability == crate::AvailabilityStatus::Available)
+    {
+        AvailableValue::available(bars.iter().filter_map(|bar| bar.quote_volume.value).sum())
+    } else {
+        AvailableValue::unavailable()
+    };
+    let trade_count = if bars
+        .iter()
+        .all(|bar| bar.trade_count.availability == crate::AvailabilityStatus::Available)
+    {
+        AvailableValue::available(bars.iter().filter_map(|bar| bar.trade_count.value).sum())
+    } else {
+        AvailableValue::unavailable()
+    };
+
+    Ok(MarketObservation {
+        instrument_id: first.instrument_id.clone(),
+        timeframe: Timeframe::M5,
+        open_time_ns: first.open_time_ns,
+        close_time_ns: last.close_time_ns,
+        open: first.open,
+        high: bars
+            .iter()
+            .map(|bar| bar.high)
+            .fold(f64::NEG_INFINITY, f64::max),
+        low: bars.iter().map(|bar| bar.low).fold(f64::INFINITY, f64::min),
+        close: last.close,
+        is_closed: true,
+        source: first.source.clone(),
+        volume,
+        quote_volume,
+        trade_count,
+        best_bid: AvailableValue::unavailable(),
+        best_ask: AvailableValue::unavailable(),
+        bid_size: AvailableValue::unavailable(),
+        ask_size: AvailableValue::unavailable(),
+    })
+}
+
+/// Aggregate M1/M5 bars into H1 bars
+pub fn aggregate_h1(
+    intraday_bars: &[MarketObservation],
+) -> Result<Vec<MarketObservation>, HistoricalError> {
+    if intraday_bars.is_empty() {
+        return Err(HistoricalError::EmptyAggregation);
+    }
+    // Must be all same timeframe (M1 or M5) and closed
+    let source_tf = intraday_bars[0].timeframe;
+    if !matches!(source_tf, Timeframe::M1 | Timeframe::M5) {
+        return Err(HistoricalError::InvalidObservation {
+            row: 0,
+            message: "H1 aggregation requires M1 or M5 input bars".into(),
+        });
+    }
+    if intraday_bars
+        .iter()
+        .any(|bar| bar.timeframe != source_tf || !bar.is_closed)
+    {
+        return Err(HistoricalError::InvalidObservation {
+            row: 0,
+            message: "all input bars must be closed and same timeframe".into(),
+        });
+    }
+
+    let bars_per_hour = match source_tf {
+        Timeframe::M1 => 60,
+        Timeframe::M5 => 12,
+        _ => unreachable!(),
+    };
+
+    let mut h1_bars = Vec::new();
+    let mut current_batch = Vec::new();
+
+    for bar in intraday_bars {
+        current_batch.push(bar);
+        if current_batch.len() == bars_per_hour {
+            h1_bars.push(aggregate_h1_batch(&current_batch)?);
+            current_batch.clear();
+        }
+    }
+
+    // Partial batch at the end is dropped (incomplete bar not included)
+    Ok(h1_bars)
+}
+
+fn aggregate_h1_batch(bars: &[&MarketObservation]) -> Result<MarketObservation, HistoricalError> {
+    if bars.is_empty() {
+        return Err(HistoricalError::EmptyAggregation);
+    }
+    let first = bars[0];
+    let last = bars.last().unwrap();
+    let volume = if bars
+        .iter()
+        .all(|bar| bar.volume.availability == crate::AvailabilityStatus::Available)
+    {
+        AvailableValue::available(bars.iter().filter_map(|bar| bar.volume.value).sum())
+    } else {
+        AvailableValue::unavailable()
+    };
+    let quote_volume = if bars
+        .iter()
+        .all(|bar| bar.quote_volume.availability == crate::AvailabilityStatus::Available)
+    {
+        AvailableValue::available(bars.iter().filter_map(|bar| bar.quote_volume.value).sum())
+    } else {
+        AvailableValue::unavailable()
+    };
+    let trade_count = if bars
+        .iter()
+        .all(|bar| bar.trade_count.availability == crate::AvailabilityStatus::Available)
+    {
+        AvailableValue::available(bars.iter().filter_map(|bar| bar.trade_count.value).sum())
+    } else {
+        AvailableValue::unavailable()
+    };
+
+    Ok(MarketObservation {
+        instrument_id: first.instrument_id.clone(),
+        timeframe: Timeframe::H1,
+        open_time_ns: first.open_time_ns,
+        close_time_ns: last.close_time_ns,
+        open: first.open,
+        high: bars
+            .iter()
+            .map(|bar| bar.high)
+            .fold(f64::NEG_INFINITY, f64::max),
+        low: bars.iter().map(|bar| bar.low).fold(f64::INFINITY, f64::min),
+        close: last.close,
+        is_closed: true,
+        source: first.source.clone(),
+        volume,
+        quote_volume,
+        trade_count,
+        best_bid: AvailableValue::unavailable(),
+        best_ask: AvailableValue::unavailable(),
+        bid_size: AvailableValue::unavailable(),
+        ask_size: AvailableValue::unavailable(),
+    })
+}
+
+/// Aggregate H1 bars into H4 bars (4 H1 bars = 1 H4 bar)
+pub fn aggregate_h4_from_h1(
+    h1_bars: &[MarketObservation],
+) -> Result<Vec<MarketObservation>, HistoricalError> {
+    if h1_bars.is_empty() {
+        return Err(HistoricalError::EmptyAggregation);
+    }
+    if h1_bars
+        .iter()
+        .any(|bar| bar.timeframe != Timeframe::H1 || !bar.is_closed)
+    {
+        return Err(HistoricalError::InvalidObservation {
+            row: 0,
+            message: "all input bars must be closed H1 bars".into(),
+        });
+    }
+    let mut h4_bars = Vec::new();
+    let mut current_batch = Vec::new();
+
+    for bar in h1_bars {
+        current_batch.push(bar);
+        if current_batch.len() == 4 {
+            h4_bars.push(aggregate_h4_batch(&current_batch)?);
+            current_batch.clear();
+        }
+    }
+
+    // Partial batch at the end is dropped
+    Ok(h4_bars)
+}
+
+fn aggregate_h4_batch(bars: &[&MarketObservation]) -> Result<MarketObservation, HistoricalError> {
+    if bars.len() != 4 {
+        return Err(HistoricalError::InvalidObservation {
+            row: 0,
+            message: "H4 batch must have exactly 4 bars".into(),
+        });
+    }
+    let first = bars[0];
+    let last = bars[3];
+    let volume = if bars
+        .iter()
+        .all(|bar| bar.volume.availability == crate::AvailabilityStatus::Available)
+    {
+        AvailableValue::available(bars.iter().filter_map(|bar| bar.volume.value).sum())
+    } else {
+        AvailableValue::unavailable()
+    };
+    let quote_volume = if bars
+        .iter()
+        .all(|bar| bar.quote_volume.availability == crate::AvailabilityStatus::Available)
+    {
+        AvailableValue::available(bars.iter().filter_map(|bar| bar.quote_volume.value).sum())
+    } else {
+        AvailableValue::unavailable()
+    };
+    let trade_count = if bars
+        .iter()
+        .all(|bar| bar.trade_count.availability == crate::AvailabilityStatus::Available)
+    {
+        AvailableValue::available(bars.iter().filter_map(|bar| bar.trade_count.value).sum())
+    } else {
+        AvailableValue::unavailable()
+    };
+
+    Ok(MarketObservation {
+        instrument_id: first.instrument_id.clone(),
+        timeframe: Timeframe::H4,
+        open_time_ns: first.open_time_ns,
+        close_time_ns: last.close_time_ns,
+        open: first.open,
+        high: bars
+            .iter()
+            .map(|bar| bar.high)
+            .fold(f64::NEG_INFINITY, f64::max),
+        low: bars.iter().map(|bar| bar.low).fold(f64::INFINITY, f64::min),
+        close: last.close,
+        is_closed: true,
+        source: first.source.clone(),
+        volume,
+        quote_volume,
+        trade_count,
+        best_bid: AvailableValue::unavailable(),
+        best_ask: AvailableValue::unavailable(),
+        bid_size: AvailableValue::unavailable(),
+        ask_size: AvailableValue::unavailable(),
+    })
+}
+
 fn optional_column(headers: &StringRecord, candidates: &[&str]) -> Option<usize> {
     headers.iter().position(|header| {
         candidates
@@ -367,5 +646,182 @@ mod tests {
         )
         .unwrap();
         assert_eq!(bars[0].volume, AvailableValue::unavailable());
+    }
+
+    #[test]
+    fn m5_aggregation_from_m1_preserves_ohlc() {
+        let m1_bars = create_m1_bars(10);
+        let m5_bars = aggregate_m5_from_m1(&m1_bars).unwrap();
+        assert_eq!(m5_bars.len(), 2);
+
+        // First M5 bar from first 5 M1 bars
+        assert_eq!(m5_bars[0].timeframe, Timeframe::M5);
+        assert_eq!(m5_bars[0].open, m1_bars[0].open);
+        assert_eq!(m5_bars[0].close, m1_bars[4].close);
+        let expected_high: f64 = m1_bars[0..5]
+            .iter()
+            .map(|b| b.high)
+            .fold(f64::NEG_INFINITY, f64::max);
+        let expected_low: f64 = m1_bars[0..5]
+            .iter()
+            .map(|b| b.low)
+            .fold(f64::INFINITY, f64::min);
+        assert_eq!(m5_bars[0].high, expected_high);
+        assert_eq!(m5_bars[0].low, expected_low);
+
+        // Second M5 bar from next 5 M1 bars
+        assert_eq!(m5_bars[1].timeframe, Timeframe::M5);
+        assert_eq!(m5_bars[1].open, m1_bars[5].open);
+        assert_eq!(m5_bars[1].close, m1_bars[9].close);
+    }
+
+    #[test]
+    fn m5_aggregation_drops_incomplete_batch() {
+        let m1_bars = create_m1_bars(12); // 2 full M5 + 2 extra M1
+        let m5_bars = aggregate_m5_from_m1(&m1_bars).unwrap();
+        assert_eq!(m5_bars.len(), 2); // Only 2 complete M5 bars
+    }
+
+    #[test]
+    fn m5_aggregation_rejects_non_m1_input() {
+        let daily_bars = create_daily_bars(10);
+        let result = aggregate_m5_from_m1(&daily_bars);
+        assert!(matches!(
+            result,
+            Err(HistoricalError::InvalidObservation { .. })
+        ));
+    }
+
+    #[test]
+    fn m5_aggregation_rejects_open_bars() {
+        let mut m1_bars = create_m1_bars(5);
+        m1_bars[2].is_closed = false;
+        let result = aggregate_m5_from_m1(&m1_bars);
+        assert!(matches!(
+            result,
+            Err(HistoricalError::InvalidObservation { .. })
+        ));
+    }
+
+    #[test]
+    fn h1_aggregation_from_m1_preserves_ohlc() {
+        let m1_bars = create_m1_bars(60);
+        let h1_bars = aggregate_h1(&m1_bars).unwrap();
+        assert_eq!(h1_bars.len(), 1);
+        assert_eq!(h1_bars[0].timeframe, Timeframe::H1);
+        assert_eq!(h1_bars[0].open, m1_bars[0].open);
+        assert_eq!(h1_bars[0].close, m1_bars[59].close);
+    }
+
+    #[test]
+    fn h1_aggregation_from_m5_preserves_ohlc() {
+        let m1_bars = create_m1_bars(60);
+        let m5_bars = aggregate_m5_from_m1(&m1_bars).unwrap();
+        let h1_bars = aggregate_h1(&m5_bars).unwrap();
+        assert_eq!(h1_bars.len(), 1);
+        assert_eq!(h1_bars[0].timeframe, Timeframe::H1);
+        assert_eq!(h1_bars[0].open, m5_bars[0].open);
+        assert_eq!(h1_bars[0].close, m5_bars[11].close);
+    }
+
+    #[test]
+    fn h1_aggregation_drops_incomplete_batch() {
+        let m1_bars = create_m1_bars(65); // 1 full H1 + 5 extra M1
+        let h1_bars = aggregate_h1(&m1_bars).unwrap();
+        assert_eq!(h1_bars.len(), 1); // Only 1 complete H1 bar
+    }
+
+    #[test]
+    fn h1_aggregation_rejects_invalid_timeframe() {
+        let daily_bars = create_daily_bars(10);
+        let result = aggregate_h1(&daily_bars);
+        assert!(matches!(
+            result,
+            Err(HistoricalError::InvalidObservation { .. })
+        ));
+    }
+
+    #[test]
+    fn h4_aggregation_from_h1_preserves_ohlc() {
+        let m1_bars = create_m1_bars(240); // 4 hours
+        let h1_bars = aggregate_h1(&m1_bars).unwrap();
+        let h4_bars = aggregate_h4_from_h1(&h1_bars).unwrap();
+        assert_eq!(h4_bars.len(), 1);
+        assert_eq!(h4_bars[0].timeframe, Timeframe::H4);
+        assert_eq!(h4_bars[0].open, h1_bars[0].open);
+        assert_eq!(h4_bars[0].close, h1_bars[3].close);
+    }
+
+    #[test]
+    fn h4_aggregation_drops_incomplete_batch() {
+        let m1_bars = create_m1_bars(250); // 4 full hours + 10 min
+        let h1_bars = aggregate_h1(&m1_bars).unwrap();
+        let h4_bars = aggregate_h4_from_h1(&h1_bars).unwrap();
+        assert_eq!(h4_bars.len(), 1); // Only 1 complete H4 bar
+    }
+
+    #[test]
+    fn h4_aggregation_rejects_non_h1_input() {
+        let m5_bars = create_m1_bars(60);
+        let m5_agg = aggregate_m5_from_m1(&m5_bars).unwrap();
+        let result = aggregate_h4_from_h1(&m5_agg);
+        assert!(matches!(
+            result,
+            Err(HistoricalError::InvalidObservation { .. })
+        ));
+    }
+
+    fn create_m1_bars(n: usize) -> Vec<MarketObservation> {
+        (0..n)
+            .map(|i| {
+                let base = 100.0 + i as f64 * 0.01;
+                MarketObservation {
+                    instrument_id: "test:instrument".into(),
+                    timeframe: Timeframe::M1,
+                    open_time_ns: (i as i64) * 60_000_000_000,
+                    close_time_ns: (i as i64 + 1) * 60_000_000_000 - 1,
+                    open: base,
+                    high: base + 0.02,
+                    low: base - 0.02,
+                    close: base + 0.01,
+                    is_closed: true,
+                    source: "test".into(),
+                    volume: AvailableValue::available(100.0),
+                    quote_volume: AvailableValue::available(10000.0),
+                    trade_count: AvailableValue::available(50),
+                    best_bid: AvailableValue::unavailable(),
+                    best_ask: AvailableValue::unavailable(),
+                    bid_size: AvailableValue::unavailable(),
+                    ask_size: AvailableValue::unavailable(),
+                }
+            })
+            .collect()
+    }
+
+    fn create_daily_bars(n: usize) -> Vec<MarketObservation> {
+        (0..n)
+            .map(|i| {
+                let base = 100.0 + i as f64 * 1.0;
+                MarketObservation {
+                    instrument_id: "test:instrument".into(),
+                    timeframe: Timeframe::D1,
+                    open_time_ns: (i as i64) * 86_400_000_000_000,
+                    close_time_ns: (i as i64 + 1) * 86_400_000_000_000 - 1,
+                    open: base,
+                    high: base + 2.0,
+                    low: base - 2.0,
+                    close: base + 1.0,
+                    is_closed: true,
+                    source: "test".into(),
+                    volume: AvailableValue::available(1000.0),
+                    quote_volume: AvailableValue::available(100000.0),
+                    trade_count: AvailableValue::available(500),
+                    best_bid: AvailableValue::unavailable(),
+                    best_ask: AvailableValue::unavailable(),
+                    bid_size: AvailableValue::unavailable(),
+                    ask_size: AvailableValue::unavailable(),
+                }
+            })
+            .collect()
     }
 }

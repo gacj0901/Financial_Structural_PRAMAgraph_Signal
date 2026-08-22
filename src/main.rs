@@ -5,7 +5,8 @@ use pramagraph_financial::calibration::{
     build_neighbor_anatomy_artifacts, build_range_distance_geometry_audit,
     build_range_intraclass_compactness_audit, build_range_trajectory_anatomy_audit,
     build_resolution_profile, build_right_censoring_audit, resolve_direction,
-    validate_profile_for_engine, NeighborAnatomyQuery, ResolutionCalibrationProfile,
+    validate_profile_for_engine, CalibrationProtocol, NeighborAnatomyQuery,
+    ResolutionCalibrationProfile, DEVELOPMENT_DATA_CUTOFF_NS, PROTOCOL_FREEZE_TIMESTAMP_NS,
 };
 use pramagraph_financial::corpus::{audit_corpus, CorpusAuditReport};
 use pramagraph_financial::engine::{KernelObservation, StructuralEngineAdapter};
@@ -87,6 +88,11 @@ enum Command {
         timeframe: String,
         #[arg(long)]
         profile: PathBuf,
+    },
+    /// Generate the frozen calibration protocol and its SHA-256 hash.
+    FreezeProtocol {
+        #[arg(long)]
+        output: Option<PathBuf>,
     },
     NeighborAnatomy {
         #[arg(long)]
@@ -451,6 +457,28 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
                     .clone()
                     .expect("profile builder hashes"),
             })?;
+        }
+        Command::FreezeProtocol { output } => {
+            let protocol = CalibrationProtocol::frozen();
+            let hash = protocol.sha256();
+            let json = protocol.canonical_json();
+
+            if let Some(path) = output {
+                let mut file = File::create(&path)?;
+                file.write_all(json.as_bytes())?;
+                println!("Frozen protocol written to: {}", path.display());
+            } else {
+                println!("{}", json);
+            }
+            println!("\nProtocol SHA-256: {}", hash);
+            println!(
+                "Development data cutoff: {} (2025-08-21T00:00:00Z)",
+                DEVELOPMENT_DATA_CUTOFF_NS
+            );
+            println!(
+                "Protocol freeze timestamp: {} (2026-07-21T00:00:00Z)",
+                PROTOCOL_FREEZE_TIMESTAMP_NS
+            );
         }
         Command::ResolveDirection {
             input,

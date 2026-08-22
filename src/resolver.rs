@@ -191,6 +191,30 @@ pub fn default_catalog() -> Vec<CatalogEntry> {
             ),
             aliases: vec!["GC".into(), "GOLD".into()],
         },
+        CatalogEntry {
+            instrument: instrument(
+                "crypto:binance:ETHUSDT",
+                AssetClass::Crypto,
+                "ETHUSDT",
+                Some("ETH"),
+                Some("USDT"),
+                "binance",
+                SessionCalendar::ContinuousUtc,
+            ),
+            aliases: vec!["ETH".into(), "ETHUSDT".into()],
+        },
+        CatalogEntry {
+            instrument: instrument(
+                "crypto:binance:SOLUSDT",
+                AssetClass::Crypto,
+                "SOLUSDT",
+                Some("SOL"),
+                Some("USDT"),
+                "binance",
+                SessionCalendar::ContinuousUtc,
+            ),
+            aliases: vec!["SOL".into(), "SOLUSDT".into()],
+        },
     ]
 }
 

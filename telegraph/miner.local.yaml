@@ -1,6 +1,6 @@
 version: "1"
 kind: miner
-id: 0
+id: 111
 slug: financial-structural-pramagraph-signal
 protocol: generic
 name: Financial Structural PRAMAgraph Signal

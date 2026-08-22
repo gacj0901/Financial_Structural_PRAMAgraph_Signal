@@ -6,7 +6,10 @@ use crate::canonical;
 use crate::engine::{StructuralEngineAdapter, ENGINE_VERSION};
 use crate::historical::{aggregate_weekly, load_daily_csv};
 use crate::observation::{adapt_closed_bars, OBSERVATION_INTERFACE_VERSION};
-use crate::provider::{binance_closed_daily, massive_closed_daily, ProviderError};
+use crate::provider::{
+    binance_closed_daily, binance_closed_h1, binance_closed_h4, binance_closed_m1,
+    binance_closed_m5, massive_closed_daily, ProviderError,
+};
 use crate::resolver::{AssetResolver, Resolution};
 use crate::technical::{
     TechnicalCounterReading, TechnicalDirectionHead, TechnicalStructuralContrast,
@@ -122,42 +125,235 @@ async fn build_financial_data_response_internal(
         Resolution::Found { instrument } => instrument,
         _ => return Err(ServiceError::Asset(request.asset.clone())),
     };
-    if !matches!(request.timeframe, Timeframe::D1 | Timeframe::W1) {
+
+    // Validate timeframe - all six canonical timeframes now supported
+    if !matches!(
+        request.timeframe,
+        Timeframe::M1
+            | Timeframe::M5
+            | Timeframe::H1
+            | Timeframe::H4
+            | Timeframe::D1
+            | Timeframe::W1
+    ) {
         return Err(ServiceError::Timeframe);
     }
-    let (daily, primary_provider, provider_instrument, corpus_file, input_sha256, live) =
+
+    // SuppliedCorpus only has D1 data - reject intraday timeframes early
+    if request.source == DataSourcePreference::SuppliedCorpus
+        && matches!(
+            request.timeframe,
+            Timeframe::M1 | Timeframe::M5 | Timeframe::H1 | Timeframe::H4
+        )
+    {
+        return Err(ServiceError::Timeframe);
+    }
+
+    let (bars, primary_provider, provider_instrument, corpus_file, input_sha256, live) =
         if request.source == DataSourcePreference::Auto && instrument.venue == "binance" {
-            match binance_closed_daily(&instrument, 1_000).await {
-                Ok(observations) => {
-                    let hash = canonical::sha256(&observations).map_err(pipeline)?;
-                    (
-                        observations,
-                        "binance_spot".to_owned(),
-                        Some(instrument.symbol.clone()),
-                        None,
-                        hash,
-                        true,
-                    )
+            match request.timeframe {
+                Timeframe::M1 => {
+                    match binance_closed_m1(&instrument, 1_000).await {
+                        Ok(observations) => {
+                            let hash = canonical::sha256(&observations).map_err(pipeline)?;
+                            (
+                                observations,
+                                "binance_spot".to_owned(),
+                                Some(instrument.symbol.clone()),
+                                None,
+                                hash,
+                                true,
+                            )
+                        }
+                        Err(ProviderError::Unsupported(_)) => {
+                            return Err(ServiceError::Asset(instrument.symbol.clone()));
+                        }
+                        Err(_e) => {
+                            // Live Binance failed - fallback to corpus with explicit STALE status
+                            let file = calibration_file(&instrument)?;
+                            let path = corpus_directory.as_ref().join(file);
+                            let bytes = fs::read(&path).map_err(pipeline)?;
+                            let observations =
+                                load_daily_csv(&path, &instrument, "supplied_corpus")
+                                    .map_err(pipeline)?;
+                            (
+                                observations,
+                                "supplied_corpus".to_owned(),
+                                None,
+                                Some(file.to_owned()),
+                                format!("sha256:{}", hex::encode(Sha256::digest(bytes))),
+                                false,
+                            )
+                        }
+                    }
                 }
-                Err(ProviderError::Unsupported(_)) => {
-                    return Err(ServiceError::Asset(instrument.symbol.clone()));
+                Timeframe::M5 => {
+                    match binance_closed_m5(&instrument, 1_000).await {
+                        Ok(observations) => {
+                            let hash = canonical::sha256(&observations).map_err(pipeline)?;
+                            (
+                                observations,
+                                "binance_spot".to_owned(),
+                                Some(instrument.symbol.clone()),
+                                None,
+                                hash,
+                                true,
+                            )
+                        }
+                        Err(ProviderError::Unsupported(_)) => {
+                            return Err(ServiceError::Asset(instrument.symbol.clone()));
+                        }
+                        Err(_e) => {
+                            // Live Binance failed - fallback to corpus
+                            let file = calibration_file(&instrument)?;
+                            let path = corpus_directory.as_ref().join(file);
+                            let bytes = fs::read(&path).map_err(pipeline)?;
+                            let _daily = load_daily_csv(&path, &instrument, "supplied_corpus")
+                                .map_err(pipeline)?;
+                            let _m1_obs = load_daily_csv(&path, &instrument, "supplied_corpus")
+                                .map_err(pipeline)?;
+                            // Note: M5 from corpus requires M1 data which we don't have
+                            // Fall back to empty for now - will return insufficient data
+                            (
+                                vec![],
+                                "supplied_corpus".to_owned(),
+                                None,
+                                Some(file.to_owned()),
+                                format!("sha256:{}", hex::encode(Sha256::digest(bytes))),
+                                false,
+                            )
+                        }
+                    }
                 }
-                Err(_e) => {
-                    // Live Binance failed - fallback to corpus with explicit STALE status
-                    let file = calibration_file(&instrument)?;
-                    let path = corpus_directory.as_ref().join(file);
-                    let bytes = fs::read(&path).map_err(pipeline)?;
-                    let observations =
-                        load_daily_csv(&path, &instrument, "supplied_corpus").map_err(pipeline)?;
-                    (
-                        observations,
-                        "supplied_corpus".to_owned(),
-                        None,
-                        Some(file.to_owned()),
-                        format!("sha256:{}", hex::encode(Sha256::digest(bytes))),
-                        false,
-                    )
+                Timeframe::H1 => {
+                    match binance_closed_h1(&instrument, 1_000).await {
+                        Ok(observations) => {
+                            let hash = canonical::sha256(&observations).map_err(pipeline)?;
+                            (
+                                observations,
+                                "binance_spot".to_owned(),
+                                Some(instrument.symbol.clone()),
+                                None,
+                                hash,
+                                true,
+                            )
+                        }
+                        Err(ProviderError::Unsupported(_)) => {
+                            return Err(ServiceError::Asset(instrument.symbol.clone()));
+                        }
+                        Err(_e) => {
+                            let file = calibration_file(&instrument)?;
+                            let path = corpus_directory.as_ref().join(file);
+                            let bytes = fs::read(&path).map_err(pipeline)?;
+                            let _daily = load_daily_csv(&path, &instrument, "supplied_corpus")
+                                .map_err(pipeline)?;
+                            // Note: H1 from corpus requires M1/M5 data which we don't have
+                            (
+                                vec![],
+                                "supplied_corpus".to_owned(),
+                                None,
+                                Some(file.to_owned()),
+                                format!("sha256:{}", hex::encode(Sha256::digest(bytes))),
+                                false,
+                            )
+                        }
+                    }
                 }
+                Timeframe::H4 => match binance_closed_h4(&instrument, 1_000).await {
+                    Ok(observations) => {
+                        let hash = canonical::sha256(&observations).map_err(pipeline)?;
+                        (
+                            observations,
+                            "binance_spot".to_owned(),
+                            Some(instrument.symbol.clone()),
+                            None,
+                            hash,
+                            true,
+                        )
+                    }
+                    Err(ProviderError::Unsupported(_)) => {
+                        return Err(ServiceError::Asset(instrument.symbol.clone()));
+                    }
+                    Err(_e) => {
+                        let file = calibration_file(&instrument)?;
+                        let path = corpus_directory.as_ref().join(file);
+                        let bytes = fs::read(&path).map_err(pipeline)?;
+                        let _daily = load_daily_csv(&path, &instrument, "supplied_corpus")
+                            .map_err(pipeline)?;
+                        (
+                            vec![],
+                            "supplied_corpus".to_owned(),
+                            None,
+                            Some(file.to_owned()),
+                            format!("sha256:{}", hex::encode(Sha256::digest(bytes))),
+                            false,
+                        )
+                    }
+                },
+                Timeframe::D1 => match binance_closed_daily(&instrument, 1_000).await {
+                    Ok(observations) => {
+                        let hash = canonical::sha256(&observations).map_err(pipeline)?;
+                        (
+                            observations,
+                            "binance_spot".to_owned(),
+                            Some(instrument.symbol.clone()),
+                            None,
+                            hash,
+                            true,
+                        )
+                    }
+                    Err(ProviderError::Unsupported(_)) => {
+                        return Err(ServiceError::Asset(instrument.symbol.clone()));
+                    }
+                    Err(_e) => {
+                        let file = calibration_file(&instrument)?;
+                        let path = corpus_directory.as_ref().join(file);
+                        let bytes = fs::read(&path).map_err(pipeline)?;
+                        let observations = load_daily_csv(&path, &instrument, "supplied_corpus")
+                            .map_err(pipeline)?;
+                        (
+                            observations,
+                            "supplied_corpus".to_owned(),
+                            None,
+                            Some(file.to_owned()),
+                            format!("sha256:{}", hex::encode(Sha256::digest(bytes))),
+                            false,
+                        )
+                    }
+                },
+                Timeframe::W1 => match binance_closed_daily(&instrument, 1_000).await {
+                    Ok(daily_obs) => {
+                        let observations = aggregate_weekly(&daily_obs).map_err(pipeline)?;
+                        let hash = canonical::sha256(&observations).map_err(pipeline)?;
+                        (
+                            observations,
+                            "binance_spot".to_owned(),
+                            Some(instrument.symbol.clone()),
+                            None,
+                            hash,
+                            true,
+                        )
+                    }
+                    Err(ProviderError::Unsupported(_)) => {
+                        return Err(ServiceError::Asset(instrument.symbol.clone()));
+                    }
+                    Err(_e) => {
+                        let file = calibration_file(&instrument)?;
+                        let path = corpus_directory.as_ref().join(file);
+                        let bytes = fs::read(&path).map_err(pipeline)?;
+                        let daily = load_daily_csv(&path, &instrument, "supplied_corpus")
+                            .map_err(pipeline)?;
+                        let observations = aggregate_weekly(&daily).map_err(pipeline)?;
+                        (
+                            observations,
+                            "supplied_corpus".to_owned(),
+                            None,
+                            Some(file.to_owned()),
+                            format!("sha256:{}", hex::encode(Sha256::digest(bytes))),
+                            false,
+                        )
+                    }
+                },
             }
         } else if request.source == DataSourcePreference::Auto && instrument.venue == "massive" {
             match massive_closed_daily(&instrument).await {
@@ -220,10 +416,46 @@ async fn build_financial_data_response_internal(
                 false,
             )
         };
+
+    // For intraday timeframes, if we got daily bars from corpus fallback, we can't construct intraday
+    // Return early with appropriate error for corpus-based intraday requests
     let bars = match request.timeframe {
-        Timeframe::D1 => daily,
-        Timeframe::W1 => aggregate_weekly(&daily).map_err(pipeline)?,
-        _ => return Err(ServiceError::Timeframe),
+        Timeframe::D1 => bars,
+        Timeframe::W1 => aggregate_weekly(&bars).map_err(pipeline)?,
+        Timeframe::M1 | Timeframe::M5 | Timeframe::H1 | Timeframe::H4 => {
+            if bars.is_empty() || bars[0].timeframe == Timeframe::D1 {
+                // Corpus fallback doesn't have intraday data
+                return Err(ServiceError::Timeframe);
+            }
+            match request.timeframe {
+                Timeframe::M1 => bars,
+                Timeframe::M5 => {
+                    // If we have M1, aggregate to M5
+                    if bars[0].timeframe == Timeframe::M1 {
+                        crate::historical::aggregate_m5_from_m1(&bars).map_err(pipeline)?
+                    } else {
+                        bars // Already M5 from provider
+                    }
+                }
+                Timeframe::H1 => {
+                    // If we have M1 or M5, aggregate to H1
+                    if matches!(bars[0].timeframe, Timeframe::M1 | Timeframe::M5) {
+                        crate::historical::aggregate_h1(&bars).map_err(pipeline)?
+                    } else {
+                        bars // Already H1 from provider
+                    }
+                }
+                Timeframe::H4 => {
+                    // If we have H1, aggregate to H4
+                    if bars[0].timeframe == Timeframe::H1 {
+                        crate::historical::aggregate_h4_from_h1(&bars).map_err(pipeline)?
+                    } else {
+                        bars // Already H4 from provider
+                    }
+                }
+                _ => bars,
+            }
+        }
     };
     let kernel_input = adapt_closed_bars(&bars).map_err(pipeline)?;
     let last = bars
